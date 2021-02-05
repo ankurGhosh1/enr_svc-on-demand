@@ -1,7 +1,23 @@
 {% extends 'base.html' %}
 
 {%block content%}
-
+<style media="screen">
+  .st{
+    padding:20px;
+    border-radius:20px;
+    background:blue;
+    color:white;
+    width: max-content;
+  }
+</style>
 <h1>Homepage</h1>
+<h3 class="st"> Hello {{request.user.first_name}}</h3>
+<ul>
+  {% for user in users %}
+    <li>
+      <a href="{% url 'clients:chat' user_id=user.id %}">Chat with: {{user.first_name}}</a>
+    </li>
+  {% endfor %}
+</ul>
 
 {%endblock%}

@@ -6,10 +6,11 @@ from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 class User(AbstractUser):
-    number = PhoneNumberField(null=True)
+    number = PhoneNumberField(blank=True)
     zipcode = models.IntegerField(null=True)
+    is_professional = models.BooleanField(default=False)
 
-    
+
 
 class JobPost(models.Model):
     taskoverview = models.CharField(max_length=300)
@@ -20,3 +21,11 @@ class JobPost(models.Model):
 
     def __str__(self):
         return self.taskoverview
+
+
+class ChatRecord(models.Model):
+    client = models.ForeignKey(User, on_delete=models.CASCADE)
+    professional = models.ForeignKey(User, on_delete=models.CASCADE, related_name="professional")
+    message = models.CharField(max_length=400)
+    side = models.BooleanField(null=True, blank=True)   #True for consumer, False for professional
+    room_name = models.CharField(max_length=300 )
