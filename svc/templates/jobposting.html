@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-6">
+                {{ form.taskoverview|as_crispy_field }}
+            </div>
+            <div class="col-6">
+                {{ form.address|as_crispy_field }}
+            </div>
+            <div class="col-3">
+                {{ form.time|as_crispy_field }}
+            </div>
+            <div class="col-9">
+                {{ form.addinfo|as_crispy_field }}
+            </div>
+        <button class="btn btn-primary" type="submit">Post Job</button>
+    </form>
+</div>
+
+{% endblock %}

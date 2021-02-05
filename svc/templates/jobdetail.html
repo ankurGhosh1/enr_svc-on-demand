@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for detail in jobdetail %}
+
+<ul>
+    <li>{{detail.task}}</li>
+    <li>{{detail.address}}</li>
+    <li>{{detail.time}}</li>
+    <li>{{detail.addinfo}}</li>
+    <li>{{detail.owner}}</li>
+</ul>
+
+{% endblock %}
