@@ -25,7 +25,12 @@ class SignupView(generic.CreateView):
 class HomeView(View):
     template_name = 'home.html'
     def get(self, request):
-        users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True)  # conditions need to be set as we develop
+        users =[]
+        if request.user.is_authenticated:
+            if request.user.is_professional:
+                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(is_professional=True)  # conditions need to be set as we develop
+            else:
+                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(is_professional=False)  # conditions need to be set as we develop
         context = {'users': users}
         print(users)
         return render(request, self.template_name, context)

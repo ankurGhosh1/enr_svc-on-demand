@@ -4,6 +4,13 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 # Create your models here.
+class Category(models.Model):
+    cat_name = models.CharField(max_length=100)
+
+class SubCategory(models.Model):
+    cat = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
+    sub_cat_name = models.CharField(max_length=100)
+
 
 class User(AbstractUser):
     number = PhoneNumberField(blank=True)
@@ -18,6 +25,9 @@ class JobPost(models.Model):
     time = models.IntegerField()
     addinfo = models.TextField()
     client = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
+    sub_category = models.ForeignKey(SubCategory, null=True, on_delete=models.SET_NULL)
+
 
     def __str__(self):
         return self.taskoverview

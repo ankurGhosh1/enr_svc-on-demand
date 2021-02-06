@@ -16,5 +16,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name="logout"),
     path('jobpost/', JobPostingView.as_view(), name="jobpost"),
     path('alljobs/', AllJobView.as_view(), name="alljobs"),
-    path('chat/<str:user_id>', chat, name="chat")
+    path('chat/<str:user_id>', chat, name="chat"),
 ]
