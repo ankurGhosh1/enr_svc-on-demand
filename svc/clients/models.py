@@ -6,9 +6,13 @@ from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 class User(AbstractUser):
+    user_type = (
+        ('Customer', 'Customer'),
+        ('Professional', 'Professional')
+    )
     number = PhoneNumberField(blank=True)
     zipcode = models.IntegerField(null=True)
-    is_professional = models.BooleanField(default=False)
+    usertype = models.CharField(max_length=15, choices=user_type, default="Customer")
 
 
 
