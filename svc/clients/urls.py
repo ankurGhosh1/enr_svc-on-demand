@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from .views import SignupView, HomeView, JobPostingView, AllJobView, chat
+from .views import SignupView, HomeView, JobPostingView, MyJobView, chat
 
 app_name = 'clients'
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('password-reset-complete/', PasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path('logout/', LogoutView.as_view(), name="logout"),
     path('jobpost/', JobPostingView.as_view(), name="jobpost"),
-    path('alljobs/', AllJobView.as_view(), name="alljobs"),
+    path('myjobs/', MyJobView.as_view(), name="myJobs"),
+    path('myjobs/<int:job_id>', MyJobView.as_view(), name="indiJob"),
     path('chat/<str:user_id>', chat, name="chat"),
 ]

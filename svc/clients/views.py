@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.views import generic
-from .models import User, JobPost, ChatRecord
+from .models import User, JobPost, ChatRecord, Category, SubCategory
 from .forms import CustomClientUserForm, JobPostForm
 from django.views.generic import View
 
@@ -27,10 +27,10 @@ class HomeView(View):
     def get(self, request):
         users =[]
         if request.user.is_authenticated:
-            if request.user.is_professional:
-                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(is_professional=True)  # conditions need to be set as we develop
+            if request.user.usertype=="Professional":
+                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(usertype="Professional")  # conditions need to be set as we develop
             else:
-                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(is_professional=False)  # conditions need to be set as we develop
+                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(usertype="Customer")  # conditions need to be set as we develop
         context = {'users': users}
         print(users)
         return render(request, self.template_name, context)
@@ -39,8 +39,14 @@ class JobPostingView(generic.CreateView):
     template_name = 'jobposting.html'
     form_class = JobPostForm
 
+    def get_context_data(self, **kwargs):
+        ctx = super(JobPostingView, self).get_context_data(**kwargs)
+        ctx['categories'] = [(i.id, i.cat_name) for i in Category.objects.all()]
+        ctx['sub_categories'] = [(i.id, i.cat_id, i.sub_cat_name) for i in SubCategory.objects.all()]
+        return ctx
+
     def get_success_url(self):
-        return reverse('clients:alljobs')
+        return reverse('clients:myJobs')
 
     def form_valid(self, form):
         if form.is_valid():
@@ -51,12 +57,12 @@ class JobPostingView(generic.CreateView):
             return super(JobPostingView, self).form_valid(form)
 
 
-class AllJobView(generic.ListView):
-    template_name = 'alljobs.html'
-    context_object_name = 'alljobs'
+class MyJobView(generic.ListView):
+    template_name = 'MyJobs.html'
+    context_object_name = 'myJobs'
 
     def get_queryset(self):
-        return JobPost.objects.all()
+        return JobPost.objects.filter(client=self.request.user)
 
 
 class JobDetailView(generic.DetailView):
@@ -70,7 +76,7 @@ class JobDetailView(generic.DetailView):
 def chat(request, user_id):
     chatRoom = None
     messages = []
-    if not request.user.is_professional:
+    if not request.user.usertype=="Professional":
         chatRoom = ChatRecord.objects.filter(client=request.user, professional_id=user_id)
         room_name = f'chat{user_id}{request.user.id}s'
         client_id = request.user.id
