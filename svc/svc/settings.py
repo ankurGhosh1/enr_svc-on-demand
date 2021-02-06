@@ -143,3 +143,4 @@ AUTH_USER_MODEL = 'clients.User'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ 
