@@ -16,7 +16,7 @@ class JobPost(models.Model):
     address = models.CharField(max_length=300)
     time = models.IntegerField()
     addinfo = models.TextField()
-    client = models.OneToOneField(User, on_delete=models.CASCADE)
+    client = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.taskoverview
