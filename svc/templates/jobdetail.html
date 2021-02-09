@@ -2,14 +2,22 @@
 
 {% block content %}
 
-{% for detail in jobdetail %}
-
-<ul>
-    <li>{{detail.task}}</li>
-    <li>{{detail.address}}</li>
-    <li>{{detail.time}}</li>
-    <li>{{detail.addinfo}}</li>
-    <li>{{detail.owner}}</li>
-</ul>
+<div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="..." alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{jobdetail.taskoverview}}</h5>
+          <p class="card-text">{{jobdetail.address}}</p>
+          <p class="card-text">{{jobdetail.addinfo}}</p>
+          <p class="card-text"><small class="text-muted">{{jobdetail.client}}</small></p>
+          <a href="/jobpost/{{jobdetail.pk}}/update" class="btn btn-primary">Update</a> 
+          <a href="/jobpost/{{jobdetail.pk}}/delete" class="btn btn-primary text-end">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
