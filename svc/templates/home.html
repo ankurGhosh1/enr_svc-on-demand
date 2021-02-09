@@ -13,6 +13,7 @@
 <h1>Homepage</h1>
 <h3 class="st"> Hello {{request.user.first_name}}{{row}}</h3>
 <ul>
+  {{users}}
   {% if request.user.is_authenticated %}
     {% for user in users %}
       <li>

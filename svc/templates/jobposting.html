@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+{{ categories|json_script:"cats" }}
+{{ sub_categories|json_script:"subCats" }}
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-6">
+                {{ form.taskoverview|as_crispy_field }}
+            </div>
+            <div class="col-6">
+                {{ form.address|as_crispy_field }}
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                  <label for="id_category" class=" requiredField">
+                      Category<span class="asteriskField">*</span>
+                  </label>
+                  <div class="">
+                    <select onchange="makeSubCat(event)" class="select form-control" id="id_category" name="category">
+                      <option value="" selected="">---------</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="id_sub_category" class=" requiredField">
+                      Sub category<span class="asteriskField">*</span>
+                  </label>
+                  <div class="">
+                    <select class="select form-control" id="id_sub_category" name="sub_category">
+                      <option value="" selected="">---------</option>
+                    </select>
+                  </div>
+                </div>
+                {{ form.time|as_crispy_field }}
+            </div>
+            <div class="col-9">
+                {{ form.addinfo|as_crispy_field }}
+            </div>
+        <button class="btn btn-primary" type="submit">Post Job</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+  var cats = JSON.parse(document.getElementById('cats').textContent);
+  var subCats = JSON.parse(document.getElementById('subCats').textContent);
+  var catDiv = document.getElementById('id_category');
+  var subCatDiv = document.getElementById('id_sub_category');
+  cats.forEach((item, index) => {
+      catDiv.innerHTML+=`<option value=${item[0]}>${item[1]}</option>`;
+  })
+
+
+  function makeSubCat(event){
+    var catId = event.target.value;
+    subCatDiv.innerHTML = '<option value="" selected="">---------</option>';
+    subCats.forEach((item, index)=>{
+      if(catId==item[1]){
+        subCatDiv.innerHTML+=`<option value=${item[0]}>${item[2]}</option>`;
+      }
+    })
+  }
+
+  console.log(cats, subCats);
+</script>
+
+{% endblock %}
