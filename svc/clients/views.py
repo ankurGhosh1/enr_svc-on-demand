@@ -3,6 +3,8 @@ from django.views import generic
 from .models import User, JobPost, ChatRecord, Category, SubCategory
 from .forms import CustomClientUserForm, JobPostForm
 from django.views.generic import View
+from django.db import connection
+
 
 # Create your views here.
 
@@ -28,11 +30,15 @@ class HomeView(View):
         users =[]
         if request.user.is_authenticated:
             if request.user.usertype=="Professional":
-                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(usertype="Professional")  # conditions need to be set as we develop
+                with connection.cursor() as cursor:
+                    cursor.execute(f'EXEC dbo.allUserTypeExceptMe @userId = {request.user.id}, @userType = "Customer"')
+                    users = cursor.fetchall()
             else:
-                users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True).exclude(usertype="Customer")  # conditions need to be set as we develop
+                with connection.cursor() as cursor:
+                    cursor.execute(f'EXEC dbo.allUserTypeExceptMe @userId = {request.user.id}, @userType = "Professional"')
+                    users = cursor.fetchall()
         context = {'users': users}
-        print(users)
+        # print(users)
         return render(request, self.template_name, context)
 
 class JobPostingView(generic.CreateView):
@@ -57,6 +63,16 @@ class JobPostingView(generic.CreateView):
             return super(JobPostingView, self).form_valid(form)
 
 
+class IndiJobView(generic.ListView):
+    template_name = 'construction.html'
+    context_object_name = 'myJobs'
+
+    def get_queryset(self):
+        return JobPost.objects.filter(id=self.request.GET.get('job_id'), client=self.request.user)
+
+
+
+
 class MyJobView(generic.ListView):
     template_name = 'MyJobs.html'
     context_object_name = 'myJobs'
@@ -76,25 +92,24 @@ class JobDetailView(generic.DetailView):
 def chat(request, user_id):
     chatRoom = None
     messages = []
+    sender = User.objects.get(id=user_id)
+    name = sender.first_name
     if not request.user.usertype=="Professional":
         chatRoom = ChatRecord.objects.filter(client=request.user, professional_id=user_id)
         room_name = f'chat{user_id}{request.user.id}s'
         client_id = request.user.id
         professional_id = user_id
         for i in chatRoom:
-            print(i)
-            messages.append((i.message, i.side))
+            messages.append((i.message, i.side, name))
     else:
         chatRoom = ChatRecord.objects.filter(professional=request.user, client_id=user_id)
         room_name = f'chat{request.user.id}{user_id}s'
         professional_id = request.user.id
         client_id = user_id
         for i in chatRoom:
-            print(i)
-            messages.append((i.message, not i.side))
-    print(messages, chatRoom)
+            messages.append((i.message, not i.side, name))
     context = {
-        'senderId': user_id,
+        'senderId': (user_id, name),
         'room_name':room_name,
         'messages': messages,
         'professional_id':professional_id,

@@ -5,7 +5,7 @@ from .models import User, JobPost
 class CustomClientUserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'password', 'number', 'zipcode')
+        fields = ('first_name', 'last_name', 'username', 'email', 'password', 'number', 'zipcode', 'usertype')
 
 class JobPostForm(forms.ModelForm):
     class Meta:

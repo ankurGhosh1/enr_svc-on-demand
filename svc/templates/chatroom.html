@@ -1,118 +1,110 @@
 {% extends 'base.html' %}
 
 {%block content%}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
-<style media="screen">
-      .chatarea{
-        height:400px;
-      }
-      .chat-wrapper{
-        border:1px solid black;
-        padding: 10px;
-        width:400px;
-      }
-      .w-100{
-        margin-top:5px;
-        margin-bottom:5px;
-        width: 100%;
-        display: flex;
-      }
-      .invert{
-        transform: rotate(180deg);
-      }
-      .sent{
-        color: white;
-        background: black;
-        box-shadow: 1px 1px 1px white;
-        border-radius: 15px;
-        width: max-content;
-        padding:10px;
-        float: right;
-        transform: rotate(180deg);
-      }
-      .recieved{
-        color: black;
-        background: white;
-        box-shadow: 1px 1px 1px black;
-        border-radius: 15px;
-        width: max-content;
-        padding:10px;
-      }
-    </style>
-<body>
-  <div class="chat-wrapper">
-    <div class="chatarea" id="chat-log">
-      {% for message in messages %}
+<section class="chat text-center">
+  <div class="input-chat-wrap shadow m-auto">
+    <div class="m-auto mt-3 border-light border-top p-2 bg-light">
+      <div class="row">
+        <div class="col-sm-12 text-left">
+          <div class="p-1" id="with">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-wrapper rounded" id="chatWrap">
+      <div class="chatarea" id="chat-log">
+        {% for message in messages %}
         {% if message.1 %}
         <div class="w-100">
           <div class="recieved">
+            <small>{{message.2}}</small><br>
             {{message.0}}
           </div>
         </div>
         {% else %}
         <div class="w-100 invert">
-          <div class="sent">
+          <div class="bg-dark sent">
             {{message.0}}
           </div>
         </div>
         {% endif %}
-      {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="m-auto mt-3 border-dark border-bottom p-2 bg-dark">
+      <div class="row">
+        <div class="col-sm-9">
+          <input id="chat-message-input" type="text" class="chat-input">
+        </div>
+        <div class="col-sm-1">
+          <input id="chat-message-submit" class="btn btn-light" type="button" value="Send">
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
 
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    {{ senderId|json_script:"senderId" }}
-    {{ room_name|json_script:"roomName" }}
-    {{ request.user.id|json_script:"myId" }}
-    <script>
-        const roomName = JSON.parse(document.getElementById('roomName').textContent);
-        const senderId = JSON.parse(document.getElementById('senderId').textContent);
-        const myId = JSON.parse(document.getElementById('myId').textContent);
-        const client_id = {{client_id}};
-        const professional_id = {{professional_id}};
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/'
-            + senderId
-            + '/'
-            + roomName
-        );
+{{ senderId|json_script:"senderId" }}
+{{ room_name|json_script:"roomName" }}
+{{ request.user.id|json_script:"myId" }}
+<script>
+    const roomName = JSON.parse(document.getElementById('roomName').textContent);
+    const senderInfo = JSON.parse(document.getElementById('senderId').textContent);
+    const senderId = senderInfo[0];
+    const senderName = senderInfo[1];
+    const myId = JSON.parse(document.getElementById('myId').textContent);
+    const chatWrap = document.getElementById('chatWrap');
+    document.getElementById('with').innerHTML=senderName;
+    chatWrap.scrollTo(0,chatWrap.scrollHeight);
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            console.log(data.id, data)
-            if(senderId==data.id){
-              document.querySelector('#chat-log').innerHTML += `<div class="w-100"><div class="recieved">${data.message}</div></div>`;
-            }
-        };
+    const client_id = {{client_id}};
+    const professional_id = {{professional_id}};
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/chat/'
+        + senderId
+        + '/'
+        + roomName
+    );
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log(data.id, data)
+        if(senderId==data.id){
+          document.querySelector('#chat-log').innerHTML += `<div class="w-100"><div class="recieved"><small>${senderName}</small><br>${data.message}</div></div>`;
+          chatWrap.scrollTo(0,chatWrap.scrollHeight);
+        }
+    };
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            document.querySelector('#chat-log').innerHTML += `<div class="invert w-100"><div class="sent">${message}</div><div>`;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'senderId':myId,
-                'roomName': roomName,
-                'client_id':client_id,
-                'professional_id':professional_id,
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
-</body>
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        document.querySelector('#chat-log').innerHTML += `<div class="invert w-100"><div class="bg-dark sent">${message}</div><div>`;
+        chatWrap.scrollTo(0,chatWrap.scrollHeight)
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'senderId':myId,
+            'roomName': roomName,
+            'client_id':client_id,
+            'professional_id':professional_id,
+        }));
+        messageInputDom.value = '';
+    };
+</script>
 {%endblock%}
