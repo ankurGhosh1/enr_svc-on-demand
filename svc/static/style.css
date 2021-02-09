@@ -11,5 +11,8 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* All jobs Card */
+.container-fluid{
+  padding: 0px;
+  margin: 0px;
+}
 

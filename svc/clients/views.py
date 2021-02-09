@@ -31,7 +31,7 @@ class HomeView(View):
         return render(request, self.template_name, context)
 
 class JobPostingView(generic.CreateView):
-    template_name = 'jobposting.html'
+    template_name = 'jobpost.html'
     form_class = JobPostForm
 
     def get_success_url(self):
@@ -59,7 +59,33 @@ class JobDetailView(generic.DetailView):
     context_object_name = 'jobdetail'
 
     def get_queryset(self):
-        return JobPost.objects.filter(client=self.request.user)
+        pk = self.kwargs.get('pk')
+        return JobPost.objects.filter(id= pk)
+
+
+class JobUpdateView(generic.UpdateView):
+    template_name = 'jobupdate.html'
+    form_class = JobPostForm
+    context_object_name = "job"
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        return JobPost.objects.filter(id= pk)
+
+    def get_success_url(self):
+        return reverse("clients:alljobs")
+
+
+class JobDeleteView(generic.DeleteView):
+    template_name = 'jobdelete.html'
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        return JobPost.objects.filter(id= pk)
+
+    def get_success_url(self):
+        return reverse("clients:alljobs")
+
 
 
 def chat(request, user_id):
