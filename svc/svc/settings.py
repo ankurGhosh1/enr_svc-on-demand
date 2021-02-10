@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'channels',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'phonenumber_field',
-    # 'crispy_forms',
+    'phonenumber_field',
+    'crispy_forms',
 
     'clients',
     'accounts',
@@ -79,14 +79,14 @@ WSGI_APPLICATION = 'svc.wsgi.application'
 ASGI_APPLICATION = 'svc.asgi.application'
 
 
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             "hosts": [('127.0.0.1', 6379)],
-#         },
-#     },
-# }
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -100,10 +100,10 @@ ASGI_APPLICATION = 'svc.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
+    'ENGINE': 'sql_server.pyodbc',
         'NAME': 'baghiService',
-        'HOST': 'DESKTOP-LEG6F66',
-        # 'PORT': '1433',
+        'HOST': 'DESKTOP-IUNO0HB',
+        'PORT': '1433',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

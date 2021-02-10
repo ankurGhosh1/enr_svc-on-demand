@@ -2,7 +2,7 @@ from django.shortcuts import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from collections import namedtuple
-
+import datetime
 cursor = connection.cursor()
 # Create your views here.
 def dictfetchall(cursor):
@@ -47,26 +47,13 @@ def signup(request):
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        contact = request.POST.get('contact')
-        password = request.POST.get('password')
-        user_type = int(request.POST.get('user_type'))
-        application = int(request.POST.get('application'))
+        li = []
+        for i in request.POST:
+            if i!='csrfmiddlewaretoken':
+                li.append(request.POST[i])
+        query = f"EXEC [dbo].[addUser]  @first_name = '{li[0]}', @last_name = '{li[1]}', @email = '{li[2]}', @ContactCell = '{li[3]}', @password = '{li[4]}', @UserTypeId = '{li[5]}', @ApplicationId = '{li[6]}', @date_joined='{datetime.datetime.now()}';"
         with connection.cursor() as cursor:
-            cursor.execute(f'''EXEC [dbo].[addUser] 
-                @first_name = {first_name},
-                @last_name = {last_name}, 
-                @email = {email},
-                @ContactCell = {contact}, 
-                @password = {password},
-                @UserTypeId = {user_type},
-                @ApplicationId = {application}
-            ''')
-
-        #cursor.execute("INSERT INTO baghiService.dbo.accounts_userlist (first_name,last_name,email,ContactCell,password,UserType_id,Application_id) VALUES (%s, %s ,%s ,%s ,%s ,%d ,%d)" % (first_name,last_name,email,contact,password,user_type,application))
-        connection.commit()  # save change
+            cursor.execute(query)
         return redirect('accounts:signup')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
 
