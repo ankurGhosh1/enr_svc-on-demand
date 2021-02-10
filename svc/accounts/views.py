@@ -39,10 +39,11 @@ def login(request):
     return render(request,'registration/login.html')
 
 def signup(request):
+    cursor = connection.cursor()
     cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applicationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applcationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
@@ -53,7 +54,18 @@ def signup(request):
         password = request.POST.get('password')
         user_type = int(request.POST.get('user_type'))
         application = int(request.POST.get('application'))
-        cursor.execute("INSERT INTO baghiService.dbo.accounts_userlist (first_name,last_name,email,ContactCell,password,UserType_id,Application_id) VALUES (?, ? ,? ,? ,? ,? ,?)", first_name,last_name,email,contact,password,user_type,application)
+        with connection.cursor() as cursor:
+            cursor.execute(f'''EXEC [dbo].[addUser] 
+                @first_name = {first_name},
+                @last_name = {last_name}, 
+                @email = {email},
+                @ContactCell = {contact}, 
+                @password = {password},
+                @UserTypeId = {user_type},
+                @ApplicationId = {application}
+            ''')
+
+        #cursor.execute("INSERT INTO baghiService.dbo.accounts_userlist (first_name,last_name,email,ContactCell,password,UserType_id,Application_id) VALUES (%s, %s ,%s ,%s ,%s ,%d ,%d)" % (first_name,last_name,email,contact,password,user_type,application))
         connection.commit()  # save change
         return redirect('accounts:signup')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
