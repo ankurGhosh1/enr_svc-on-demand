@@ -11,19 +11,34 @@ class AppliationList(models.Model):
 
 
 class UserType(models.Model):
-    UserType = models.CharField(max_length=100)
+    user_type = (
+        ('Customer', 'Customer'),
+        ('Professional', 'Professional')
+    )
+    UserType = models.CharField(max_length=15, choices=user_type, default="Customer")
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.UserType
+
 class UserList(AbstractUser):
-    UserMiddleName = models.CharField(max_length=100)
+    UserMiddleName = models.CharField(max_length=100, null=True)
     usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
-    Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE)
-    ContactCell = models.CharField(max_length=100)
-    UserEmail = models.EmailField(max_length=100, unique=True)
+    Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
+    ContactCell = models.CharField(max_length=100, null=True)
 
-    USERNAME_FIELD = 'UserEmail'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'usertype',
+        'username',
+        'first_name',
+        'last_name',
+    ]
+    AbstractUser._meta.get_field('email')._unique = True
 
+    def __str__(self):
+        return self.email
 
 
 

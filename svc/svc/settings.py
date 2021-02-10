@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,7 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'svc.wsgi.application'
-ASGI_APPLICATION = 'svc.asgi.application'
+# ASGI_APPLICATION = 'svc.asgi.application'
 
 
 CHANNEL_LAYERS = {
