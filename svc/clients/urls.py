@@ -9,7 +9,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, 
 app_name = 'clients'
 
 urlpatterns = [
-    path('proffessional/profile',views.profile,name = 'profile'),
+    path('consumer/profile',views.profile,name = 'profile'),
     # path('', HomeView.as_view(), name="home"),
     # path('signup/', SignupView.as_view(), name = 'signup'),
     # path('login/', LoginView.as_view(), name="login"),
