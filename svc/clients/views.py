@@ -25,9 +25,9 @@ class SignupView(generic.CreateView):
 class HomeView(View):
     template_name = 'home.html'
     def get(self, request):
-        users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True)  # conditions need to be set as we develop
-        context = {'users': users}
-        print(users)
+        # users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True)  # conditions need to be set as we develop
+        context = {'users':"Asdf"}
+        # print(users)
         return render(request, self.template_name, context)
 
 # class JobPostingView(generic.CreateView):

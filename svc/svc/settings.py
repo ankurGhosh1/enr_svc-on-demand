@@ -44,10 +44,7 @@ INSTALLED_APPS = [
 
     'clients',
     'accounts',
-<<<<<<< HEAD
     'professional',
-=======
->>>>>>> 1f022d922deece65dd6d4c606dc9983ae416129f
 ]
 
 MIDDLEWARE = [

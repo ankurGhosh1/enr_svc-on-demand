@@ -1,8 +1,7 @@
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 # from .views import SignupView, HomeView, JobPostingView, MyJobView, chat, IndiJobView, JobUpdateView, JobDetailView, JobDeleteView
-def sample():
-    return "safas"
+from .views import HomeView
 app_name = 'clients'
 
 urlpatterns = [
@@ -27,19 +26,18 @@ urlpatterns = [
 
 
 
-    path('', sample, name="home"),
-    path('', sample, name="signup"),
-    path('', sample, name="login"),
-    path('', sample, name="reset_password"),
-    path('', sample, name="password_reset_done"),
-    path('', sample, name="password_reset_confirm"),
-    path('', sample, name="password_reset_complete"),
-    path('', sample, name="logout"),
-    path('', sample, name="jobpost"),
-    path('', sample, name="myJobs"),
-    path('', sample, name="indiJob"),
-    path('', sample, name="chat"),
-    path('', sample, name="jobdetail"),
-    path('', sample, name="jobupdate"),
-    path('', sample, name="jobdelete"),
+    path('', HomeView.as_view(), name="signup"),
+    path('', HomeView.as_view(), name="login"),
+    path('', HomeView.as_view(), name="reset_password"),
+    path('', HomeView.as_view(), name="password_reset_done"),
+    path('', HomeView.as_view(), name="password_reset_confirm"),
+    path('', HomeView.as_view(), name="password_reset_complete"),
+    path('', HomeView.as_view(), name="logout"),
+    path('', HomeView.as_view(), name="jobpost"),
+    path('', HomeView.as_view(), name="myJobs"),
+    path('', HomeView.as_view(), name="indiJob"),
+    path('', HomeView.as_view(), name="chat"),
+    path('', HomeView.as_view(), name="jobdetail"),
+    path('', HomeView.as_view(), name="jobupdate"),
+    path('', HomeView.as_view(), name="jobdelete"),
 ]
