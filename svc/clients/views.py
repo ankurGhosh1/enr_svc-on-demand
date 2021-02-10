@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, reverse
 from django.views import generic
-from .models import User, JobPost, ChatRecord
-from .forms import CustomClientUserForm, JobPostForm
+# from .models import User, JobPost, ChatRecord
+from .forms import CustomClientUserForm #, JobPostForm
 from django.views.generic import View
 
 # Create your views here.
@@ -30,89 +30,89 @@ class HomeView(View):
         print(users)
         return render(request, self.template_name, context)
 
-class JobPostingView(generic.CreateView):
-    template_name = 'jobpost.html'
-    form_class = JobPostForm
+# class JobPostingView(generic.CreateView):
+#     template_name = 'jobpost.html'
+#     form_class = JobPostForm
 
-    def get_success_url(self):
-        return reverse('clients:alljobs')
+#     def get_success_url(self):
+#         return reverse('clients:alljobs')
 
-    def form_valid(self, form):
-        if form.is_valid():
-            job = form.save(commit=False)
-            job.client = self.request.user
-            job.save()
-            print(job)
-            return super(JobPostingView, self).form_valid(form)
-
-
-class AllJobView(generic.ListView):
-    template_name = 'alljobs.html'
-    context_object_name = 'alljobs'
-
-    def get_queryset(self):
-        return JobPost.objects.all()
+#     def form_valid(self, form):
+#         if form.is_valid():
+#             job = form.save(commit=False)
+#             job.client = self.request.user
+#             job.save()
+#             print(job)
+#             return super(JobPostingView, self).form_valid(form)
 
 
-class JobDetailView(generic.DetailView):
-    template_name = 'jobdetail.html'
-    context_object_name = 'jobdetail'
+# class AllJobView(generic.ListView):
+#     template_name = 'alljobs.html'
+#     context_object_name = 'alljobs'
 
-    def get_queryset(self):
-        pk = self.kwargs.get('pk')
-        return JobPost.objects.filter(id= pk)
-
-
-class JobUpdateView(generic.UpdateView):
-    template_name = 'jobupdate.html'
-    form_class = JobPostForm
-    context_object_name = "job"
-
-    def get_queryset(self):
-        pk = self.kwargs.get('pk')
-        return JobPost.objects.filter(id= pk)
-
-    def get_success_url(self):
-        return reverse("clients:alljobs")
+#     def get_queryset(self):
+#         return JobPost.objects.all()
 
 
-class JobDeleteView(generic.DeleteView):
-    template_name = 'jobdelete.html'
+# class JobDetailView(generic.DetailView):
+#     template_name = 'jobdetail.html'
+#     context_object_name = 'jobdetail'
 
-    def get_queryset(self):
-        pk = self.kwargs.get('pk')
-        return JobPost.objects.filter(id= pk)
-
-    def get_success_url(self):
-        return reverse("clients:alljobs")
+#     def get_queryset(self):
+#         pk = self.kwargs.get('pk')
+#         return JobPost.objects.filter(id= pk)
 
 
+# class JobUpdateView(generic.UpdateView):
+#     template_name = 'jobupdate.html'
+#     form_class = JobPostForm
+#     context_object_name = "job"
 
-def chat(request, user_id):
-    chatRoom = None
-    messages = []
-    if not request.user.is_professional:
-        chatRoom = ChatRecord.objects.filter(client=request.user, professional_id=user_id)
-        room_name = f'chat{user_id}{request.user.id}s'
-        client_id = request.user.id
-        professional_id = user_id
-        for i in chatRoom:
-            print(i)
-            messages.append((i.message, i.side))
-    else:
-        chatRoom = ChatRecord.objects.filter(professional=request.user, client_id=user_id)
-        room_name = f'chat{request.user.id}{user_id}s'
-        professional_id = request.user.id
-        client_id = user_id
-        for i in chatRoom:
-            print(i)
-            messages.append((i.message, not i.side))
-    print(messages, chatRoom)
-    context = {
-        'senderId': user_id,
-        'room_name':room_name,
-        'messages': messages,
-        'professional_id':professional_id,
-        'client_id':client_id
-    }
-    return render(request, 'chatroom.html', context)
+#     def get_queryset(self):
+#         pk = self.kwargs.get('pk')
+#         return JobPost.objects.filter(id= pk)
+
+#     def get_success_url(self):
+#         return reverse("clients:alljobs")
+
+
+# class JobDeleteView(generic.DeleteView):
+#     template_name = 'jobdelete.html'
+
+#     def get_queryset(self):
+#         pk = self.kwargs.get('pk')
+#         return JobPost.objects.filter(id= pk)
+
+#     def get_success_url(self):
+#         return reverse("clients:alljobs")
+
+
+
+# def chat(request, user_id):
+#     chatRoom = None
+#     messages = []
+#     if not request.user.is_professional:
+#         chatRoom = ChatRecord.objects.filter(client=request.user, professional_id=user_id)
+#         room_name = f'chat{user_id}{request.user.id}s'
+#         client_id = request.user.id
+#         professional_id = user_id
+#         for i in chatRoom:
+#             print(i)
+#             messages.append((i.message, i.side))
+#     else:
+#         chatRoom = ChatRecord.objects.filter(professional=request.user, client_id=user_id)
+#         room_name = f'chat{request.user.id}{user_id}s'
+#         professional_id = request.user.id
+#         client_id = user_id
+#         for i in chatRoom:
+#             print(i)
+#             messages.append((i.message, not i.side))
+#     print(messages, chatRoom)
+#     context = {
+#         'senderId': user_id,
+#         'room_name':room_name,
+#         'messages': messages,
+#         'professional_id':professional_id,
+#         'client_id':client_id
+#     }
+#     return render(request, 'chatroom.html', context)

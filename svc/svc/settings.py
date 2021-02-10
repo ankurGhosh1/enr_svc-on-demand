@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
 
     'clients',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -143,7 +144,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 LOGIN_REDIRECT_URL = '/alljobs'
 LOGOUT_REDIRECT_URL = '/login'
 
-AUTH_USER_MODEL = 'clients.User'
+AUTH_USER_MODEL = 'accounts.UserList'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
