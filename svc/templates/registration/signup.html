@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-header">Signup</div>
+            <div class="card-body">
+            <form action="{% url 'accounts:signup' %}" method="post">
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                    <label for="">First Name</label>
+                    <input type="text" class="form-control" name="first_name">
+                </div>
+                    <div class="form-group">
+                    <label for="">Last Name</label>
+                    <input type="text" class="form-control" name="last_name">
+                </div>
+                    <div class="form-group">
+                    <label for="">Email</label>
+                    <input type="email" class="form-control" name="email">
+                </div>
+                    <div class="form-group">
+                    <label for="">Contact</label>
+                    <input type="text" class="form-control" name="contact">
+                </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                    <label for="">Password</label>
+                    <input type="password" class="form-control" name="password">
+                </div>
+                    <div class="form-group">
+                        <label for="">Type</label>
+                    <select name="user_type" class="form-control" >
+                        <option disabled selected>Select Type</option>
+                        {% for t in user_type %}
+                        <option value="{{ t.id }}">{{ t.UserType }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                    <div class="form-group">
+                        <label for="">Application</label>
+                    <select name="application" class="form-control" >
+                        <option disabled selected>Select Application </option>
+                        {% for a in application %}
+                        <option value="{{ a.id }}">{{ a.ApplicationName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                    <div class="form-group">
+                    <input type="submit"  class="btn btn-block btn-primary">
+                </div>
+                </div>
+            </div>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

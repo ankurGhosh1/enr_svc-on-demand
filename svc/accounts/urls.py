@@ -1,8 +1,11 @@
 from django.urls import path, include
-from .views import HomeView
 
+# from .views import SignupView, HomeView, JobPostingView, AllJobView, chat
+from . import views
 app_name = 'accounts'
 
 urlpatterns = [
-    path("", HomeView.as_view(), name="home"),
+    path('',views.login,name = 'login'),
+    path('signup',views.signup,name ='signup'),
+    path('logout',views.logout,name ='logout'),
 ]

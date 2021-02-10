@@ -1,4 +1,5 @@
 /venv
 /clients/migrations/__pycache__
 /clients/__pycache__
-/svc/settings.py
+/svc/venv
+/svc/svc/settings.py
