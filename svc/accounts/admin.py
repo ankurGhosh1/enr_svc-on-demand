@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     LanguageList,
-    AppliationList,
+    ApplcationList,
     UserType,
     UserList,
     CityList,
@@ -22,7 +22,7 @@ from .models import (
 # Register your models here.
 
 admin.site.register(LanguageList)
-admin.site.register(AppliationList)
+admin.site.register(ApplcationList)
 admin.site.register(UserType)
 admin.site.register(UserList)
 admin.site.register(CityList)

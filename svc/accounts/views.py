@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.shortcuts import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
@@ -43,7 +42,7 @@ def signup(request):
     cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applciationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applicationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
@@ -54,7 +53,7 @@ def signup(request):
         password = request.POST.get('password')
         user_type = int(request.POST.get('user_type'))
         application = int(request.POST.get('application'))
-        cursor.execute("INSERT INTO baghiService.dbo.accounts_userlist(first_name,last_name,email,ContactCell,password,UserType_id,Application_id) VALUES (?, ? ,? ,? ,? ,? ,?)", first_name,last_name,email,contact,password,user_type,application)
+        cursor.execute("INSERT INTO baghiService.dbo.accounts_userlist (first_name,last_name,email,ContactCell,password,UserType_id,Application_id) VALUES (?, ? ,? ,? ,? ,? ,?)", first_name,last_name,email,contact,password,user_type,application)
         connection.commit()  # save change
         return redirect('accounts:signup')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
@@ -66,28 +65,3 @@ def logout(request):
     except:
         pass
     return redirect('clients:login')
-=======
-from django.shortcuts import render
-from django.db import connection
-from django.views.generic import View
-
-
-
-
-class HomeView(View):
-    template_name = 'home.html'
-    def get(self, request):
-        users =[]
-        if request.user.is_authenticated:
-            if request.user.usertype=="Professional":
-                with connection.cursor() as cursor:
-                    cursor.execute(f'EXEC dbo.allUserTypeExceptMe @userId = {request.user.id}, @userType = "Customer"')
-                    users = cursor.fetchall()
-            else:
-                with connection.cursor() as cursor:
-                    cursor.execute(f'EXEC dbo.allUserTypeExceptMe @userId = {request.user.id}, @userType = "Professional"')
-                    users = cursor.fetchall()
-        context = {'users': users}
-        # print(users)
-        return render(request, self.template_name, context)
->>>>>>> 1063b8785d20a292866d9d196df172530257f046
