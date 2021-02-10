@@ -1,14 +1,17 @@
 from django import forms
-from .models import User, JobPost
+from accounts.models import UserList #, JobPost
 
 
 class CustomClientUserForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'password', 'number', 'zipcode', 'usertype')
+        model = UserList
+        fields = ('first_name', 'last_name', 'username', 'email', 'password', 'usertype')
+        widgets = {
+            'usertype': forms.RadioSelect()
+        }
 
-class JobPostForm(forms.ModelForm):
-    class Meta:
-        model = JobPost
-        #  fields = '__all__'
-        exclude = ('client',)
+# class JobPostForm(forms.ModelForm):
+#     class Meta:
+#         model = JobPost
+#         # fields = '__all__'
+#         exclude = ('client',)

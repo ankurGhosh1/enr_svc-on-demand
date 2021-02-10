@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.shortcuts import *
 # from django.views import generic
 # from .models import User, JobPost, ChatRecord, Category, SubCategory
@@ -49,19 +50,47 @@ def profile(request):
 #         # print(users)
 #         return render(request, self.template_name, context)
 #
+=======
+from django.shortcuts import render, redirect, reverse
+from django.views import generic
+# from .models import User, JobPost, ChatRecord
+from .forms import CustomClientUserForm #, JobPostForm
+from django.views.generic import View
+
+# Create your views here.
+
+class SignupView(generic.CreateView):
+    template_name = 'signup.html'
+    form_class = CustomClientUserForm
+
+    def get_success_url(self):
+        return reverse('clients:jobpost')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            client = form.save(commit=False)
+            client.set_password(form.cleaned_data["password"])
+            client.save()
+            print(client)
+            return super(SignupView, self).form_valid(form)
+
+
+class HomeView(View):
+    template_name = 'home.html'
+    def get(self, request):
+        # users = User.objects.all().exclude(id=request.user.id).exclude(is_staff=True)  # conditions need to be set as we develop
+        context = {'users':"Asdf"}
+        # print(users)
+        return render(request, self.template_name, context)
+
+>>>>>>> 1063b8785d20a292866d9d196df172530257f046
 # class JobPostingView(generic.CreateView):
 #     template_name = 'jobpost.html'
 #     form_class = JobPostForm
-#
-#     def get_context_data(self, **kwargs):
-#         ctx = super(JobPostingView, self).get_context_data(**kwargs)
-#         ctx['categories'] = [(i.id, i.cat_name) for i in Category.objects.all()]
-#         ctx['sub_categories'] = [(i.id, i.cat_id, i.sub_cat_name) for i in SubCategory.objects.all()]
-#         return ctx
-#
+
 #     def get_success_url(self):
-#         return reverse('clients:myJobs')
-#
+#         return reverse('clients:alljobs')
+
 #     def form_valid(self, form):
 #         if form.is_valid():
 #             job = form.save(commit=False)

@@ -18,9 +18,17 @@ class UserType(models.Model):
     IsActive = models.BooleanField(default=True)
 
 class UserList(AbstractUser):
+<<<<<<< HEAD
     UserType = models.ForeignKey(UserType, on_delete=models.CASCADE)
     Application = models.ForeignKey(ApplciationList,on_delete=models.CASCADE)
+=======
+    UserMiddleName = models.CharField(max_length=100)
+    usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
+    Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE)
+>>>>>>> 1063b8785d20a292866d9d196df172530257f046
     ContactCell = models.CharField(max_length=100)
+    UserEmail = models.EmailField(max_length=100, unique=True)
+
 
 
 
