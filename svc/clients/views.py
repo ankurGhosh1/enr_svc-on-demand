@@ -1,4 +1,4 @@
-# from django.shortcuts import render, redirect, reverse
+from django.shortcuts import *
 # from django.views import generic
 # from .models import User, JobPost, ChatRecord, Category, SubCategory
 # from .forms import CustomClientUserForm, JobPostForm
@@ -7,6 +7,9 @@
 #
 #
 # # Create your views here.
+
+def profile(request):
+    pass
 #
 #
 #

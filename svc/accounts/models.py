@@ -7,7 +7,7 @@ from django.contrib.auth.models import AbstractUser
 class LanguageList(models.Model):
     LanguageName = models.CharField(max_length=100)
 
-class AppliationList(models.Model):
+class ApplciationList(models.Model):
     ApplicationName = models.CharField(max_length=100)
     Language = models.ForeignKey(LanguageList, on_delete=models.SET_NULL, null=True)
 
@@ -18,15 +18,10 @@ class UserType(models.Model):
     IsActive = models.BooleanField(default=True)
 
 class UserList(AbstractUser):
-    UserFirstName = models.CharField(max_length=100)
-    UserMiddleName = models.CharField(max_length=100)
-    UserLastName = models.CharField(max_length=100)
     UserType = models.ForeignKey(UserType, on_delete=models.CASCADE)
-    Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE)
-    UserEmail = models.CharField(max_length=100, unique=True)
+    Application = models.ForeignKey(ApplciationList,on_delete=models.CASCADE)
     ContactCell = models.CharField(max_length=100)
 
-    USERNAME_FIELD = 'UserEmail'
 
 
 
