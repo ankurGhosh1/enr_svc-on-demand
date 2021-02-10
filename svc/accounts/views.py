@@ -2,7 +2,10 @@ from django.shortcuts import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from collections import namedtuple
+from django.contrib.auth.hashers import make_password, check_password
 import datetime
+
+
 cursor = connection.cursor()
 # Create your views here.
 def dictfetchall(cursor):
@@ -22,19 +25,18 @@ def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-           proffessional = cursor.execute("SELECT count(*) FROM baghiService.dbo.accounts_userlist WHERE UserType_id = 1 AND email = %s AND phone = %s",[email, password]).fetchone()[0]
-           consumers = cursor.execute("SELECT count(*) FROM baghiService.dbo.accounts_userlist WHERE UserType_id = 2 AND email = %s AND phone = %s",[email, password]).fetchone()[0]
-           try:
-              if(consumers == 1):
-                 request.session['email'] = email
-                 return redirect('clients:profile')
-           except ObjectDoesNotExist:
-              if (proffessional == 1):
-                 request.session['email'] = email
-                 return redirect('professional:profile')
-        except ObjectDoesNotExist:
-            return redirect('accounts:login')
+        user = []
+        with connection.cursor() as cursor:
+            cursor.execute(f"EXEC dbo.getUser @email='{email}'")
+            user = cursor.fetchone()
+        if check_password(password, user[1]):
+            if(user[-1]==3):
+                request.session['email'] = email
+                return redirect('clients:profile')
+            if (user[-1]==2):
+                request.session['email'] = email
+                return redirect('professional:profile')
+        return redirect('accounts:login')
 
     return render(request,'registration/login.html')
 
@@ -49,12 +51,15 @@ def signup(request):
     if request.method == 'POST':
         li = []
         for i in request.POST:
-            if i!='csrfmiddlewaretoken':
+            if i=="password":
+                hashed = make_password(request.POST[i])
+                li.append(hashed)
+            elif i!='csrfmiddlewaretoken':
                 li.append(request.POST[i])
         query = f"EXEC [dbo].[addUser]  @first_name = '{li[0]}', @last_name = '{li[1]}', @email = '{li[2]}', @ContactCell = '{li[3]}', @password = '{li[4]}', @UserTypeId = '{li[5]}', @ApplicationId = '{li[6]}', @date_joined='{datetime.datetime.now()}';"
         with connection.cursor() as cursor:
             cursor.execute(query)
-        return redirect('accounts:signup')
+        return redirect('accounts:login')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
 
 
