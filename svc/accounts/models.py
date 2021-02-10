@@ -205,3 +205,13 @@ class ReviewList(models.Model):
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
     IsAdminApproved = models.BooleanField(default=True)
+
+
+class ChatRecord(models.Model):
+    client = models.ForeignKey(UserList, on_delete=models.CASCADE)
+    professional = models.ForeignKey(UserList, on_delete=models.CASCADE, related_name="professional")
+    message = models.CharField(max_length=400)
+    side = models.BooleanField(null=True, blank=True)   #True for consumer, False for professional
+    room_name = models.CharField(max_length=300 )
+    TimeStamp = models.DateTimeField(auto_now_add=True)
+    IsActive = models.BooleanField(default=True)

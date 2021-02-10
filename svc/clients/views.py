@@ -1,5 +1,7 @@
-
+from django.db import connection
 from django.shortcuts import *
+from svc.utils import AllProcedures
+
 # from django.views import generic
 # from .models import User, JobPost, ChatRecord, Category, SubCategory
 # from .forms import CustomClientUserForm, JobPostForm
@@ -118,30 +120,31 @@ def profile(request):
 #
 #
 #
-# def chat(request, user_id):
-#     chatRoom = None
-#     messages = []
-#     sender = User.objects.get(id=user_id)
-#     name = sender.first_name
-#     if not request.user.usertype=="Professional":
-#         chatRoom = ChatRecord.objects.filter(client=request.user, professional_id=user_id)
-#         room_name = f'chat{user_id}{request.user.id}s'
-#         client_id = request.user.id
-#         professional_id = user_id
-#         for i in chatRoom:
-#             messages.append((i.message, i.side, name))
-#     else:
-#         chatRoom = ChatRecord.objects.filter(professional=request.user, client_id=user_id)
-#         room_name = f'chat{request.user.id}{user_id}s'
-#         professional_id = request.user.id
-#         client_id = user_id
-#         for i in chatRoom:
-#             messages.append((i.message, not i.side, name))
-#     context = {
-#         'senderId': (user_id, name),
-#         'room_name':room_name,
-#         'messages': messages,
-#         'professional_id':professional_id,
-#         'client_id':client_id
-#     }
-#     return render(request, 'chatroom.html', context)
+def chat(request, user_id):
+    chatRoom = None
+    messages = []
+    if request.session.has_key('user'):
+        user = AllProcedures.getUserWithId(user_id)
+        name = user[5]
+        my_id = request.session['user']['id']
+        if not request.session['user']['type']=="Professional":
+            messages = AllProcedures.getChatRecord(client_id=my_id, professional_id=user_id)
+            room_name = f'chat{user_id}{my_id}s'
+            professional_id = user_id
+            client_id = my_id
+            messages = [(i[0], i[1], name) for i in messages]
+        else:
+            messages = AllProcedures.getChatRecord(client_id=user_id, professional_id=my_id)
+            room_name = f'chat{my_id}{user_id}s'
+            professional_id = my_id
+            client_id = user_id
+            messages = [(i[0], not i[1], name) for i in messages]
+        context = {
+            'senderId': (user_id, name),
+            'room_name':room_name,
+            'messages': messages,
+            'professional_id':professional_id,
+            'client_id':client_id
+        }
+        return render(request, 'chatroom.html', context)
+    return redirect('accounts:login')

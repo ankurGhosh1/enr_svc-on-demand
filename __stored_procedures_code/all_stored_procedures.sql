@@ -63,3 +63,56 @@ CREATE PROCEDURE [dbo].[getUser]
 AS
 SELECT * FROM [dbo].[accounts_userlist] WHERE [email]=@email
 GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getUserWithId]
+	@id int = NULL
+AS
+SELECT * FROM [dbo].[accounts_userlist] WHERE [id]=@id
+GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getChatRecord]
+	@client_id int = NULL,
+	@professional_id int = NULL
+AS
+
+SELECT [message],[side] FROM [dbo].[accounts_chatrecord] WHERE [client_id] = @client_id AND [professional_id] = @professional_id
+GO
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[createChatRecord]
+	@client_id int = NULL,
+	@professional_id int = NULL,
+	@room_name nvarchar(300) = NULL,
+	@is_active bit = True,
+	@time_stamp datetime2(7) = NULL,
+	@side bit = True,
+	@message nvarchar(400) = NULL
+AS
+INSERT INTO [dbo].[accounts_chatrecord]
+    ([message]
+    ,[side]
+    ,[room_name]
+    ,[TimeStamp]
+    ,[IsActive]
+    ,[client_id]
+    ,[professional_id])
+VALUES
+    (
+		@message,
+		@side,
+		@room_name,
+		@time_stamp,
+		@is_active,
+		@client_id,
+		@professional_id
+	)
+GO
