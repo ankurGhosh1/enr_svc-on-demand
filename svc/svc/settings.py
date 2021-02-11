@@ -155,6 +155,6 @@ LOGOUT_REDIRECT_URL = '/login'
 
 AUTH_USER_MODEL = 'accounts.UserList'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

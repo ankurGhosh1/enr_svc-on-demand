@@ -50,7 +50,7 @@
 
 {{ senderId|json_script:"senderId" }}
 {{ room_name|json_script:"roomName" }}
-{{ request.user.id|json_script:"myId" }}
+{{ request.session.user.id|json_script:"myId" }}
 <script>
     const roomName = JSON.parse(document.getElementById('roomName').textContent);
     const senderInfo = JSON.parse(document.getElementById('senderId').textContent);
