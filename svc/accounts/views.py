@@ -14,6 +14,26 @@ import os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def _login(request, user, password, pass_req):
+    if check_password(password, user[1]) or pass_req:
+        request.session['user'] = {
+        'is_authenticated': True,
+        'id':user[0],
+        'email':user[4],
+        'info': user[2:10]+user[11:]
+        }
+        type = AllProcedures.getUserType(user[-1])
+        print(type)
+        if(type and type[0]=="Customer"):
+            request.session['user']['type'] = "Client"
+            return redirect('clients:dashboard')
+        elif not type:
+            return redirect('accounts:login')
+        else:
+            request.session['user']['type'] = "Professional"
+            return redirect('professional:dashboard')
+    return redirect('accounts:login')
+
 cursor = connection.cursor()
 # Create your views here.
 def dictfetchall(cursor):
@@ -58,6 +78,9 @@ def s_complete(request):
         service = build('people', 'v1', credentials=credentials)
         profile = service.people().get(resourceName='people/me', personFields='emailAddresses').execute()
         print(profile)
+        user = AllProcedures.getUserWithEmail(profile['emailAddresses'][0]['value'])
+        if user:
+            return _login(request, user, "a", True)
         request.session['user']['email'] = profile['emailAddresses'][0]['value']
     return redirect("accounts:selectusertype")
 
@@ -86,24 +109,8 @@ def login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = AllProcedures.getUserWithEmail(email)
-        print(user, "user")
-        if check_password(password, user[1]):
-            request.session['user'] = {
-            'is_authenticated': True,
-            'id':user[0],
-            'email':user[4],
-            'info': user[2:10]+user[11:]
-            }
-            type = AllProcedures.getUserType(user[-1])
-            print(type)
-            if(type and type[0]=="Customer"):
-                request.session['user']['type'] = "Client"
-                return redirect('clients:dashboard')
-            elif not type:
-                return redirect('accounts:login')
-            else:
-                request.session['user']['type'] = "Professional"
-                return redirect('professional:dashboard')
+        if user:
+            return _login(request, user, password, False)
         return redirect('accounts:login')
     print(request.session.get('user'), "all user session")
     return render(request,'registration/login.html')
