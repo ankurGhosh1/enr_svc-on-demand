@@ -11,6 +11,13 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+.type{
+  transition: .3s all;
+}
+.type:hover{
+  transform: scale(1.04);
+}
+
 .chat-input{
   width:100%
 }

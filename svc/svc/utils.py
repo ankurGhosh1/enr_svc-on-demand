@@ -20,9 +20,27 @@ class AllProcedures:
         return user
 
     @staticmethod
+    def getUserType(id):
+        type = None
+        with connection.cursor() as cursor:
+            cursor.execute(f"EXEC dbo.getUserType @id='{id}'")
+            type = cursor.fetchone()
+        return type
+
+    @staticmethod
     def createUser(li):
         status = False
         query = f"EXEC dbo.addUser  @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@password='{li[4]}',@UserTypeId='{li[5]}',@ApplicationId='{li[6]}',@date_joined='{datetime.datetime.now()}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
+
+    @staticmethod
+    def createUserWithType(li):
+        status = False
+        query = f"EXEC dbo.addUserWithType  @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@password='{li[4]}',@UserType='{li[5]}',@ApplicationId='{li[6]}',@date_joined='{datetime.datetime.now()}';"
         with connection.cursor() as cursor:
             cursor.execute(query)
             status = True

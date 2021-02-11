@@ -25,12 +25,13 @@ SECRET_KEY = 'u*uem4%tq7b+8u$z_r)ibd62u!!ino@un+mp4xknmmk74n8t4='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'sslserver',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,12 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
+
+    'social_django',
+
     'phonenumber_field',
     'crispy_forms',
 
     'clients',
     'accounts',
     'professional',
+
 ]
 
 MIDDLEWARE = [
@@ -55,6 +61,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+
 ]
 
 ROOT_URLCONF = 'svc.urls'
@@ -70,10 +80,25 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+
             ],
         },
     },
 ]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+]
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '489488048195-rqb0k714dkc3kuj45q0cgvd9f5ksl8ee.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'HKfwK7VvZfmlIgpXpXrHSvgW'
 
 WSGI_APPLICATION = 'svc.wsgi.application'
 ASGI_APPLICATION = 'svc.asgi.application'
@@ -152,6 +177,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login'
+# SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = "/social/logging"
+# SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/social/logedin/'
+# SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/social/register/'
+
 
 AUTH_USER_MODEL = 'accounts.UserList'
 

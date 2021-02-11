@@ -1,6 +1,7 @@
 from django.db import connection
 from django.shortcuts import *
 from svc.utils import AllProcedures
+from django.http import HttpResponse
 
 # from django.views import generic
 # from .models import User, JobPost, ChatRecord, Category, SubCategory
@@ -11,8 +12,8 @@ from svc.utils import AllProcedures
 #
 # # Create your views here.
 
-def profile(request):
-    pass
+def dashboard(request):
+    return HttpResponse("<h2>Client Dashboard</h2>")
 #
 #
 #
