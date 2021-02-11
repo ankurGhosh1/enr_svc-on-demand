@@ -1,5 +1,6 @@
 
 from django.shortcuts import *
+from svc.utils import AllProcedures
 # from django.views import generic
 # from .models import User, JobPost, ChatRecord, Category, SubCategory
 # from .forms import CustomClientUserForm, JobPostForm
@@ -9,8 +10,11 @@ from django.shortcuts import *
 #
 # # Create your views here.
 
+
 def profile(request):
-    pass
+    user = AllProcedures.getUserWithId(request.session['user']['id'])
+    print(user[0].first_name)
+    return render(request,'clients/profile.html',{'profile':user})
 #
 #
 #
@@ -145,3 +149,31 @@ def profile(request):
 #         'client_id':client_id
 #     }
 #     return render(request, 'chatroom.html', context)
+def chat(request, user_id):
+    chatRoom = None
+    messages = []
+    if request.session.has_key('user'):
+        user = AllProcedures.getUserWithId(user_id)
+        name = user[5]
+        my_id = request.session['user']['id']
+        if not request.session['user']['type']=="Professional":
+            messages = AllProcedures.getChatRecord(client_id=my_id, professional_id=user_id)
+            room_name = f'chat{user_id}{my_id}s'
+            professional_id = user_id
+            client_id = my_id
+            messages = [(i[0], i[1], name) for i in messages]
+        else:
+            messages = AllProcedures.getChatRecord(client_id=user_id, professional_id=my_id)
+            room_name = f'chat{my_id}{user_id}s'
+            professional_id = my_id
+            client_id = user_id
+            messages = [(i[0], not i[1], name) for i in messages]
+        context = {
+            'senderId': (user_id, name),
+            'room_name':room_name,
+            'messages': messages,
+            'professional_id':professional_id,
+            'client_id':client_id
+        }
+        return render(request, 'chatroom.html', context)
+    return redirect('accounts:login')

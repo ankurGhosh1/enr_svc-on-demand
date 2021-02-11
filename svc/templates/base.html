@@ -10,7 +10,7 @@
     <link href="css/rotating-card.css" rel="stylesheet" /> -->
     <!-- <link href="https://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" /> -->
     <link rel="stylesheet" href="/static/style.css" />
-    <title>CRM- {{ request.session.email }}</title>
+    <title>CRM- {{ request.session.user.email }}</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -26,7 +26,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/jobpost/">Post A Job</a>
         </li>
-        {% if request.session.email %}
+        {% if request.session.user.is_authenticated %}
         <li class="nav-item">
         <a href="{% url 'accounts:logout' %}"><button class="btn btn-danger">Logout</button></a>
         </li>

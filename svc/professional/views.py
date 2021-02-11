@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import *
+from svc.utils import AllProcedures
 
 def profile(request):
-    pass
+    user = AllProcedures.getUserWithId(request.session['user']['id'])
+    return render(request, 'professional/profile.html', {'profile': user})

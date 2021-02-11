@@ -1,9 +1,11 @@
 from django.shortcuts import *
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.hashers import make_password, check_password
 from django.db import connection
 from collections import namedtuple
+from svc.utils import AllProcedures
+from django.contrib.auth.hashers import make_password, check_password
 import datetime
+
 
 cursor = connection.cursor()
 # Create your views here.
@@ -24,20 +26,25 @@ def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = []
+        user = AllProcedures.getUserWithEmail(email)
+        print(user, "user")
         try:
-            with connection.cursor() as cursor:
-                cursor.execute(f"EXEC dbo.getUser @email='{email}'")
-                user = cursor.fetchone()
             if check_password(password, user[1]):
+                request.session['user'] = {
+                'is_authenticated': True,
+                'id':user[0],
+                'email':user[4],
+                'info': user[2:10]+user[11:]
+                }
                 if(user[-1]==2):
-                    request.session['email'] = email
+                    request.session['user']['type'] = "Client"
                     return redirect('clients:profile')
                 if (user[-1]==1):
-                    request.session['email'] = email
+                    request.session['user']['type'] = "Professional"
                     return redirect('professional:profile')
         except ObjectDoesNotExist:
             return redirect('accounts:login')
+    print(request.session.get('user'), "all user session")
     return render(request,'registration/login.html')
 
 def signup(request):
@@ -56,16 +63,14 @@ def signup(request):
                 li.append(hashed)
             elif i!='csrfmiddlewaretoken':
                 li.append(request.POST[i])
-        query = f"EXEC [dbo].[addUser]  @first_name = '{li[0]}', @last_name = '{li[1]}', @email = '{li[2]}', @ContactCell = '{li[3]}', @password = '{li[4]}', @UserTypeId = '{li[5]}', @ApplicationId = '{li[6]}', @date_joined='{datetime.datetime.now()}';"
-        with connection.cursor() as cursor:
-            cursor.execute(query)
+        saved = AllProcedures.createUser(li)
         return redirect('accounts:login')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
 
 
 def logout(request):
     try:
-        del request.session['email']
+        del request.session['user']
     except:
         pass
     return redirect('accounts:login')
