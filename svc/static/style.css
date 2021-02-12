@@ -11,6 +11,43 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+.bg-svc{
+  background: #540c0c;
+}
+.popular-links{
+  border-radius: 15px;
+  border: 2px solid white;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: white;
+  text-decoration: none;
+  transition: .25s all ease-in-out;
+  cursor: pointer;
+}
+
+.popular-links:hover{
+  background: #8f54546b;
+  color: white;
+}
+
+a:hover{
+  text-decoration: none;
+}
+
+.outline-0{
+  outline: 0;
+}
+
+.bg-svc-match{
+  background: #1dbf73;
+
+}
+
+.bg-svc-match:hover{
+  background: #1dbf73d9;
+}
+
 .type{
   transition: .3s all;
 }
@@ -83,6 +120,61 @@ input[type=number] {
   border-radius: 15px;
   width: max-content;
   padding:10px;
+}
+
+
+
+
+.partners {
+  display: flex;
+  flex-direction: row;
+}
+.partners:before, .partners:after{
+  content: "";
+  flex: 1 1;
+  border-bottom: 1px solid #C3C3C3;
+  margin: auto;
+}
+.partners:before {
+  margin-right: 10px
+}
+.partners:after {
+  margin-left: 10px
+}
+
+.social:hover{
+  transform: scale(1.03);
+  opacity: 0.8;
+}
+
+.social{
+  transition: .3s all;
+}
+
+.facebook{
+  background: #4267B2;
+}
+.partners{
+  color: #C3C3C3;
+}
+
+form.w-75{
+  transition: .4s all ease-out;
+}
+
+
+form.w-75:hover{
+  width: 100% !important;
+  transform: scale(1.03);
+}
+
+.lh-2{
+  line-height: 2.3;
+}
+@media(max-width:757px){
+  .banner-h1{
+    font-size: 23px !important;
+  }
 }
 
 /* All jobs Card */

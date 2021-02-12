@@ -14,6 +14,10 @@ from django.conf import settings
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+
+def home(request):
+    return render(request, 'home.html')
+
 def _login(request, user, password, pass_req):
     if check_password(password, user[1]) or pass_req:
         request.session['user'] = {
