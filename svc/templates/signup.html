@@ -33,8 +33,19 @@
                 {{ form.usertype|as_crispy_field }}
             </div>
         </div>
-        <button class="btn btn-primary" type="submit">Signup</button>
+        <button class="btn btn-primary" id="submitBtn" type="submit">Signup</button>
     </form>
 </div>
+
+<script type="text/javascript">
+  var inputs = document.getElementsByTagName("input");
+  for (let i=0;i<inputs;i++){
+    inputs[i].setAttribute('onpropertychange', 'disable()');
+  }
+  funciton disable(){
+    var submitBtn = document.getElementById('submitBtn');
+    submitBtn.setAttribute('disabled', 'true');
+  }
+</script>
 
 {% endblock %}

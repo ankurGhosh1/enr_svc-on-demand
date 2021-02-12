@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-header">Signup</div>
             <div class="card-body">
-            <form action="{% url 'accounts:signup' %}" method="post">
+            <form action="{% url 'accounts:signup' %}" onsubmit="validate(event)" method="post">
                 {% csrf_token %}
             <div class="row">
                 <div class="col-lg-6">
@@ -52,14 +52,47 @@
                     </select>
                 </div>
                     <div class="form-group">
-                    <input type="submit"  class="btn btn-block btn-primary">
+                    <input type="submit" id="submitBtn" class="btn btn-block btn-primary">
                 </div>
                 </div>
             </div>
             </form>
+            <div class="help" id="help">
+
+            </div>
             </div>
         </div>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+var inputs = document.getElementsByTagName("input");
+var help = document.getElementById("help");
+function validate(event){
+  for (let i=0;i<inputs.length;i++){
+    if(inputs[i].value.indexOf("script")>-1 || inputs[i].value.indexOf("<")>-1){
+      disable();
+      help.innerHTML = "<h4>Use the fields as they should be...........</h4>"
+      break;
+    } else {
+      enable();
+      help.innerHTML = ""
+    }
+  }
+}
+for (let i=0;i<inputs.length;i++){
+  inputs[i].setAttribute('oninput', 'validate(event)');
+}
+
+function disable(){
+  console.log("hua")
+  var submitBtn = document.getElementById('submitBtn');
+  submitBtn.setAttribute('disabled', 'true');
+}
+function enable(){
+  console.log("hua")
+  var submitBtn = document.getElementById('submitBtn');
+  submitBtn.removeAttribute('disabled');
+}
+</script>
 {% endblock %}

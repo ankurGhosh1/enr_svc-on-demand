@@ -21,7 +21,12 @@
                     <input type="submit" value="Login" class="btn btn-block btn-primary">
                 </div>
             </form>
-            <a href="{% url "social:begin" "google-oauth2" %}">Google+</a>
+            <button class="btn btn-primary mb-2">
+                <a class="text-white" href="{% url "social:begin" "google-oauth2" %}">Google+</a>
+            </button>
+            <button class="btn btn-primary mb-2">
+                <a class="text-white" href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
+            </button>
             </div>
         </div>
         </div>

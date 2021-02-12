@@ -10,5 +10,7 @@ urlpatterns = [
     path('logout/',views.logout,name ='logout'),
     path('social/logedin/',views.s_login,name ='social_login'),
     path('complete/google-oauth2/',views.s_complete,name ='social_complete'),
+    path('complete/facebook/',views.f_complete,name ='social_complete'),
+
     path('complete/typeSelection',views.selectUserType,name ='selectusertype'),
 ]

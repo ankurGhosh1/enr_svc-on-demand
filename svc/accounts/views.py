@@ -1,16 +1,16 @@
 from django.shortcuts import *
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from collections import namedtuple
 from svc.utils import AllProcedures
 from django.contrib.auth.hashers import make_password, check_password
 import datetime
-
+import requests as re
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import Flow
 import os
-
+from django.conf import settings
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -63,7 +63,7 @@ def s_complete(request):
     BASE+'/accounts/client_secret.json',
     scopes=None,
     state=state)
-    flow.redirect_uri = 'https://localhost:5000/complete/google-oauth2/'
+    flow.redirect_uri = f'{settings.HOST}/complete/google-oauth2/'
     try:
         req_state =request.META['QUERY_STRING'] if "state" in request.META['QUERY_STRING'] else request.scope['query_string']
     except:
@@ -82,6 +82,32 @@ def s_complete(request):
         if user:
             return _login(request, user, "a", True)
         request.session['user']['email'] = profile['emailAddresses'][0]['value']
+    return redirect("accounts:selectusertype")
+
+# def f_begin(request):
+#     url = f"https://www.facebook.com/v9.0/dialog/oauth?response_type=token&display=popup&client_id={settings.SOCIAL_AUTH_FACEBOOK_KEY}&redirect_uri={settings.HOST}/complete/facebook/&auth_type=rerequest&scope=public_profile%2Cemail"
+#     return HttpResponseRedirect(url)
+
+def f_complete(request):
+    state = request.GET.get('state')
+    # scope = ["https://www.googleapis.com/auth/userinfo.email.read", " https://www.googleapis.com/auth/userinfo.profile"]
+    code = request.GET.get('code')
+    prompt = request.GET.get('prompt')
+    request.session['user'] = {}
+    request.session['user']['state'] = state
+    print(state, code, prompt, request.__dict__)
+    url = f'https://graph.facebook.com/v9.0/oauth/access_token?client_id={settings.SOCIAL_AUTH_FACEBOOK_KEY}&redirect_uri={settings.HOST}/complete/facebook/&client_secret={settings.SOCIAL_AUTH_FACEBOOK_SECRET}&code={code}'
+    print(url)
+    k = re.get(url)
+    res = k.json()
+    access_token = res['access_token']
+    url = f'https://graph.facebook.com/me?fields=id,name,email&access_token={access_token}'
+    k = re.get(url)
+    res = k.json()
+    request.session['user'] = {'email':res['email']}
+    user = AllProcedures.getUserWithEmail(res['email'])
+    if user:
+        return _login(request, user, "a", True)
     return redirect("accounts:selectusertype")
 
 def selectUserType(request):
