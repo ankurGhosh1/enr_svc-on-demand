@@ -31,21 +31,19 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'sslserver',
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'sslserver',
 
 
     'social_django',
 
     'phonenumber_field',
-    'crispy_forms',
+    # 'crispy_forms',
 
     'clients',
     'accounts',
@@ -104,7 +102,7 @@ SOCIAL_AUTH_FACEBOOK_KEY = '116954303618847'
 SOCIAL_AUTH_FACEBOOK_SECRET = '3fb07848389c705bf5bbec4773d2c69f'
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 WSGI_APPLICATION = 'svc.wsgi.application'
-ASGI_APPLICATION = 'svc.asgi.application'
+# ASGI_APPLICATION = 'svc.asgi.application'
 
 
 CHANNEL_LAYERS = {
@@ -131,7 +129,6 @@ DATABASES = {
     'ENGINE': 'sql_server.pyodbc',
         'NAME': 'baghiService',
         'HOST': 'DESKTOP-IUNO0HB',
-        'PORT': '1433',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

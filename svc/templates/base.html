@@ -28,10 +28,10 @@
           <a class="nav-link active" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/alljobs/">Alljobs</a>
+          <a class="nav-link" href="{% url 'clients:alljobs' %}">Alljobs</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/jobpost/">Post A Job</a>
+          <a class="nav-link" href="{% url 'clients:jobpost' %}">Post A Job</a>
         </li>
         {% if request.session.user.is_authenticated %}
         <li class="nav-item">

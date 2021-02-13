@@ -61,3 +61,19 @@ class AllProcedures:
             cursor.execute(f"EXEC dbo.createChatRecord @time_stamp='{datetime.datetime.now()}', @client_id='{client_id}', @professional_id='{professional_id}', @message='{message}', @room_name='{room_name}', @side='{side}'")
             status = True
         return status
+
+    @staticmethod
+    def createjob(li):
+        status = False
+        with connection.cursor() as cursor:
+            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[1]}', @SubCategory_id='{li[2]}', @City_id='{li[3]}', @User_id='{li[4]}', @AddedBy_id='{li[5]}', @IsActive={1}, @IsClose='{0}', @IsNotification='{1}'")
+            status = True
+        return status
+
+    @staticmethod
+    def getjobs():
+        with connection.cursor() as cursor:
+            alljobs = cursor.execute(f"EXEC dbo.getAllJobs")
+        return alljobs
+
+    

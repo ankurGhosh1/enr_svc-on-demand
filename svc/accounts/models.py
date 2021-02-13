@@ -7,23 +7,41 @@ from django.contrib.auth.models import AbstractUser
 class LanguageList(models.Model):
     LanguageName = models.CharField(max_length=100)
 
-class ApplcationList(models.Model):
+class AppliationList(models.Model):
     ApplicationName = models.CharField(max_length=100)
     Language = models.ForeignKey(LanguageList, on_delete=models.SET_NULL, null=True)
 
 
 class UserType(models.Model):
-    UserType = models.CharField(max_length=100)
+    user_type = (
+        ('Customer', 'Customer'),
+        ('Professional', 'Professional')
+    )
+    UserType = models.CharField(max_length=15, choices=user_type, default="Customer")
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.UserType
+
 class UserList(AbstractUser):
-    UserType = models.ForeignKey(UserType, on_delete=models.CASCADE)
-    Application = models.ForeignKey(ApplcationList,on_delete=models.CASCADE)
-    ContactCell = models.CharField(max_length=100)
-    UserEmail = models.EmailField(max_length=100, unique=True)
+    UserMiddleName = models.CharField(max_length=100, null=True)
+    usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
+    Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
+    ContactCell = models.CharField(max_length=100, null=True)
+    City = models.CharField(max_length=30)
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'usertype',
+        'username',
+        'first_name',
+        'last_name',
+    ]
+    AbstractUser._meta.get_field('email')._unique = True
 
+    def __str__(self):
+        return self.email
 
 
 
@@ -36,6 +54,9 @@ class CityList(models.Model):
     UpdatedBy = models.ForeignKey(UserList, related_name="City_Updated_By", on_delete=models.SET_NULL, null=True)
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.City
 
 
 
@@ -66,6 +87,8 @@ class CategoryList(models.Model):
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.CategoryName
 
 
 class SubCategoryList(models.Model):
@@ -76,6 +99,9 @@ class SubCategoryList(models.Model):
     UpdatedBy = models.ForeignKey(UserList, related_name="SubCat_Updated_By", on_delete=models.CASCADE, null=True)
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.SubCategoryName
 
 
 class SubscriptionList(models.Model):
@@ -134,16 +160,16 @@ class TopicList(models.Model):
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Topic_Updated_By", on_delete=models.CASCADE, null=True)
-    UpdatedDate = models.DateField(auto_now_add=True)
+    UpdatedDate = models.DateField(auto_now_add=True,null=True)
     IsActive = models.BooleanField(default=True)
-    IsClose = models.BooleanField(default=True)
-    CloseBy = models.ForeignKey(UserList, related_name="Topic_Closed_By", on_delete=models.CASCADE)
-    CloseDate = models.DateField(auto_now_add=True)
-    ForceCloseReason = models.CharField(max_length=3999)
+    IsClose = models.BooleanField(default=False)
+    CloseBy = models.ForeignKey(UserList, related_name="Topic_Closed_By", on_delete=models.CASCADE, null=True)
+    CloseDate = models.DateField(auto_now_add=True, null=True)
+    ForceCloseReason = models.CharField(max_length=3999, null=True)
     ForceCloseCategory = models.ForeignKey(ForceCloseCategoryList, on_delete=models.SET_NULL, null=True)
     IsNotification = models.BooleanField(default=True)
-    SMSText = models.CharField(max_length=150)
-    WhatsAppText = models.CharField(max_length=1000)
+    SMSText = models.CharField(max_length=150, null=True)
+    WhatsAppText = models.CharField(max_length=1000, null=True)
 
 
 class AssetsDetailList(models.Model):
@@ -169,6 +195,7 @@ class TopicDetailList(models.Model):
     UpdatedBy = models.ForeignKey(UserList, related_name="Topic_details_Updated_By", on_delete=models.CASCADE, null=True)
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
 
 
 

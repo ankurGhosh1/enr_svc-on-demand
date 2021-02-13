@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<ul>
+    {% for job in jobs %}
+    <a href="/client/alljobs/{{job.id}}/"><li>{{job.TopicName}}/{{job.AddedDate}}-{{job.City.id}} {{job.Category_id}}</li>   </a>
+    {% endfor %}
+</ul>
+
+{% endblock %}
