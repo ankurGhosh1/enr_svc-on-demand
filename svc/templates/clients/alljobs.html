@@ -3,10 +3,32 @@
 {% block content %}
 
 
-<ul>
-    {% for job in jobs %}
-    <a href="/client/alljobs/{{job.id}}/"><li>{{job.TopicName}}/{{job.AddedDate}}-{{job.City.id}} {{job.Category_id}}</li>   </a>
-    {% endfor %}
-</ul>
+<div class="">
+    <section class="bg-svc">
+      <div class="p-5">
+        <div class="container p-3 text-white">
+          <div class="mx-auto text-left p-3">
+            <h3 class="banner-h1">My Jobs :</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <div class="container p-5 over-me border rounded shadow bg-white mt-3">
+      <div class="row">
+        {% for job in jobs %}
+        <div class="col-sm-4">
+          <div class="">
+            <div class="border p-2 rounded">
+              <a href="/client/alljobs/{{job.id}}/"><div>{{job.TopicName}}/{{job.AddedDate}}-{{job.City.id}} {{job.Category_id}}</div></a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+</div>
 
 {% endblock %}

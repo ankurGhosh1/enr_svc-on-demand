@@ -1,7 +1,8 @@
 from django import forms
-from accounts.models import TopicList, TopicDetailList 
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList
 
 class JobPostForm(forms.ModelForm):
+
     class Meta:
         model = TopicList
         fields = '__all__'  # ('TopicName',)
@@ -11,3 +12,9 @@ class JobUpdateForm(forms.ModelForm):
     class Meta:
         model = TopicList
         fields = '__all__'
+
+
+class AssetsForm(forms.ModelForm):
+    class Meta:
+        model = AssetsDetailList
+        fields = ['FileName']

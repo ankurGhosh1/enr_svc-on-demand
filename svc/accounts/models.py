@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from tinymce.models import HTMLField
 
 
 
@@ -152,6 +152,7 @@ class SubscriptionDetailList(models.Model):
 
 class TopicList(models.Model):
     TopicName = models.CharField(max_length=300)
+    content = HTMLField()
     TopicDate = models.DateField(auto_now_add=True)
     Category = models.ForeignKey(CategoryList, on_delete=models.CASCADE)
     SubCategory = models.ForeignKey(SubCategoryList, on_delete=models.CASCADE)
@@ -172,9 +173,14 @@ class TopicList(models.Model):
     WhatsAppText = models.CharField(max_length=1000, null=True)
 
 
+def get_upload_path(instance, filename):
+    return '{0}/{1}'.format(instance.Topic.TopicName, filename)
+
+
 class AssetsDetailList(models.Model):
+
     Topic = models.ForeignKey(TopicList, on_delete=models.SET_NULL, null=True)
-    FileName = models.CharField(max_length=1000, null=True, default=None)
+    FileName = models.FileField(upload_to=get_upload_path)
     FileExtension = models.CharField(max_length=50, null=True, default=None)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)

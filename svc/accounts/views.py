@@ -16,6 +16,14 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def home(request):
+    if request.session.has_key('user'):
+        if request.session['user']['type']:
+            if request.session['user']['type'] == "Client":
+                return redirect(f'client:dashboard')
+
+            if request.session['user']['type'] == "Professional":
+                return redirect(f'professional:dashboard')
+
     return render(request, 'home.html')
 
 def _login(request, user, password, pass_req):
@@ -131,6 +139,9 @@ def selectUserType(request):
             li = li[0:2]+[request.session['user']['email']]+li[2:]
             print(li)
             AllProcedures.createUserWithType(li)
+        user = AllProcedures.getUserWithEmail(request.session['user']['email'])
+        if user:
+            return _login(request, user, "a", True)
     return render(request, 'registration/selectType.html', {'application':app})
 
 

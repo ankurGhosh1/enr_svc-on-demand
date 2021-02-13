@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<div class="">
+  <section class="bg-svc">
+    <div class="p-5">
+      <div class="container p-3 text-white">
+        <div class="mx-auto text-left p-3">
+          <h3 class="banner-h1">Your Profile :</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="over-me">
+    <div class="container">
+      <div class="p-3">
+        <div class="rounded shadow card">
+          <div class="row p-0 m-0">
+            <div class="col-sm-4 border-right m-0 p-0">
+              <div class="border-bottom">
+                <div class="text-center">
+                  <div class="row p-3 m-0">
+                    <div class="col-sm-8">
+                      <h3 class="text-dark">
+                        Earnings
+                      </h3>
+                    </div>
+                    <div class="col-sm-4">
+                      <button type="button" name="button" title="See Details" class="btn btn-primary border-0 bg-svc-match"><i class="fa fa-caret-right"></i></button>
+                    </div>
+                  </div>
+                  <div class="row p-0 m-0">
+                    <div class="col-sm-6 p-2 border-top border-right">
+                      <h4 class="text-dark">$200</h4>
+                      <small class="text-secondary"><b>Paid Out</b></small>
+                    </div>
+                    <div class="col-sm-6 p-2 border-top">
+                      <h4 class="text-dark">$200</h4>
+                      <small class="text-secondary"><b>In Locker</b></small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-3">
+                <h6 class="text-secondary">Recent Reviews</h6>
+                <ul>
+                  <li>Review 1</li>
+                  <li>Review 2</li>
+                  <li>Review 3</li>
+                  <li>Review 4</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-8 m-0 p-5 mt-auto mb-auto">
+              <div class="row">
+                <a href="#" class="fa fa-edit mt-2 p-1"></a>
+                <table class="" cellpadding="5" cellspacing="5">
+                  <tr>
+                    <th>Name</th>
+                    <th>:</th>
+                    <td>{{request.session.user.info.3}} {{request.session.user.info.4}}</td>
+                  </tr>
+                  <tr>
+                    <th>Email</th>
+                    <th>:</th>
+                    <td>{{request.session.user.info.2}}</td>
+                  </tr>
+                  <tr>
+                    <th>Language</th>
+                    <th>:</th>
+                    <td>English</td>
+                  </tr>
+                  <tr>
+                    <th>Phone Number</th>
+                    <th>:</th>
+                    <td>{{request.session.user.info.9}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
+{%endblock%}

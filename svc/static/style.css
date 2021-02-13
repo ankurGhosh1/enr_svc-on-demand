@@ -10,7 +10,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+.lh-0{
+  line-height: 0.4;
+}
 
+.over-me{
+  margin-top:-70px !important;
+}
 .bg-svc{
   background: #540c0c;
 }

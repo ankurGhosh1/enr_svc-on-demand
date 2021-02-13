@@ -29,7 +29,6 @@ INSERT INTO [dbo].[accounts_userlist]
 		   ,[first_name]
            ,[last_name]
            ,[email]
-		   ,[UserEmail]
            ,[ContactCell]
 		   ,[password]
            ,[UserType_id]
@@ -43,7 +42,6 @@ VALUES
 		@email,
 		@first_name,
 		@last_name,
-		@email,
 		@email,
 		@ContactCell,
 		@password,
@@ -149,7 +147,6 @@ INSERT INTO [dbo].[accounts_userlist]
 		   ,[first_name]
            ,[last_name]
            ,[email]
-		   ,[UserEmail]
            ,[ContactCell]
 		   ,[password]
            ,[UserType_id]
@@ -163,7 +160,6 @@ VALUES
 		@email,
 		@first_name,
 		@last_name,
-		@email,
 		@email,
 		@ContactCell,
 		@password,
@@ -200,7 +196,7 @@ CREATE PROCEDURE [dbo].[addJobPost]
 	@SubCategory_id int = NULL,
 	@UpdatedBy_id int = NULL,
 	@User_id int = NULL
-	 
+
 AS
 INSERT INTO [dbo].[accounts_topiclist]
            ([TopicName]
@@ -282,7 +278,7 @@ CREATE PROCEDURE [dbo].[updateJobPost]
 	@SubCategory_id int = NULL,
 	@UpdatedBy_id int = NULL,
 	@User_id int = NULL
-	 
+
 AS
 UPDATE [dbo].[accounts_topiclist]
    SET     [TopicName]=@TopicName,
@@ -305,4 +301,70 @@ UPDATE [dbo].[accounts_topiclist]
 		   [UpdatedBy_id]=@UpdatedBy_id,
 		   [User_id]=@User_id
 WHERE id = @id
+GO
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getEachJob]
+	@id int = NULL
+AS
+Select * from [dbo].[accounts_topiclist] WHERE id=@id
+GO
+
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getMyJobs]
+	@user_id int = NULL
+AS
+Select * from [dbo].[accounts_topiclist] WHERE AddedBy_id=@user_id
+GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getAllJobs]
+AS
+Select * from [dbo].[accounts_topiclist]
+GO
+
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[createTopicAsset]
+	@addedby_id int = NULL,
+	@updatedby_id int = NULL,
+	@added_date datetime2(7) = NULL,
+	@updated_date datetime2(7) = NULL,
+	@topic_id int = NULL,
+	@file_name nvarchar(100) = NULL,
+	@file_ext nvarchar(50) = NULL
+AS
+
+INSERT INTO [dbo].[accounts_assetsdetaillist]
+           ([FileName]
+           ,[FileExtension]
+           ,[AddedDate]
+           ,[UpdatedDate]
+           ,[IsActive]
+           ,[AddedBy_id]
+           ,[Topic_id]
+           ,[UpdatedBy_id])
+     VALUES
+           (@file_name
+		   ,@file_ext
+		   ,@added_date
+		   ,@updated_date
+		   ,1
+		   ,@addedby_id
+		   ,@topic_id
+		   ,@updatedby_id)
+GO
+
 GO

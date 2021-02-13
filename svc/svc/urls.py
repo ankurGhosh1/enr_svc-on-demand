@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,5 +26,6 @@ urlpatterns = [
     path('', include('social_django.urls', namespace='social')),
     path('client/', include('clients.urls')),
     path('professional/', include('professional.urls')),
-    path('', include('django.contrib.auth.urls'))
-]
+    path('', include('django.contrib.auth.urls')),
+    path('tinymce/', include('tinymce.urls')),
+]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

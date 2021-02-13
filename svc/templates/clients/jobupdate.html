@@ -3,6 +3,12 @@
 
 {% block content %}
 
+<head>
+  {{ form.media }}
+</head>
+{{ categories|json_script:"cats" }}
+{{ sub_categories|json_script:"subCats" }}
+
 <div class="container">
     <form method="POST">
         {% csrf_token %}
@@ -12,5 +18,30 @@
         <button class="btn btn-primary" type="submit">Update Job</button>
     </form>
 </div>
+
+
+<script type="text/javascript">
+  var cats = JSON.parse(document.getElementById('cats').textContent);
+  var subCats = JSON.parse(document.getElementById('subCats').textContent);
+  var catDiv = document.getElementById('id_category');
+  var subCatDiv = document.getElementById('id_sub_category');
+  cats.forEach((item, index) => {
+      catDiv.innerHTML+=`<option value=${item[0]}>${item[1]}</option>`;
+  })
+
+
+  function makeSubCat(event){
+    var catId = event.target.value;
+    subCatDiv.innerHTML = '<option value="" selected="">---------</option>';
+    subCats.forEach((item, index)=>{
+      if(catId==item[1]){
+        subCatDiv.innerHTML+=`<option value=${item[0]}>${item[2]}</option>`;
+      }
+    })
+  }
+
+  console.log(cats, subCats);
+</script>
+
 
 {% endblock content %}
