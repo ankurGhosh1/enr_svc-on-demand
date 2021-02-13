@@ -11,13 +11,22 @@
   }
 </style>
 <h1>Homepage</h1>
-<h3 class="st"> Hello {{request.user.first_name}}</h3>
+<h3 class="st"> Hello {{request.user.first_name}}{{row}}</h3>
 <ul>
-  {% for user in users %}
+  {{users}}
+  {% if request.user.is_authenticated %}
+    {% for user in users %}
+      <li>
+        <a href="{% url 'clients:chat' user_id=user.0 %}">Chat with: {{user.2}}</a>
+      </li>
+    {% endfor %}
+  {% else %}
     <li>
-      <a href="{% url 'clients:chat' user_id=user.id %}">Chat with: {{user.first_name}}</a>
+      <a href="{% url 'clients:login' %}">Login First</a>
     </li>
-  {% endfor %}
+  {% endif %}
 </ul>
-
+<div class="container">
+  <a href="{% url 'clients:myJobs' %}" class="btn btn-primary">My Jobs</a>
+</div>
 {%endblock%}

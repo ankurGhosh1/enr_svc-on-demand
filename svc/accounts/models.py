@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+
+
 class LanguageList(models.Model):
     LanguageName = models.CharField(max_length=100)
 
@@ -27,6 +29,7 @@ class UserList(AbstractUser):
     usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
     Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
     ContactCell = models.CharField(max_length=100, null=True)
+    City = models.CharField(max_length=30)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
@@ -51,6 +54,9 @@ class CityList(models.Model):
     UpdatedBy = models.ForeignKey(UserList, related_name="City_Updated_By", on_delete=models.SET_NULL, null=True)
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.City
 
 
 
@@ -81,6 +87,8 @@ class CategoryList(models.Model):
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.CategoryName
 
 
 class SubCategoryList(models.Model):
@@ -91,6 +99,9 @@ class SubCategoryList(models.Model):
     UpdatedBy = models.ForeignKey(UserList, related_name="SubCat_Updated_By", on_delete=models.CASCADE, null=True)
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.SubCategoryName
 
 
 class SubscriptionList(models.Model):
@@ -149,16 +160,16 @@ class TopicList(models.Model):
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Topic_Updated_By", on_delete=models.CASCADE, null=True)
-    UpdatedDate = models.DateField(auto_now_add=True)
+    UpdatedDate = models.DateField(auto_now_add=True,null=True)
     IsActive = models.BooleanField(default=True)
-    IsClose = models.BooleanField(default=True)
-    CloseBy = models.ForeignKey(UserList, related_name="Topic_Closed_By", on_delete=models.CASCADE)
-    CloseDate = models.DateField(auto_now_add=True)
-    ForceCloseReason = models.CharField(max_length=3999)
+    IsClose = models.BooleanField(default=False)
+    CloseBy = models.ForeignKey(UserList, related_name="Topic_Closed_By", on_delete=models.CASCADE, null=True)
+    CloseDate = models.DateField(auto_now_add=True, null=True)
+    ForceCloseReason = models.CharField(max_length=3999, null=True)
     ForceCloseCategory = models.ForeignKey(ForceCloseCategoryList, on_delete=models.SET_NULL, null=True)
     IsNotification = models.BooleanField(default=True)
-    SMSText = models.CharField(max_length=150)
-    WhatsAppText = models.CharField(max_length=1000)
+    SMSText = models.CharField(max_length=150, null=True)
+    WhatsAppText = models.CharField(max_length=1000, null=True)
 
 
 class AssetsDetailList(models.Model):
@@ -184,6 +195,7 @@ class TopicDetailList(models.Model):
     UpdatedBy = models.ForeignKey(UserList, related_name="Topic_details_Updated_By", on_delete=models.CASCADE, null=True)
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
 
 
 
@@ -220,3 +232,13 @@ class ReviewList(models.Model):
     UpdatedDate = models.DateField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
     IsAdminApproved = models.BooleanField(default=True)
+
+
+class ChatRecord(models.Model):
+    client = models.ForeignKey(UserList, on_delete=models.CASCADE)
+    professional = models.ForeignKey(UserList, on_delete=models.CASCADE, related_name="professional")
+    message = models.CharField(max_length=400)
+    side = models.BooleanField(null=True, blank=True)   #True for consumer, False for professional
+    room_name = models.CharField(max_length=300 )
+    TimeStamp = models.DateTimeField(auto_now_add=True)
+    IsActive = models.BooleanField(default=True)

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+{% for job in jobdetail %}
 <div class="card mb-3" style="max-width: 540px;">
     <div class="row g-0">
       <div class="col-md-4">
@@ -9,15 +9,15 @@
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h5 class="card-title">{{jobdetail.taskoverview}}</h5>
-          <p class="card-text">{{jobdetail.address}}</p>
-          <p class="card-text">{{jobdetail.addinfo}}</p>
-          <p class="card-text"><small class="text-muted">{{jobdetail.client}}</small></p>
-          <a href="/jobpost/{{jobdetail.pk}}/update" class="btn btn-primary">Update</a> 
+          <h5 class="card-title">{{job.TopicName}}</h5>
+          <p class="card-text">{{job.AddedDate}}</p>
+          <p class="card-text">{{job.Category}}</p>
+          <p class="card-text"><small class="text-muted">{{job.Subcategory_id}}</small></p>
+          <a href="/client/alljobs/{{job.id}}/update" class="btn btn-primary">Update</a> 
           <a href="/jobpost/{{jobdetail.pk}}/delete" class="btn btn-primary text-end">Delete</a>
         </div>
       </div>
     </div>
   </div>
-
+{% endfor %}
 {% endblock %}

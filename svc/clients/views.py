@@ -1,73 +1,102 @@
 from django.shortcuts import render, redirect, reverse
 from django.views import generic
 from accounts.models import UserList
-from .forms import CustomClientUserForm
+from .forms import JobPostForm, JobUpdateForm
 from django.views.generic import View
 from django.db import connection
-#
-#
+from svc.utils import AllProcedures
+
+
 # # Create your views here.
-#
-#
-#
-#
-class SignupView(generic.CreateView):
-    template_name = 'signup.html'
-    form_class = CustomClientUserForm
 
-    def get_success_url(self):
-        return reverse('clients:jobpost')
+def dictfetchall(cursor):
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
 
-    def form_valid(self, form):
-        if form.is_valid():
-            client = form.save(commit=False)
-            client.set_password(form.cleaned_data["password"])
-            client.save()
-            print(client)
-            return super(SignupView, self).form_valid(form)
-#
-#
-# class HomeView(View):
-#     template_name = 'home.html'
-#     def get(self, request):
-#         users =[]
-#         if request.user.is_authenticated:
-#             if request.user.usertype=="Professional":
-#                 Customer = "Customer"
-#                 with connection.cursor() as cursor:
-#                     cursor.execute(f'EXEC dbo.allUserTypeExceptMe @userId = {request.user.id}, @userType = "{Customer}"')
-#                     users = cursor.fetchall()
-#             else:
-#                 Professional = "Professional"
-#                 with connection.cursor() as cursor:
-#                     cursor.execute(f'EXEC dbo.allUserTypeExceptMe @userId = {request.user.id}, @userType = "{Professional}"')
-#                     users = cursor.fetchall()
-#         context = {'users': users}
-#         # print(users)
-#         return render(request, self.template_name, context)
-#
-# class JobPostingView(generic.CreateView):
-#     template_name = 'jobpost.html'
-#     form_class = JobPostForm
-#
-#     def get_context_data(self, **kwargs):
-#         ctx = super(JobPostingView, self).get_context_data(**kwargs)
-#         ctx['categories'] = [(i.id, i.cat_name) for i in Category.objects.all()]
-#         ctx['sub_categories'] = [(i.id, i.cat_id, i.sub_cat_name) for i in SubCategory.objects.all()]
-#         return ctx
-#
-#     def get_success_url(self):
-#         return reverse('clients:myJobs')
-#
-#     def form_valid(self, form):
-#         if form.is_valid():
-#             job = form.save(commit=False)
-#             job.client = self.request.user
-#             job.save()
-#             print(job)
-#             return super(JobPostingView, self).form_valid(form)
-#
-#
+
+class JobPostView(generic.CreateView):
+    def get(self, request):
+        form_class = {'form': JobPostForm}
+        return render(request, 'clients/jobposting.html', form_class)
+
+    def post(self, request):
+        if request.method == 'POST':
+            li = []
+            for i in request.POST:
+                if i != 'csrfmiddlewaretoken':
+                    li.append(request.POST[i])
+            saved = AllProcedures.createjob(li)
+            return redirect('/alljobs')
+
+
+class GetJobPost(generic.ListView):
+    def get(self, request):
+        cursor = connection.cursor()
+        cursor.execute(f'EXEC dbo.getAllJobs')
+        joblist = dictfetchall(cursor)
+        return render(request, 'clients/alljobs.html', {'jobs': joblist}) 
+
+class JobDetailView(generic.DetailView):
+    def get(self, request, pk):
+        pk = self.kwargs.get('pk')
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
+        eachjob = dictfetchall(cursor)
+        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob})
+
+class JobUpdateView(generic.UpdateView):
+    # template_name = 'jobupdate.html'
+    # form_class = JobPostForm
+    # context_object_name = "job"
+
+    # def get_queryset(self):
+    #     pk = self.kwargs.get('pk')
+    #     return JobPost.objects.filter(id= pk)
+
+    # def get_success_url(self):
+    #     return reverse("clients:alljobs")
+
+    def get(self, request, pk):
+        form_class = {'form': JobUpdateForm}
+        pk = self.kwargs.get('pk')
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
+        eachjob = dictfetchall(cursor)
+        return render(request, 'clients/jobupdate.html', form_class)
+
+    def post(self, request, pk):
+        if request.method == 'POST':
+            li = [request.user.email, request.user.City]
+            for i in request.POST:
+                if i != 'csrfmiddlewaretoken':
+                    li.append(request.POST[i])
+            saved = AllProcedures.createjob(li)
+            return redirect('/alljobs')
+
+
+
+# def jobpost(request):
+#     with connection.cursor() as cursor:
+#             cursor.execute(f'EXEC dbo.getCategory @city = {request.user.City}')
+#             users = cursor.fetchall()
+#             print(users)
+#         context = {
+#             'users': users,
+#         }
+
+#         if request.method == 'POST':
+#             li = []
+#             for i in request.POST:
+#                 if i != 'csrfmiddlewaretoken':
+#                     li.append(request.POST[i])
+#             saved = AllProcedures.createjob(li)
+#             return redirect('/client/jobpost')
+#         return render(request, 'jobposting.html', context)
+
+
 # class IndiJobView(generic.ListView):
 #     template_name = 'construction.html'
 #     context_object_name = 'myJobs'

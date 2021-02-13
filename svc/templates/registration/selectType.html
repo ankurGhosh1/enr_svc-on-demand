@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <form action="{% url 'accounts:selectusertype' %}" method="post" id="userTypeForm">
+      {% csrf_token %}
+
+      <div class="row" id="option">
+        <div class="col-md-6">
+          <div class="p-3 bg-dark type" onclick="selected('Professional')" id="Professional">
+            <div class="row">
+              <div class="col-sm-6">
+                <img class="m-auto" src="https://engagenreap.com/images/logo2.png" width="70" alt="">
+              </div>
+              <div class="m-auto col-sm-6">
+                <h3 class="text-white">Professional</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="p-3 bg-light type" onclick="selected('Customer')" id="Customer">
+            <div class="row">
+              <div class="col-sm-6">
+                <img class="m-auto" src="https://www.pngfind.com/pngs/m/164-1640997_businessman-with-bars-stocks-graphic-comments-business-man.png" width="70" alt="">
+              </div>
+              <div class="m-auto col-sm-6">
+                <h3 class="">Customer</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+          <div class="col-lg-6">
+              <div class="form-group">
+              <label for="">First Name</label>
+              <input type="text" class="form-control" name="first_name">
+          </div>
+              <div class="form-group">
+              <label for="">Last Name</label>
+              <input type="text" class="form-control" name="last_name">
+          </div>
+
+              <div class="form-group">
+              <label for="">Contact</label>
+              <input type="text" class="form-control" name="contact">
+          </div>
+          </div>
+          <div class="col-lg-6">
+              <div class="form-group">
+              <label for="">Password</label>
+              <input type="password" class="form-control" name="password">
+          </div>
+          <div class="" style="display:none" id="type">
+
+          </div>
+              <div class="form-group">
+                  <label for="">Application</label>
+              <select name="application" class="form-control" >
+                  <option disabled selected>Select Application </option>
+                  {% for a in application %}
+                  <option value="{{ a.id }}">{{ a.ApplicationName }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+              <div class="form-group">
+              <input type="submit" title="Select All Type" disabled="true" id="submitbtn" class="btn btn-block btn-primary">
+          </div>
+          </div>
+      </div>
+      <div class="p-5" id="loading">
+
+      </div>
+  </form>
+</div>
+<script type="text/javascript">
+  function selected(val){
+    console.log(val)
+    var ele = document.getElementById(val);
+    var Customer = document.getElementById("Customer");
+    var Professional = document.getElementById("Professional");
+    var option = document.getElementById("option");
+    var type = document.getElementById("type");
+    var submitbtn = document.getElementById("submitbtn");
+
+    ele.style.border = '2px solid green';
+    ele.style.transform = 'scale(0.99)';
+    Customer.removeAttribute("onclick");
+    Professional.removeAttribute("onclick");
+    option.style.opacity = "0.6";
+    submitbtn.removeAttribute('disabled');
+    type.innerHTML+=`<input style="display:none" type="text" name="userType" value="${val}">`;
+    <!-- var loading = '<div class="mt-5"><div class="p-5"><div class="m-auto"><div class="h-50"><div class="p-2 text-center"><i class="fa fa-spinner fa-spin fa-3x"></i></div></div></div></div></div>'; -->
+    <!-- document.getElementById("loading").innerHTML = loading; -->
+  }
+</script>
+{% endblock %}

@@ -1,17 +1,13 @@
 from django import forms
-from accounts.models import UserList #, JobPost
+from accounts.models import TopicList, TopicDetailList 
 
-
-class CustomClientUserForm(forms.ModelForm):
+class JobPostForm(forms.ModelForm):
     class Meta:
-        model = UserList
-        fields = ('first_name', 'last_name', 'username', 'email', 'password', 'usertype')
-        widgets = {
-            'usertype': forms.RadioSelect()
-        }  
+        model = TopicList
+        fields = '__all__'  # ('TopicName',)
+        exclude = ('UpdatedDate', 'CloseDate', 'ForceCloseReason', 'SMSText', 'WhatsAppText', 'CloseBy_id', 'ForceCloseCategory', 'UpdatedBy', 'CloseBy', 'IsClose', 'IsActive')
 
-# class JobPostForm(forms.ModelForm):
-#     class Meta:
-#         model = JobPost
-#         # fields = '__all__'
-#         exclude = ('client',)
+class JobUpdateForm(forms.ModelForm):
+    class Meta:
+        model = TopicList
+        fields = '__all__'
