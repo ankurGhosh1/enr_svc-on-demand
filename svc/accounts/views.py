@@ -115,7 +115,7 @@ def f_complete(request):
     return redirect("accounts:selectusertype")
 
 def selectUserType(request):
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applcationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
     if request.method=='POST':
         type = request.POST.get('userType');
@@ -150,7 +150,7 @@ def signup(request):
     cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applcationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
