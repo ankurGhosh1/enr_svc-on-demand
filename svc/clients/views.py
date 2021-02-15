@@ -12,11 +12,21 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import os
 import datetime
+from django.db import connection
 
 
-# # Create your views here.
+
+
+
+
 def dashboard(request):
-    return render(request, 'clients/dashboard.html')
+    cursor = connection.cursor()
+    address = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_addresslist WHERE AddedBy_id = %s", [request.session['user']['id']]).fetchone()[0]
+    if address == 0 :
+        return redirect('accounts:address_add')
+    return render(request, 'professional/dashboard.html')
+
+
 
 def chat(request, user_id):
     chatRoom = None
@@ -102,6 +112,7 @@ class GetJobPost(generic.ListView):
     def get(self, request):
         cursor = connection.cursor()
         userId = request.session['user']['id']
+        print(userId)
         cursor.execute(f'EXEC dbo.getMyJobs @user_id="{userId}"')
         joblist = dictfetchall(cursor)
         for i in joblist:

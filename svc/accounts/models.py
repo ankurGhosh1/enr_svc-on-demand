@@ -44,9 +44,26 @@ class UserList(AbstractUser):
         return self.email
 
 
+class CountryList(models.Model):
+    Country = models.CharField(max_length=100,blank=True,null=True)
+    IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.Country
+
+
+class StateList(models.Model):
+    State = models.CharField(max_length=100,blank=True,null=True)
+    CountryId = models.ForeignKey(CountryList,on_delete=models.CASCADE, null=True)
+    IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.State
+
 
 class CityList(models.Model):
     City = models.CharField(max_length=100)
+    StateId = models.ForeignKey(StateList,on_delete=models.CASCADE, null=True)
     Latitude = models.FloatField()
     Longitude = models.FloatField()
     AddedBy = models.ForeignKey(UserList, on_delete=models.SET_NULL, null=True)
@@ -57,6 +74,18 @@ class CityList(models.Model):
 
     def __str__(self):
         return self.City
+
+
+class AddressList(models.Model):
+    Street = models.CharField(max_length=500,blank=True,null=True)
+    CityId = models.ForeignKey(CityList,on_delete=models.CASCADE, null=True)
+    ZipCode = models.CharField(max_length=50, blank=True, null=True)
+    user = models.ForeignKey(UserList, on_delete=models.CASCADE)
+    AddedDate = models.DateField(auto_now_add=True)
+    IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.Street
 
 
 

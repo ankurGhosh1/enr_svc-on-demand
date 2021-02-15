@@ -1,7 +1,6 @@
 from django.shortcuts import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import connection
 from collections import namedtuple
 from svc.utils import AllProcedures
 from django.contrib.auth.hashers import make_password, check_password
@@ -9,8 +8,11 @@ import datetime
 import requests as re
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import Flow
-import os
+from django.db import connection
 from django.conf import settings
+import os
+
+
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -183,3 +185,28 @@ def logout(request):
     except:
         pass
     return redirect('accounts:login')
+
+
+
+
+def addressAdd(request):
+    country = AllProcedures.getCountry()
+    state = AllProcedures.getState()
+    city = AllProcedures.getCityByState()
+    print(country, state, city)
+    if request.method == 'POST':
+        li = []
+        for i in request.POST:
+            if i!='csrfmiddlewaretoken':
+                li.append(request.POST[i])
+                li.append(request.session['user']['id'])
+        saved = AllProcedures.addressAddUser(li)
+        print(li)
+        user = AllProcedures.getUserWithEmail(request.session['user']['email'])
+        type = AllProcedures.getUserType(user[-1])
+        if (type and type[0] == "Customer"):
+            return redirect('clients:dashboard')
+        elif (type and type[0] == "Professional"):
+            return redirect('professional:dashboard')
+    print(AllProcedures.getAddressList())
+    return render(request,'address_add.html',{'country':country,'state':state,'city':city})

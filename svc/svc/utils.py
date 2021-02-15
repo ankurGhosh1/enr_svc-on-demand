@@ -1,6 +1,16 @@
 from django.db import connection
 import datetime
 
+
+
+def dictfetchall(cursor):
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
+
 class AllProcedures:
 
     @staticmethod
@@ -79,6 +89,53 @@ class AllProcedures:
         with connection.cursor() as cursor:
             alljobs = cursor.execute(f"EXEC dbo.getAllJobs")
         return alljobs
+
+
+    @staticmethod
+    def getCountry():
+        with connection.cursor() as cursor:
+            country = cursor.execute(f"EXEC dbo.getCountry")
+            country = dictfetchall(country)
+        return country
+
+    @staticmethod
+    def getState():
+        with connection.cursor() as cursor:
+            state = cursor.execute(f"EXEC dbo.getState")
+            state = dictfetchall(state)
+        return state
+
+    @staticmethod
+    def getCity():
+        with connection.cursor() as cursor:
+            city = cursor.execute(f"EXEC dbo.getCity")
+            city = dictfetchall(city)
+        return city
+
+    @staticmethod
+    def getCityByState():
+        with connection.cursor() as cursor:
+            city = cursor.execute(f"EXEC dbo.getCityByState")
+            city = dictfetchall(city)
+        return city
+
+    @staticmethod
+    def addressAddUser(li):
+        status = False
+        query = f"EXEC dbo.addUserAddressList  @street='{li[0]}',@zip_code='{li[8]}',@added_date='{datetime.datetime.now()}',@user_id='{li[9]}',@city='{li[6]}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
+    @staticmethod
+    def getAddressList():
+        with connection.cursor() as cursor:
+            address = cursor.execute(f"EXEC dbo.getAddressList")
+            address = dictfetchall(address)
+        return address
+
+
 
 class FastProcedures:
     @staticmethod
