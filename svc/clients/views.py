@@ -5,7 +5,9 @@ from .forms import JobPostForm, JobUpdateForm
 from django.views.generic import View
 from django.db import connection
 from svc.utils import AllProcedures
-
+from django.core.paginator import Paginator
+from django.core.mail import send_mail
+import datetime
 
 # # Create your views here.
 
@@ -29,7 +31,7 @@ class JobPostView(generic.CreateView):
                 if i != 'csrfmiddlewaretoken':
                     li.append(request.POST[i])
             saved = AllProcedures.createjob(li)
-            return redirect('/alljobs')
+            return redirect('/client/alljobs')
 
 
 class GetJobPost(generic.ListView):
@@ -68,13 +70,75 @@ class JobUpdateView(generic.UpdateView):
         return render(request, 'clients/jobupdate.html', form_class)
 
     def post(self, request, pk):
+        pk = self.kwargs.get('pk')
         if request.method == 'POST':
-            li = [request.user.email, request.user.City]
-            for i in request.POST:
-                if i != 'csrfmiddlewaretoken':
-                    li.append(request.POST[i])
-            saved = AllProcedures.createjob(li)
+            topicname = request.POST['TopicName']
+            category_id = int(request.POST['Category'] or 0)
+            sub_Category = int(request.POST['SubCategory'] or 0)
+            isActive = request.POST.get('IsActive')
+            active = AllProcedures.boolcheck(isActive)
+            isClose = request.POST.get('IsClose')
+            close = AllProcedures.boolcheck(isClose)
+            closed_by = int(request.POST['CloseBy'] or 0)
+            closereason = request.POST['ForceCloseReason']
+            CLosedCategory = int(request.POST['ForceCloseCategory'] or 1)
+            isNotify = request.POST.get('IsNotification')
+            notify = AllProcedures.boolcheck(isNotify)
+            sms = request.POST['SMSText']
+            wap = request.POST['WhatsAppText']
+            li = [request.user.id, request.user.City, pk, topicname, category_id, sub_Category, active, close, closed_by, closereason, CLosedCategory, notify, sms, wap]
+            print(li)
+            cursor = connection.cursor()
+            cursor.execute(f"EXEC dbo.updateJobPost @id='{pk}', @TopicName='{topicname}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{active}', @IsClose='{close}', @ForceCloseReason='{closereason}', @IsNotification='{notify}', @SMSText='{sms}', @Category_id='{category_id}', @CloseBy_id='{closed_by}', @ForceCloseCategory_id='{CLosedCategory}', @SubCategory_id='{sub_Category}', @User_id='{request.user.id}'")
             return redirect('/alljobs')
+
+class JobDeleteView(View):
+    def post(self, request, pk):
+        pk = self.kwargs.get('pk')
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.deleteJob @id='{pk}'")
+        return redirect('/client/alljobs')
+
+
+class AllProfessionals(View):
+    def get(self, request):
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getCategory @City='{request.user.City}'")
+        allcategories = dictfetchall(cursor)
+        paginator = Paginator(allcategories, 3)
+
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'clients/services.html', {'professionals': page_obj}) 
+
+
+class Callback(View):
+    def get(self, request, slug):
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getUser @id='{request.user.id}'")
+        user = dictfetchall(cursor)
+        return render(request, 'clients/callback.html', {'user': user})
+
+    def post(self, request, slug):
+        if request.method == 'POST':
+            slug = self.kwargs.get('slug')
+            email = request.POST['email']
+            number = request.POST['number'] 
+            cursor = connection.cursor()
+            cursor.execute(f"EXEC dbo.getEmail @username='{slug}'")
+            user = dictfetchall(cursor)
+            rec_email = [user[0]['email']]
+            message = request.user.username + " has requested you for a callback. You may email here:" + email + ", or you may call at " + number
+            send_mail(
+                subject="Request for a Callback",
+                message= message,
+                from_email = "ouremail@gmail.com",
+                recipient_list= rec_email
+            )
+            return render(request, 'clients/successemail.html')
+
+
+
 
 
 

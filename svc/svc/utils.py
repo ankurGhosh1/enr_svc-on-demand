@@ -76,4 +76,20 @@ class AllProcedures:
             alljobs = cursor.execute(f"EXEC dbo.getAllJobs")
         return alljobs
 
+    # @staticmethod
+    # def updateJobPost(li):
+    #     with connection.cursor() as cursor:
+    #         alljobs = cursor.execute(f"EXEC dbo.updateJobPost @TopicName='{li[2]}', @UpdatedDate='{datetime.datetime.now()}', @IsActive=''")
+    #     return alljobs
+
+    @staticmethod
+    def boolcheck(var):
+        if var == 'on':
+            return 1
+        else:
+            return 0
+
+    
+
+
     

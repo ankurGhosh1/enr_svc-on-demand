@@ -264,8 +264,6 @@ GO
 CREATE PROCEDURE [dbo].[updateJobPost]
 	@id int = Null,
 	@TopicName nvarchar(300) = NULL,
-	@TopicDate datetime2(7) = NULL,
-	@AddedDate datetime2(7) = NULL,
 	@UpdatedDate datetime2(7) = NULL,
 	@IsActive bit = 0,
 	@IsClose bit = 1,
@@ -274,20 +272,16 @@ CREATE PROCEDURE [dbo].[updateJobPost]
 	@IsNotification bit = 0,
 	@SMSText nvarchar(150) = NULL,
 	@WhatsAppText nvarchar(1000) = NULL,
-	@AddedBy_id int = NULL,
 	@Category_id int = NULL,
 	@City_id int = NULL,
 	@CloseBy_id int = NULL,
 	@ForceCloseCategory_id int = NULL,
 	@SubCategory_id int = NULL,
-	@UpdatedBy_id int = NULL,
 	@User_id int = NULL
 	 
 AS
 UPDATE [dbo].[accounts_topiclist]
    SET     [TopicName]=@TopicName,
-		   [TopicDate]=@TopicDate,
-           [AddedDate]=@AddedDate,
            [UpdatedDate]=@UpdatedDate,
 		   [IsActive]=@IsActive,
            [IsClose]=@IsClose,
@@ -296,13 +290,21 @@ UPDATE [dbo].[accounts_topiclist]
            [IsNotification]=@IsNotification,
            [SMSText]=@SMSText,
            [WhatsAppText]=@WhatsAppText,
-           [AddedBy_id]=@AddedBy_id,
 		   [Category_id]=Category_id,
 		   [City_id]=@City_id,
 		   [CloseBy_id]=@CloseBy_id,
 		   [ForceCloseCategory_id]=@ForceCloseCategory_id,
 		   [SubCategory_id]=@SubCategory_id,
-		   [UpdatedBy_id]=@UpdatedBy_id,
 		   [User_id]=@User_id
 WHERE id = @id
+GO
+
+--  Delete Job
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[deleteJob]
+	@id int = NULL
+AS
+DELETE FROM [dbo].[accounts_topiclist] WHERE [id] = @id
 GO

@@ -3,10 +3,21 @@
 {% block content %}
 
 
-<ul>
+<div class="container" style="padding: 15px 10px;">
     {% for job in jobs %}
-    <a href="/client/alljobs/{{job.id}}/"><li>{{job.TopicName}}/{{job.AddedDate}}-{{job.City.id}} {{job.Category_id}}</li>   </a>
+    <div class="card" style="margin: 15px 10px;">
+        <div class="card-header">
+          All Current Job Posting
+        </div>
+        <div class="card-body">
+          <h5 class="card-title"></h5>
+          <p class="card-text">{{job.TopicName}}</p>
+          <h5 class="card-title">{{job.AddedDate}}</h5>
+          <h5 class="card-title">{{job.Category_id}}</h5>
+          <h5 class="card-title">{{job.City.id}}</h5>
+          <a href="/client/alljobs/{{job.id}}/" class="btn btn-primary">Details</a>
+        </div>
+      </div>
     {% endfor %}
-</ul>
-
+</div>
 {% endblock %}
