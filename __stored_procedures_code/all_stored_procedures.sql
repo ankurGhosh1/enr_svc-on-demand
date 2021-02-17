@@ -83,19 +83,24 @@ SELECT [message],[side] FROM [dbo].[accounts_chatrecord] WHERE [client_id] = @cl
 GO
 
 
+
+
 USE [baghiService]
 GO
+
+
 CREATE PROCEDURE [dbo].[getClientConnections]
 	@client_id int = NULL
 AS
-SELECT [professional_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[client_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[client_id]=@client_id
-GO
+SELECT [professional_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[professional_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[client_id]=@client_id
+
 
 CREATE PROCEDURE [dbo].[getProfessionalConnections]
 	@professinoal_id int = NULL
 AS
-SELECT [client_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[professional_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[professional_id]=@professinoal_id
-GO
+SELECT [client_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[client_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[professional_id]=@professinoal_id
+
+
 
 
 

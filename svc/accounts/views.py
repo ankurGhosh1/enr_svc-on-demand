@@ -211,3 +211,27 @@ def addressAdd(request):
             return redirect('professional:dashboard')
     print(AllProcedures.getAddressList())
     return render(request,'address_add.html',{'country':country,'state':state,'city':city})
+
+
+
+def update_profile(request):
+    country = AllProcedures.getCountry()
+    state = AllProcedures.getState()
+    city = AllProcedures.getCityByState()
+    address = AllProcedures.getUserAddress(request.session['user']['id'])
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+        app = dictfetchall(cursor)
+    with connection.cursor() as cursor:
+        cursor.execute(f"EXEC dbo.getUserWithId @id='{request.session['user']['id']}'")
+        user = namedtuplefetchall(cursor)
+    if request.method == 'POST':
+        li = []
+        for i in request.POST:
+            if i!='csrfmiddlewaretoken':
+                li.append(request.POST[i])
+        user_id = user[0].id
+        saved = AllProcedures.updateUser(li,user_id)
+        print(li)
+        return redirect('professional:profile')
+    return render(request,'update_profile.html',{'user':user,'application':app,'country':country,'state':state,'city':city,'address':address})

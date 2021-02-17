@@ -178,6 +178,23 @@ class AllProcedures:
             connections = cursor.fetchall()
         return connections
 
+    @staticmethod
+    def getUserAddress(user_id):
+        address = None
+        with connection.cursor() as cursor:
+            address = cursor.execute(f"EXEC dbo.getUserAddress @user_id='{user_id}'")
+            address = dictfetchall(address)
+        return address
+
+    @staticmethod
+    def updateUser(li,user_id):
+        status = False
+        query = f"EXEC dbo.UpdateUser @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@ApplicationId='{li[4]}',@user_id='{user_id}',@street='{li[5]}',@city='{li[8]}',@zip_code='{li[9]}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
 
 
 class FastProcedures:
