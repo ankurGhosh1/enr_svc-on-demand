@@ -5,4 +5,5 @@ app_name = 'professional'
 
 urlpatterns = [
     path('dashboard/',views.dashboard,name = 'dashboard'),
+    path('profile/',views.MyProfile,name = 'profile'),
 ]

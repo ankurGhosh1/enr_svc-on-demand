@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container mt-2">
+<div class="row">
+    <div class="col-lg-5 mx-auto">
+        <div class="card">
+            <div class="card-header text-center bg-info text-light">Address Add</div>
+            <div class="card-body">
+                <form method="POST">
+                {% csrf_token %}
+                  <div class="form-group">
+                      <input type="text" name="street" class="form-control" placeholder="Street/House/Address">
+                  </div>
+                  <div class="form-group">
+                      <select name="country" id="id_country" class="form-control">
+                          <option value="" disabled selected>Select Country</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <select name="state" id="id_state" class="form-control">
+                          <option value="" disabled selected>Select State</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <select name="city" id="id_city" class="form-control">
+                          <option value="" disabled selected>Select City</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <input type="text" name="zip_code" class="form-control" placeholder="zip code">
+                  </div>
+                  <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                 </div>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{{ country|json_script:"country" }}
+{{ city|json_script:"city" }}
+{{ state|json_script:"state" }}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+    // Countries
+
+
+    var countryDiv = document.getElementById('id_country');
+    var country_arr = JSON.parse(document.getElementById('country').textContent);
+    console.log(country_arr)
+    country_arr.forEach((item, index) => {
+        countryDiv.innerHTML += "<option value=" + item.id + ">" + item.Country + "</option>";
+    });
+
+
+    $('#id_country').change(function (e) {
+        var state_arr = JSON.parse(document.getElementById('state').textContent);
+
+        var stateDiv = document.getElementById('id_state');
+        stateDiv.innerHTML = '<option value="" disabled selected>Select State</option>';
+        var cId = e.target.value;
+        state_arr.forEach((item, index) => {
+            if (cId == item.CountryId_id) {
+                stateDiv.innerHTML += "<option value=" + item.id + ">" + item.State + "</option>";
+            }
+        })
+    });
+
+
+    $('#id_state').change(function (e) {
+        var city_arr = JSON.parse(document.getElementById('city').textContent);
+        var cityDiv = document.getElementById('id_city');
+        var sId = e.target.value;
+        cityDiv.innerHTML = '<option value="" disabled selected>Select City</option>';
+        city_arr.forEach((item, index) => {
+            if (sId == item.StateId_id) {
+                cityDiv.innerHTML += "<option value=" + item.id + ">" + item.City + "</option>";
+            }
+        })
+    });
+});
+
+</script>
+
+{% endblock %}

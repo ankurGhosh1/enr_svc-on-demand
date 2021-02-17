@@ -1,18 +1,32 @@
 from django.shortcuts import *
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import connection
 from collections import namedtuple
 from svc.utils import AllProcedures
 from django.contrib.auth.hashers import make_password, check_password
 import datetime
-
+import requests as re
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import Flow
+from django.db import connection
+from django.conf import settings
 import os
+
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+
+def home(request):
+    if request.session.has_key('user'):
+        if request.session['user']['type']:
+            if request.session['user']['type'] == "Client":
+                return redirect(f'clients:dashboard')
+
+            if request.session['user']['type'] == "Professional":
+                return redirect(f'professional:dashboard')
+
+    return render(request, 'home.html')
 
 def _login(request, user, password, pass_req):
     if check_password(password, user[1]) or pass_req:
@@ -63,7 +77,7 @@ def s_complete(request):
     BASE+'/accounts/client_secret.json',
     scopes=None,
     state=state)
-    flow.redirect_uri = 'https://localhost:5000/complete/google-oauth2/'
+    flow.redirect_uri = f'{settings.HOST}/complete/google-oauth2/'
     try:
         req_state =request.META['QUERY_STRING'] if "state" in request.META['QUERY_STRING'] else request.scope['query_string']
     except:
@@ -84,8 +98,34 @@ def s_complete(request):
         request.session['user']['email'] = profile['emailAddresses'][0]['value']
     return redirect("accounts:selectusertype")
 
+# def f_begin(request):
+#     url = f"https://www.facebook.com/v9.0/dialog/oauth?response_type=token&display=popup&client_id={settings.SOCIAL_AUTH_FACEBOOK_KEY}&redirect_uri={settings.HOST}/complete/facebook/&auth_type=rerequest&scope=public_profile%2Cemail"
+#     return HttpResponseRedirect(url)
+
+def f_complete(request):
+    state = request.GET.get('state')
+    # scope = ["https://www.googleapis.com/auth/userinfo.email.read", " https://www.googleapis.com/auth/userinfo.profile"]
+    code = request.GET.get('code')
+    prompt = request.GET.get('prompt')
+    request.session['user'] = {}
+    request.session['user']['state'] = state
+    print(state, code, prompt, request.__dict__)
+    url = f'https://graph.facebook.com/v9.0/oauth/access_token?client_id={settings.SOCIAL_AUTH_FACEBOOK_KEY}&redirect_uri={settings.HOST}/complete/facebook/&client_secret={settings.SOCIAL_AUTH_FACEBOOK_SECRET}&code={code}'
+    print(url)
+    k = re.get(url)
+    res = k.json()
+    access_token = res['access_token']
+    url = f'https://graph.facebook.com/me?fields=id,name,email&access_token={access_token}'
+    k = re.get(url)
+    res = k.json()
+    request.session['user'] = {'email':res['email']}
+    user = AllProcedures.getUserWithEmail(res['email'])
+    if user:
+        return _login(request, user, "a", True)
+    return redirect("accounts:selectusertype")
+
 def selectUserType(request):
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applcationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
     if request.method=='POST':
         type = request.POST.get('userType');
@@ -101,6 +141,9 @@ def selectUserType(request):
             li = li[0:2]+[request.session['user']['email']]+li[2:]
             print(li)
             AllProcedures.createUserWithType(li)
+        user = AllProcedures.getUserWithEmail(request.session['user']['email'])
+        if user:
+            return _login(request, user, "a", True)
     return render(request, 'registration/selectType.html', {'application':app})
 
 
@@ -120,7 +163,7 @@ def signup(request):
     cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_applcationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
@@ -142,3 +185,29 @@ def logout(request):
     except:
         pass
     return redirect('accounts:login')
+
+
+
+
+def addressAdd(request):
+    country = AllProcedures.getCountry()
+    state = AllProcedures.getState()
+    city = AllProcedures.getCityByState()
+    print(country, state, city)
+    if request.method == 'POST':
+        li = []
+        for i in request.POST:
+            if i!='csrfmiddlewaretoken':
+                li.append(request.POST[i])
+                li.append(request.session['user']['id'])
+        print(li)
+        saved = AllProcedures.addressAddUser(li)
+        print(li)
+        user = AllProcedures.getUserWithEmail(request.session['user']['email'])
+        type = AllProcedures.getUserType(user[-1])
+        if (type and type[0] == "Customer"):
+            return redirect('clients:dashboard')
+        elif (type and type[0] == "Professional"):
+            return redirect('professional:dashboard')
+    print(AllProcedures.getAddressList())
+    return render(request,'address_add.html',{'country':country,'state':state,'city':city})

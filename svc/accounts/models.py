@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from tinymce.models import HTMLField
 
 
 
@@ -44,9 +44,26 @@ class UserList(AbstractUser):
         return self.email
 
 
+class CountryList(models.Model):
+    Country = models.CharField(max_length=100,blank=True,null=True)
+    IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.Country
+
+
+class StateList(models.Model):
+    State = models.CharField(max_length=100,blank=True,null=True)
+    CountryId = models.ForeignKey(CountryList,on_delete=models.CASCADE, null=True)
+    IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.State
+
 
 class CityList(models.Model):
     City = models.CharField(max_length=100)
+    StateId = models.ForeignKey(StateList,on_delete=models.CASCADE, null=True)
     Latitude = models.FloatField()
     Longitude = models.FloatField()
     AddedBy = models.ForeignKey(UserList, on_delete=models.SET_NULL, null=True)
@@ -57,6 +74,18 @@ class CityList(models.Model):
 
     def __str__(self):
         return self.City
+
+
+class AddressList(models.Model):
+    Street = models.CharField(max_length=500,blank=True,null=True)
+    CityId = models.ForeignKey(CityList,on_delete=models.CASCADE, null=True)
+    ZipCode = models.CharField(max_length=50, blank=True, null=True)
+    user = models.ForeignKey(UserList, on_delete=models.CASCADE)
+    AddedDate = models.DateField(auto_now_add=True)
+    IsActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.Street
 
 
 
@@ -152,6 +181,7 @@ class SubscriptionDetailList(models.Model):
 
 class TopicList(models.Model):
     TopicName = models.CharField(max_length=300)
+    content = HTMLField()
     TopicDate = models.DateField(auto_now_add=True)
     Category = models.ForeignKey(CategoryList, on_delete=models.CASCADE)
     SubCategory = models.ForeignKey(SubCategoryList, on_delete=models.CASCADE)
@@ -172,9 +202,14 @@ class TopicList(models.Model):
     WhatsAppText = models.CharField(max_length=1000, null=True)
 
 
+def get_upload_path(instance, filename):
+    return '{0}/{1}'.format(instance.Topic.TopicName, filename)
+
+
 class AssetsDetailList(models.Model):
+
     Topic = models.ForeignKey(TopicList, on_delete=models.SET_NULL, null=True)
-    FileName = models.CharField(max_length=1000, null=True, default=None)
+    FileName = models.FileField(upload_to=get_upload_path)
     FileExtension = models.CharField(max_length=50, null=True, default=None)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)

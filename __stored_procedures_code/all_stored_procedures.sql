@@ -29,7 +29,6 @@ INSERT INTO [dbo].[accounts_userlist]
 		   ,[first_name]
            ,[last_name]
            ,[email]
-		   ,[UserEmail]
            ,[ContactCell]
 		   ,[password]
            ,[UserType_id]
@@ -43,7 +42,6 @@ VALUES
 		@email,
 		@first_name,
 		@last_name,
-		@email,
 		@email,
 		@ContactCell,
 		@password,
@@ -83,6 +81,22 @@ AS
 
 SELECT [message],[side] FROM [dbo].[accounts_chatrecord] WHERE [client_id] = @client_id AND [professional_id] = @professional_id
 GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getClientConnections]
+	@client_id int = NULL
+AS
+SELECT [professional_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[client_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[client_id]=@client_id
+GO
+
+CREATE PROCEDURE [dbo].[getProfessionalConnections]
+	@professinoal_id int = NULL
+AS
+SELECT [client_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[professional_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[professional_id]=@professinoal_id
+GO
+
 
 
 
@@ -149,7 +163,6 @@ INSERT INTO [dbo].[accounts_userlist]
 		   ,[first_name]
            ,[last_name]
            ,[email]
-		   ,[UserEmail]
            ,[ContactCell]
 		   ,[password]
            ,[UserType_id]
@@ -163,7 +176,6 @@ VALUES
 		@email,
 		@first_name,
 		@last_name,
-		@email,
 		@email,
 		@ContactCell,
 		@password,
@@ -200,7 +212,7 @@ CREATE PROCEDURE [dbo].[addJobPost]
 	@SubCategory_id int = NULL,
 	@UpdatedBy_id int = NULL,
 	@User_id int = NULL
-	 
+
 AS
 INSERT INTO [dbo].[accounts_topiclist]
            ([TopicName]
@@ -278,7 +290,7 @@ CREATE PROCEDURE [dbo].[updateJobPost]
 	@ForceCloseCategory_id int = NULL,
 	@SubCategory_id int = NULL,
 	@User_id int = NULL
-	 
+
 AS
 UPDATE [dbo].[accounts_topiclist]
    SET     [TopicName]=@TopicName,
@@ -299,6 +311,7 @@ UPDATE [dbo].[accounts_topiclist]
 WHERE id = @id
 GO
 
+<<<<<<< HEAD
 --  Delete Job
 
 USE [testenr]
@@ -308,3 +321,121 @@ CREATE PROCEDURE [dbo].[deleteJob]
 AS
 DELETE FROM [dbo].[accounts_topiclist] WHERE [id] = @id
 GO
+=======
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getEachJob]
+	@id int = NULL
+AS
+Select * from [dbo].[accounts_topiclist] WHERE id=@id
+GO
+
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getMyJobs]
+	@user_id int = NULL
+AS
+Select * from [dbo].[accounts_topiclist] WHERE AddedBy_id=@user_id
+GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getAllJobs]
+AS
+Select * from [dbo].[accounts_topiclist]
+GO
+
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[createTopicAsset]
+	@addedby_id int = NULL,
+	@updatedby_id int = NULL,
+	@added_date datetime2(7) = NULL,
+	@updated_date datetime2(7) = NULL,
+	@topic_id int = NULL,
+	@file_name nvarchar(100) = NULL,
+	@file_ext nvarchar(50) = NULL
+AS
+
+INSERT INTO [dbo].[accounts_assetsdetaillist]
+           ([FileName]
+           ,[FileExtension]
+           ,[AddedDate]
+           ,[UpdatedDate]
+           ,[IsActive]
+           ,[AddedBy_id]
+           ,[Topic_id]
+           ,[UpdatedBy_id])
+     VALUES
+           (@file_name
+		   ,@file_ext
+		   ,@added_date
+		   ,@updated_date
+		   ,1
+		   ,@addedby_id
+		   ,@topic_id
+		   ,@updatedby_id)
+GO
+
+
+
+
+-- Update Job
+
+
+USE [baghiService]
+GO
+
+CREATE PROCEDURE [dbo].[updateJob]
+	@id int = NULL,
+	@content nvarchar(max) = NULL,
+	@TopicName nvarchar(300) = NULL,
+	@TopicDate datetime2(7) = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@UpdatedDate datetime2(7) = NULL,
+	@IsActive bit = 0,
+	@IsClose bit = 1,
+	@CloseDate datetime2(7) = NULL,
+	@ForceCloseReason nvarchar(3999) = NULL,
+	@IsNotification bit = 0,
+	@SMS nvarchar(150) = NULL,
+	@whatsApp nvarchar(1000) = NULL,
+	@AddedBy_id int = NULL,
+	@Category_id int = NULL,
+	@City_id int = NULL,
+	@CloseBy_id int = NULL,
+	@ForceClose_id int = NULL,
+	@subCat_id int = NULL,
+	@UpdatedBy_id int = NULL
+
+
+AS
+UPDATE [dbo].[accounts_topiclist]
+   SET [TopicName] = @TopicName
+      ,[UpdatedDate] = @UpdatedDate
+      ,[IsActive] = @isActive
+      ,[IsClose] = @isClose
+      ,[CloseDate] = @closeDate
+      ,[ForceCloseReason] = @ForceCloseReason
+      ,[IsNotification] = @isNotification
+      ,[SMSText] = @SMS
+      ,[WhatsAppText] = @whatsApp
+      ,[Category_id] = @category_id
+      ,[City_id] = @City_id
+      ,[CloseBy_id] = @closeBy_id
+      ,[ForceCloseCategory_id] = @ForceClose_id
+      ,[SubCategory_id] = @subCat_id
+      ,[UpdatedBy_id] = @UpdatedBy_id
+      ,[content] = @content
+ WHERE id=@id
+GO
+>>>>>>> 303ca3336d958deabc5b5945bb0aa4aa172923a9

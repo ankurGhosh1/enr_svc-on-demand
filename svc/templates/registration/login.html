@@ -1,30 +1,72 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-2">
+<style media="screen">
+  .bg-svc{
+    background:white;
+    color:black !important;
+  }
+</style>
+<script type="text/javascript">
+  document.getElementsByClassName('navbar-dark')[0].classList.add('navbar-light')
+  document.getElementsByClassName('navbar-dark')[0].classList.remove('navbar-dark')
+  var k = document.getElementsByClassName('btn-outline-light');
+  Array.from(k).forEach((i)=>{i.classList.add('btn-outline-dark');i.classList.remove('btn-outline-light');})
+</script>
+<div class="h-100 p-5">
+  <div class="container text-center m-auto">
     <div class="row">
-        <div class="col-lg-6 mx-auto">
-        <div class="card">
-            <div class="card-header">Login</div>
-            <div class="card-body">
-            <form action="{% url 'accounts:login' %}" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="">Email</label>
-                    <input type="email" class="form-control" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="">Password</label>
-                    <input type="password" class="form-control" name="password">
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Login" class="btn btn-block btn-primary">
-                </div>
-            </form>
-            <a href="{% url "social:begin" "google-oauth2" %}">Google+</a>
+      <div class="col-lg-4 col-sm-6 mx-auto">
+        <div class="rounded social facebook mb-3">
+          <a href="{% url 'social:begin' 'facebook' %}" class="row p-3 text-white">
+            <div class="ml-4">
+              <i class="fa fa-facebook"></i>
             </div>
+            <div class="m-auto">
+              <h5 class="m-auto">Continue with Facebook</h5>
+            </div>
+          </a>
         </div>
+        <div class="border social rounded mb-3">
+          <a href="{% url "social:begin" "google-oauth2" %}" class="row p-3 text-dark">
+            <div class="ml-4">
+              <i class=" text-danger fa fa-google"></i>
+            </div>
+            <div class="m-auto">
+              <h5 class="m-auto">Continue with Google</h5>
+            </div>
+          </a>
         </div>
+      </div>
     </div>
+
+    <div class="col-lg-4 col-sm-6 mb-4 mt-3 mx-auto">
+      <h5 class="partners text-secondary">
+        <span>
+          OR
+        </span>
+      </h5>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4 col-sm-6 mx-auto">
+        <form action="{% url 'accounts:login' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="email" class="form-control" placeholder="Enter Email" name="email">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Enter Password" name="password">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn bg-svc-match border-0 btn-block btn-primary"><h5>Login</h5></button>
+            </div>
+        </form>
+        <div class="text-left">
+          <small class="text-secondary">Not a member? <a href="{% url 'accounts:signup' %}">Signup</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

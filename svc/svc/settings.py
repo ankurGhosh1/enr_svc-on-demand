@@ -31,15 +31,16 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sslserver',
 
-
-
+    'chatApp',
     'social_django',
 
     'phonenumber_field',
@@ -48,8 +49,23 @@ INSTALLED_APPS = [
     'clients',
     'accounts',
     'professional',
+    'tinymce',
 
 ]
+
+
+DJRICHTEXTFIELD_CONFIG = {
+    'js': ['//cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js'],
+    'init_template': 'djrichtextfield/init/tinymce.js',
+    'settings': {
+        'menubar': False,
+        'plugins': 'link image',
+        'toolbar': 'bold italic | link image | removeformat',
+        'width': 700
+    }
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,9 +113,12 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '489488048195-rqb0k714dkc3kuj45q0cgvd9f5ksl8ee.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'HKfwK7VvZfmlIgpXpXrHSvgW'
-
+HOST = 'https://localhost:5000'
+SOCIAL_AUTH_FACEBOOK_KEY = '116954303618847'
+SOCIAL_AUTH_FACEBOOK_SECRET = '3fb07848389c705bf5bbec4773d2c69f'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 WSGI_APPLICATION = 'svc.wsgi.application'
-# ASGI_APPLICATION = 'svc.asgi.application'
+ASGI_APPLICATION = 'svc.asgi.application'
 
 
 CHANNEL_LAYERS = {
@@ -124,8 +143,8 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
     'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'testenr',
-        'HOST': 'INDIANLEO',
+        'NAME': 'baghiService',
+        'HOST': 'DESKTOP-IUNO0HB',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
@@ -169,6 +188,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 

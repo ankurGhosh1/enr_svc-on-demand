@@ -1,6 +1,16 @@
 from django.db import connection
 import datetime
 
+
+
+def dictfetchall(cursor):
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
+
 class AllProcedures:
 
     @staticmethod
@@ -30,7 +40,7 @@ class AllProcedures:
     @staticmethod
     def createUser(li):
         status = False
-        query = f"EXEC dbo.addUser  @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@password='{li[4]}',@UserTypeId='{li[5]}',@ApplicationId='{li[6]}',@date_joined='{datetime.datetime.now()}';"
+        query = f"EXEC dbo.addUser @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@password='{li[4]}',@UserTypeId='{li[5]}',@ApplicationId='{li[6]}',@date_joined='{datetime.datetime.now()}';"
         with connection.cursor() as cursor:
             cursor.execute(query)
             status = True
@@ -65,10 +75,40 @@ class AllProcedures:
     @staticmethod
     def createjob(li):
         status = False
+        id = None
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[1]}', @SubCategory_id='{li[2]}', @City_id='{li[3]}', @User_id='{li[4]}', @AddedBy_id='{li[5]}', @IsActive={1}, @IsClose='{0}', @IsNotification='{1}'")
+            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{li[7]}', @AddedBy_id='{li[7]}', @IsActive='True', @IsClose='False', @IsNotification='True'")
+            id = cursor.execute('SELECT @@IDENTITY AS [@@IDENTITY];')
+            print(id)
+            id = id.fetchall()
+            status = True
+        return status, id[0][0]
+
+
+    @staticmethod
+    def updatejob(id=None, TopicName=None, content=None, Category=None, SubCategory=None, City=None, User=None, AddedBy=None, UpdatedBy=None, IsActive=1, CloseBy=None, IsClose=0, ForceCloseReason=None, ForceCloseCategory=None, IsNotification=1, SMSText=None, WhatsAppText=None):
+        status = False
+        closeDate = None
+        closeBy_id = None
+        fc_id = None
+        UpdatedBy = User
+        if IsNotification=='on':
+            IsNotification = 1
+        if IsActive=="on":
+            IsActive = 1
+        if IsClose:
+            IsClose = 0
+            closeDate = datetime.datetime.now()
+            closeBy_id = User
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsClose='{IsClose}', @CloseDate='{closeDate}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @CloseBy_id='{closeBy_id}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+        else:
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+        print(id)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
             status = True
         return status
+
 
     @staticmethod
     def getjobs():
@@ -76,6 +116,7 @@ class AllProcedures:
             alljobs = cursor.execute(f"EXEC dbo.getAllJobs")
         return alljobs
 
+<<<<<<< HEAD
     # @staticmethod
     # def updateJobPost(li):
     #     with connection.cursor() as cursor:
@@ -93,3 +134,79 @@ class AllProcedures:
 
 
     
+=======
+
+    @staticmethod
+    def getCountry():
+        with connection.cursor() as cursor:
+            country = cursor.execute(f"EXEC dbo.getCountry")
+            country = dictfetchall(country)
+        return country
+
+    @staticmethod
+    def getState():
+        with connection.cursor() as cursor:
+            state = cursor.execute(f"EXEC dbo.getState")
+            state = dictfetchall(state)
+        return state
+
+    @staticmethod
+    def getCity():
+        with connection.cursor() as cursor:
+            city = cursor.execute(f"EXEC dbo.getCity")
+            city = dictfetchall(city)
+        return city
+
+    @staticmethod
+    def getCityByState():
+        with connection.cursor() as cursor:
+            city = cursor.execute(f"EXEC dbo.getCityByState")
+            city = dictfetchall(city)
+        return city
+
+    @staticmethod
+    def addressAddUser(li):
+        status = False
+        query = f"EXEC dbo.addUserAddressList  @street='{li[0]}',@zip_code='{li[8]}',@added_date='{datetime.datetime.now()}',@user_id='{li[9]}',@city='{li[6]}', @IsActive=1;"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
+    @staticmethod
+    def getAddressList():
+        with connection.cursor() as cursor:
+            address = cursor.execute(f"EXEC dbo.getAddressList")
+            address = dictfetchall(address)
+        return address
+
+    @staticmethod
+    def getProfessionalConnections(user_id):
+        connections = None
+        with connection.cursor() as cursor:
+            cursor.execute(f'EXEC dbo.getProfessionalConnections @professinoal_id="{user_id}"')
+            connections = cursor.fetchall()
+        return connections
+
+
+    @staticmethod
+    def getClientConnections(user_id):
+        connections = None
+        with connection.cursor() as cursor:
+            cursor.execute(f'EXEC dbo.getClientConnections @client_id="{user_id}"')
+            connections = cursor.fetchall()
+        return connections
+
+
+
+class FastProcedures:
+    @staticmethod
+    def execute_query(query):
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+        return True
+
+    @staticmethod
+    def asset_query_add(file_name, file_ext, added_date, updated_date, addedby_id, topic_id, updatedby_id):
+        return f"EXEC dbo.createTopicAsset @file_name='{file_name}', @file_ext='{file_ext}', @added_date='{added_date}', @updated_date='{updated_date}', @addedby_id='{addedby_id}', @topic_id='{topic_id}', @updatedby_id='{updatedby_id}';"
+>>>>>>> 303ca3336d958deabc5b5945bb0aa4aa172923a9

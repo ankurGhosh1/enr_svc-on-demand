@@ -1,65 +1,140 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-2">
+<style media="screen">
+  .bg-svc{
+    background:white;
+    color:black !important;
+  }
+</style>
+<script type="text/javascript">
+  document.getElementsByClassName('navbar-dark')[0].classList.add('navbar-light')
+  document.getElementsByClassName('navbar-dark')[0].classList.remove('navbar-dark')
+  var k = document.getElementsByClassName('btn-outline-light');
+  Array.from(k).forEach((i)=>{i.classList.add('btn-outline-dark');i.classList.remove('btn-outline-light');})
+</script>
+
+
+
+<div class="h-100 p-5">
+  <div class="container text-center m-auto">
     <div class="row">
-        <div class="col-lg-10 mx-auto">
-        <div class="card">
-            <div class="card-header">Signup</div>
-            <div class="card-body">
-            <form action="{% url 'accounts:signup' %}" method="post">
-                {% csrf_token %}
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-group">
-                    <label for="">First Name</label>
-                    <input type="text" class="form-control" name="first_name">
-                </div>
-                    <div class="form-group">
-                    <label for="">Last Name</label>
-                    <input type="text" class="form-control" name="last_name">
-                </div>
-                    <div class="form-group">
-                    <label for="">Email</label>
-                    <input type="email" class="form-control" name="email">
-                </div>
-                    <div class="form-group">
-                    <label for="">Contact</label>
-                    <input type="text" class="form-control" name="contact">
-                </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-group">
-                    <label for="">Password</label>
-                    <input type="password" class="form-control" name="password">
-                </div>
-                    <div class="form-group">
-                        <label for="">Type</label>
-                    <select name="user_type" class="form-control" >
-                        <option disabled selected>Select Type</option>
-                        {% for t in user_type %}
-                        <option value="{{ t.id }}">{{ t.UserType }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                    <div class="form-group">
-                        <label for="">Application</label>
-                    <select name="application" class="form-control" >
-                        <option disabled selected>Select Application </option>
-                        {% for a in application %}
-                        <option value="{{ a.id }}">{{ a.ApplicationName }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                    <div class="form-group">
-                    <input type="submit"  class="btn btn-block btn-primary">
-                </div>
-                </div>
+      <div class="col-lg-4 col-sm-6 mx-auto">
+        <div class="rounded social facebook mb-3">
+          <a href="{% url 'social:begin' 'facebook' %}" class="row p-3 text-white">
+            <div class="ml-4">
+              <i class="fa fa-facebook"></i>
             </div>
-            </form>
+            <div class="m-auto">
+              <h5 class="m-auto">Continue with Facebook</h5>
             </div>
+          </a>
         </div>
+        <div class="border social rounded mb-3">
+          <a href="{% url "social:begin" "google-oauth2" %}" class="row p-3 text-dark">
+            <div class="ml-4">
+              <i class=" text-danger fa fa-google"></i>
+            </div>
+            <div class="m-auto">
+              <h5 class="m-auto">Continue with Google</h5>
+            </div>
+          </a>
         </div>
+      </div>
     </div>
+
+    <div class="col-lg-10 col-sm-6 mb-4 mt-3 mx-auto">
+      <h5 class="partners text-secondary">
+        <span>
+          OR
+        </span>
+      </h5>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-10 col-sm-6 mx-auto">
+        <form action="{% url 'accounts:signup' %}" onsubmit="validate(event)" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="First Name" name="first_name">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="Last Name" name="last_name">
+                </div>
+                <div class="form-group">
+                  <input type="email" class="form-control" placeholder="Email" name="email">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="Contact" name="contact">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                  <input type="password" class="form-control" placeholder="Password" name="password">
+                </div>
+                <div class="form-group">
+                    <select name="user_type" class="form-control" >
+                      <option disabled selected>Select Type</option>
+                      {% for t in user_type %}
+                      <option value="{{ t.id }}">{{ t.UserType }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                  <select name="application" class="form-control" >
+                      <option disabled selected>Select Application </option>
+                      {% for a in application %}
+                      <option value="{{ a.id }}">{{ a.ApplicationName }}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+            </div>
+        </div>
+
+            <div class="form-group">
+                <button type="submit" id="submitBtn" class="btn bg-svc-match border-0 btn-block btn-primary"><h5>Signup</h5></button>
+            </div>
+        </form>
+        <div class="help" id="help">
+
+        </div>
+        <div class="text-left">
+          <small class="text-secondary">Already a member? <a href="{% url 'accounts:login' %}">Login</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+<script type="text/javascript">
+var inputs = document.getElementsByTagName("input");
+var help = document.getElementById("help");
+function validate(event){
+  for (let i=0;i<inputs.length;i++){
+    if(inputs[i].value.indexOf("script")>-1 || inputs[i].value.indexOf("<")>-1){
+      disable();
+      help.innerHTML = "<h4>Use the fields as they should be...........</h4>"
+      break;
+    } else {
+      enable();
+      help.innerHTML = ""
+    }
+  }
+}
+for (let i=0;i<inputs.length;i++){
+  inputs[i].setAttribute('oninput', 'validate(event)');
+}
+
+function disable(){
+  console.log("hua")
+  var submitBtn = document.getElementById('submitBtn');
+  submitBtn.setAttribute('disabled', 'true');
+}
+function enable(){
+  console.log("hua")
+  var submitBtn = document.getElementById('submitBtn');
+  submitBtn.removeAttribute('disabled');
+}
+</script>
 {% endblock %}

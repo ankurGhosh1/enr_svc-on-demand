@@ -3,14 +3,60 @@
 
 {% block content %}
 
-<div class="container">
-    <form method="POST">
-        {% csrf_token %}
-        <div class="row">
-            {{ form.as_p }}
+<head>
+  {{ form.media }}
+</head>
+{{ categories|json_script:"cats" }}
+{{ sub_categories|json_script:"subCats" }}
+
+
+
+<div class="">
+  <section class="bg-svc">
+    <div class="p-5">
+      <div class="container p-3 text-white">
+        <div class="mx-auto text-left p-3">
+          <h3 class="banner-h1">Update Job :</h3>
         </div>
-        <button class="btn btn-primary" type="submit">Update Job</button>
-    </form>
+      </div>
+    </div>
+  </section>
+
+<div class="container p-5 over-me border rounded shadow bg-white mt-3">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table class="table">
+      {{form.as_table}}
+    </table>
+
+    <button type="submit" class="btn btn-primary border-0 bg-svc-match">Update</button>
+  </form>
 </div>
+<br><br><br><br><br>
+
+
+<script type="text/javascript">
+  var cats = JSON.parse(document.getElementById('cats').textContent);
+  var subCats = JSON.parse(document.getElementById('subCats').textContent);
+  var catDiv = document.getElementById('id_category');
+  var subCatDiv = document.getElementById('id_sub_category');
+  cats.forEach((item, index) => {
+      catDiv.innerHTML+=`<option value=${item[0]}>${item[1]}</option>`;
+  })
+
+
+  function makeSubCat(event){
+    var catId = event.target.value;
+    subCatDiv.innerHTML = '<option value="" selected="">---------</option>';
+    subCats.forEach((item, index)=>{
+      if(catId==item[1]){
+        subCatDiv.innerHTML+=`<option value=${item[0]}>${item[2]}</option>`;
+      }
+    })
+  }
+
+  console.log(cats, subCats);
+</script>
+
 
 {% endblock content %}
