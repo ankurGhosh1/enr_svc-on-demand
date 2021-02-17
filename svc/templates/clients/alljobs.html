@@ -18,7 +18,7 @@
     <div class="container p-5 over-me border rounded shadow bg-white mt-3">
       <div class="row">
         {% for job in jobs %}
-        <div class="col-sm-4">
+        <div class="col-sm-4 mt-3">
           <div class="">
             <div class="border p-2 rounded">
               <a href="/client/alljobs/{{job.id}}/"><div>{{job.TopicName}}/{{job.AddedDate}}-{{job.City.id}} {{job.Category_id}}</div></a>

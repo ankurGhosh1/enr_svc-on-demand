@@ -21,7 +21,7 @@ def home(request):
     if request.session.has_key('user'):
         if request.session['user']['type']:
             if request.session['user']['type'] == "Client":
-                return redirect(f'client:dashboard')
+                return redirect(f'clients:dashboard')
 
             if request.session['user']['type'] == "Professional":
                 return redirect(f'professional:dashboard')
@@ -200,6 +200,7 @@ def addressAdd(request):
             if i!='csrfmiddlewaretoken':
                 li.append(request.POST[i])
                 li.append(request.session['user']['id'])
+        print(li)
         saved = AllProcedures.addressAddUser(li)
         print(li)
         user = AllProcedures.getUserWithEmail(request.session['user']['email'])

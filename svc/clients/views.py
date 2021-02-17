@@ -21,41 +21,10 @@ from django.db import connection
 
 def dashboard(request):
     cursor = connection.cursor()
-    address = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_addresslist WHERE AddedBy_id = %s", [request.session['user']['id']]).fetchone()[0]
+    address = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_addresslist WHERE user_id = %s", [request.session['user']['id']]).fetchone()[0]
     if address == 0 :
         return redirect('accounts:address_add')
-    return render(request, 'professional/dashboard.html')
-
-
-
-def chat(request, user_id):
-    chatRoom = None
-    messages = []
-    if request.session.has_key('user'):
-        user = AllProcedures.getUserWithId(user_id)
-        name = user[5]
-        my_id = request.session['user']['id']
-        if not request.session['user']['type']=="Professional":
-            messages = AllProcedures.getChatRecord(client_id=my_id, professional_id=user_id)
-            room_name = f'chat{user_id}{my_id}s'
-            professional_id = user_id
-            client_id = my_id
-            messages = [(i[0], i[1], name) for i in messages]
-        else:
-            messages = AllProcedures.getChatRecord(client_id=user_id, professional_id=my_id)
-            room_name = f'chat{my_id}{user_id}s'
-            professional_id = my_id
-            client_id = user_id
-            messages = [(i[0], not i[1], name) for i in messages]
-        context = {
-            'senderId': (user_id, name),
-            'room_name':room_name,
-            'messages': messages,
-            'professional_id':professional_id,
-            'client_id':client_id
-        }
-        return render(request, 'chatroom.html', context)
-    return redirect('accounts:login')
+    return render(request, 'clients/dashboard.html')
 
 
 def dictfetchall(cursor):
@@ -85,6 +54,8 @@ class JobPostView(generic.CreateView):
             query = ''
             now = datetime.datetime.now()
             user_id = request.session['user']['id']
+            li.append(request.session['user']['id'])
+            print(li)
             _, id = AllProcedures.createjob(li)
             print(id, request.FILES)
             for i in request.FILES:
@@ -140,21 +111,25 @@ class JobUpdateView(generic.UpdateView):
     #     return reverse("clients:alljobs")
 
     def get(self, request, pk):
-        form_class = {'form': JobUpdateForm}
         pk = self.kwargs.get('pk')
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
         eachjob = dictfetchall(cursor)
+        print(eachjob)
+        form_class = {'form': JobUpdateForm(instance=TopicList(**eachjob[0]))}
         return render(request, 'clients/jobupdate.html', form_class)
 
     def post(self, request, pk):
         if request.method == 'POST':
-            li = [request.user.email, request.user.City]
+            li = [request.session['user']['email']]
+            dict = {'id':pk, 'User':request.session['user']['id']}
             for i in request.POST:
                 if i != 'csrfmiddlewaretoken':
                     li.append(request.POST[i])
-            saved = AllProcedures.createjob(li)
-            return redirect('/alljobs')
+                    dict[i] = request.POST[i]
+            print(dict)
+            saved = AllProcedures.updatejob(**dict)
+            return redirect('clients:alljobs')
 
 
 
@@ -226,6 +201,3 @@ class JobUpdateView(generic.UpdateView):
 #
 #     def get_success_url(self):
 #         return reverse("clients:alljobs")
-#
-#
-#

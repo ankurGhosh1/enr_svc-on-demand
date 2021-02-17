@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('', include('social_django.urls', namespace='social')),
     path('client/', include('clients.urls')),
+    path('chatApp/', include('chatApp.urls')),
     path('professional/', include('professional.urls')),
     path('', include('django.contrib.auth.urls')),
     path('tinymce/', include('tinymce.urls')),

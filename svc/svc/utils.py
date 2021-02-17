@@ -77,12 +77,38 @@ class AllProcedures:
         status = False
         id = None
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{li[5]}', @AddedBy_id='{li[6]}', @IsActive='True', @IsClose='False', @IsNotification='True'")
+            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{li[7]}', @AddedBy_id='{li[7]}', @IsActive='True', @IsClose='False', @IsNotification='True'")
             id = cursor.execute('SELECT @@IDENTITY AS [@@IDENTITY];')
             print(id)
             id = id.fetchall()
             status = True
         return status, id[0][0]
+
+
+    @staticmethod
+    def updatejob(id=None, TopicName=None, content=None, Category=None, SubCategory=None, City=None, User=None, AddedBy=None, UpdatedBy=None, IsActive=1, CloseBy=None, IsClose=0, ForceCloseReason=None, ForceCloseCategory=None, IsNotification=1, SMSText=None, WhatsAppText=None):
+        status = False
+        closeDate = None
+        closeBy_id = None
+        fc_id = None
+        UpdatedBy = User
+        if IsNotification=='on':
+            IsNotification = 1
+        if IsActive=="on":
+            IsActive = 1
+        if IsClose:
+            IsClose = 0
+            closeDate = datetime.datetime.now()
+            closeBy_id = User
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsClose='{IsClose}', @CloseDate='{closeDate}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @CloseBy_id='{closeBy_id}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+        else:
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+        print(id)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
 
     @staticmethod
     def getjobs():
@@ -122,7 +148,7 @@ class AllProcedures:
     @staticmethod
     def addressAddUser(li):
         status = False
-        query = f"EXEC dbo.addUserAddressList  @street='{li[0]}',@zip_code='{li[8]}',@added_date='{datetime.datetime.now()}',@user_id='{li[9]}',@city='{li[6]}';"
+        query = f"EXEC dbo.addUserAddressList  @street='{li[0]}',@zip_code='{li[8]}',@added_date='{datetime.datetime.now()}',@user_id='{li[9]}',@city='{li[6]}', @IsActive=1;"
         with connection.cursor() as cursor:
             cursor.execute(query)
             status = True
@@ -134,6 +160,23 @@ class AllProcedures:
             address = cursor.execute(f"EXEC dbo.getAddressList")
             address = dictfetchall(address)
         return address
+
+    @staticmethod
+    def getProfessionalConnections(user_id):
+        connections = None
+        with connection.cursor() as cursor:
+            cursor.execute(f'EXEC dbo.getProfessionalConnections @professinoal_id="{user_id}"')
+            connections = cursor.fetchall()
+        return connections
+
+
+    @staticmethod
+    def getClientConnections(user_id):
+        connections = None
+        with connection.cursor() as cursor:
+            cursor.execute(f'EXEC dbo.getClientConnections @client_id="{user_id}"')
+            connections = cursor.fetchall()
+        return connections
 
 
 

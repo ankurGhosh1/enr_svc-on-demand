@@ -47,7 +47,11 @@ a:hover{
 
 .bg-svc-match{
   background: #1dbf73;
+  transition: all .3s;
+}
 
+.bg-match-nh{
+  background: #1dbf73;
 }
 
 .bg-svc-match:hover{
