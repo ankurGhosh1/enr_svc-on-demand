@@ -122,8 +122,8 @@ class CategoryList(models.Model):
 
 class CategoryInCity(models.Model):
     city = models.ForeignKey(CityList, on_delete=models.CASCADE)
-    category = models.ForeignKey(CategoryList, on_delete=models.SET_NULL)
-    
+    category = models.ForeignKey(CategoryList, null=True, on_delete=models.SET_NULL)
+
 
 
 
@@ -191,7 +191,6 @@ class TopicList(models.Model):
     content = HTMLField()
     TopicDate = models.DateField(auto_now_add=True)
     Category = models.ForeignKey(CategoryList, on_delete=models.CASCADE)
-    SubCategory = models.ForeignKey(SubCategoryList, on_delete=models.CASCADE)
     City = models.ForeignKey(CityList, on_delete=models.CASCADE)
     User = models.ForeignKey(UserList, related_name="Topic_Subscriber", on_delete=models.CASCADE)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
@@ -239,6 +238,9 @@ class TopicDetailList(models.Model):
     IsActive = models.BooleanField(default=True)
 
 
+class TopicSubCats(models.Model):
+    Topic = models.ForeignKey(TopicList, on_delete=models.SET_NULL, null=True)
+    subcat = models.ForeignKey(SubCategoryList, on_delete=models.CASCADE)
 
 
 class NotificationList(models.Model):

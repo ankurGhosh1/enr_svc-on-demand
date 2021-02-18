@@ -73,16 +73,17 @@ class AllProcedures:
         return status
 
     @staticmethod
-    def createjob(li):
+    def createjob(TopicName, content, Category, City, User, **kwargs):
         status = False
         id = None
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{li[7]}', @AddedBy_id='{li[7]}', @IsActive='True', @IsClose='False', @IsNotification='True'")
+            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{TopicName}', @content='{content}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{Category}', @City_id='{City}', @User_id='{User}', @AddedBy_id='{User}', @IsActive='True', @IsClose='False', @IsNotification='True'")
             id = cursor.execute('SELECT @@IDENTITY AS [@@IDENTITY];')
             print(id)
             id = id.fetchall()
             status = True
         return status, id[0][0]
+
 
 
     @staticmethod
@@ -203,6 +204,10 @@ class FastProcedures:
         with connection.cursor() as cursor:
             cursor.execute(query)
         return True
+
+    @staticmethod
+    def subcat_query_add(topic_id, subcat_id):
+        return f"EXEC dbo.createTopicSubCat @TopidId='{topic_id}', @subCatId='{subcat_id}';"
 
     @staticmethod
     def asset_query_add(file_name, file_ext, added_date, updated_date, addedby_id, topic_id, updatedby_id):

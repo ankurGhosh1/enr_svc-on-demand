@@ -2,15 +2,17 @@ from django.shortcuts import render, redirect, reverse
 from django.views import generic
 from django.http import HttpResponse
 from accounts.models import UserList
-from .forms import JobPostForm, JobUpdateForm, AssetsForm
+from .forms import JobPostForm, JobUpdateForm, AssetsForm, TopicSubCatsForm
 from django.views.generic import View
 from django.db import connection
 from svc.utils import AllProcedures, FastProcedures
 from django.forms import inlineformset_factory
-from accounts.models import TopicList, AssetsDetailList
+from accounts.models import TopicList, AssetsDetailList, TopicSubCats
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.views.decorators.csrf import csrf_exempt
 import os
+from django.http import JsonResponse
 import datetime
 from django.db import connection
 
@@ -35,10 +37,41 @@ def dictfetchall(cursor):
     ]
 
 
+
+def getSubCats(request):
+    if request.method=='POST':
+        print(request)
+        cat_id = request.POST['cat_id']
+        cursor = connection.cursor()
+        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
+        subCategory =  dictfetchall(subCategory)
+        print(subCategory)
+        return JsonResponse(subCategory, safe=False)
+
+def getCats(request):
+    if request.method=='POST':
+        print(request)
+        city_id = request.POST['city_id']
+        cursor = connection.cursor()
+        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM baghiService.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
+        subCategory =  dictfetchall(subCategory)
+        print(subCategory)
+        return JsonResponse(subCategory, safe=False)
+
+
+
+
 class JobPostView(generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
     def get(self, request):
-        form_class = {'form': JobPostForm, 'assetsform': self.assetForm}
+        cursor = connection.cursor()
+        city = cursor.execute("SELECT * FROM baghiService.dbo.accounts_citylist")
+        city =  dictfetchall(city)
+        category = cursor.execute("SELECT * FROM baghiService.dbo.accounts_categorylist")
+        category =  dictfetchall(category)
+        subCategory = cursor.execute("SELECT * FROM baghiService.dbo.accounts_subcategorylist")
+        subCategory =  dictfetchall(subCategory)
+        form_class = {'form': JobPostForm, 'cat':category, 'city':city, 'subCat':subCategory, 'assetsform': self.assetForm}
         return render(request, 'clients/jobposting.html', form_class)
 
     def post(self, request):
@@ -55,8 +88,18 @@ class JobPostView(generic.CreateView):
             now = datetime.datetime.now()
             user_id = request.session['user']['id']
             li.append(request.session['user']['id'])
-            print(li)
-            _, id = AllProcedures.createjob(li)
+            kwargs = {}
+            for i in request.POST:
+                if i !="csrfmiddlewaretoken":
+                    kwargs[i] = request.POST[i]
+            _, id = AllProcedures.createjob(**kwargs, User=user_id)
+            for i in request.POST:
+                print(i)
+                if 'SubCategory-' in i:
+                    query+=FastProcedures.subcat_query_add(topic_id=id, subcat_id=request.POST[i])
+            if query:
+                FastProcedures.execute_query(query)
+            query = ''
             print(id, request.FILES)
             for i in request.FILES:
                 myfile = request.FILES[i]
@@ -75,7 +118,8 @@ class JobPostView(generic.CreateView):
                 print(FastProcedures.asset_query_add(**values), end="\n\n\n\n\n\n")
                 query+=FastProcedures.asset_query_add(**values)
             print(query)
-            FastProcedures.execute_query(query)
+            if query:
+                FastProcedures.execute_query(query)
             return redirect('clients:alljobs')
 
 
