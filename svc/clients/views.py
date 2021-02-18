@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, reverse
 from django.views import generic
 from django.http import HttpResponse
 from accounts.models import UserList
-from .forms import JobPostForm, JobUpdateForm, AssetsForm
+from .forms import JobPostForm, JobUpdateForm, AssetsForm, ReviewForm
 from django.views.generic import View
 from django.db import connection
 from svc.utils import AllProcedures, FastProcedures
@@ -55,7 +55,12 @@ class JobDetailView(generic.DetailView):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
         eachjob = dictfetchall(cursor)
-        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob})
+        cursor.close()
+        user = eachjob[0]['User_id']
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getUserWithId @id='{user}'")
+        posteduser = dictfetchall(cursor)
+        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user': posteduser})
 
 class JobUpdateView(generic.UpdateView):
     # template_name = 'jobupdate.html'
@@ -150,6 +155,16 @@ class Callback(View):
             )
             return render(request, 'clients/successemail.html')
  
+
+class Review(View):
+    def get(self, request, pk):
+        form = ReviewForm
+        id = self.kwargs.get('pk')
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getUserWithId @id='{id}'")
+        user = dictfetchall(cursor)
+        print(user)
+        return render(request, 'clients/review.html', {'user': user, 'form': form})
 
 
 

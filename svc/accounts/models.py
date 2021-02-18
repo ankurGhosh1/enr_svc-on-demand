@@ -201,6 +201,8 @@ class TopicList(models.Model):
     SMSText = models.CharField(max_length=150, null=True)
     WhatsAppText = models.CharField(max_length=1000, null=True)
 
+    def __str__(self):
+        return self.TopicName
 
 def get_upload_path(instance, filename):
     return '{0}/{1}'.format(instance.Topic.TopicName, filename)

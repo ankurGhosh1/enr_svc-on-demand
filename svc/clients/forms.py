@@ -1,5 +1,5 @@
 from django import forms
-from accounts.models import TopicList, TopicDetailList, AssetsDetailList
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList
 
 class JobPostForm(forms.ModelForm):
 
@@ -32,3 +32,9 @@ class AssetsForm(forms.ModelForm):
     class Meta:
         model = AssetsDetailList
         fields = ['FileName']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = ReviewList
+        fields = '__all__'
