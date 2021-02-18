@@ -1,26 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<<<<<<< HEAD
-<div class="container" style="padding: 15px 10px;">
-{% for job in jobdetail %}
-<div class="card mb-3" style="max-width: 1080px;">
-    <div class="row g-0">
-      <div class="col-md-4">
-        <img src="..." alt="...">
-      </div>
-      <div class="col-md-8">
-        <div class="card-body">
-          <h5 class="card-title">{{job.TopicName}}</h5>
-          <p class="card-text">{{job.AddedDate}}</p>
-          <p class="card-text">{{job.Category}}</p>
-          <p class="card-text"><small class="text-muted">{{job.Subcategory_id}}</small></p>
-          <a href="/client/alljobs/{{job.id}}/update" class="btn btn-primary">Update</a> 
-          <form method="POST" action="/client/alljobs/{{job.id}}/delete">
-            {% csrf_token %}
-          <button class="btn btn-primary text-end">Delete</button>
-          </form>
-=======
 <div class="container mt-5">
   {% for job in jobdetail %}
   <div class="card m-3">
@@ -62,18 +42,11 @@
               <p class="card-text ml-5">{{job.content|safe}}</p>
             </div>
           </div>
->>>>>>> 303ca3336d958deabc5b5945bb0aa4aa172923a9
         </div>
       </div>
     </div>
   </div>
-<<<<<<< HEAD
-{% endfor %}
-</div>
-{% endblock %}
-=======
   {% endfor %}
 </div>
 <br><br><br><br>
 {% endblock %}
->>>>>>> 303ca3336d958deabc5b5945bb0aa4aa172923a9

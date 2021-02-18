@@ -29,7 +29,7 @@ class UserList(AbstractUser):
     usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
     Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
     ContactCell = models.CharField(max_length=100, null=True)
-    City = models.CharField(max_length=30)
+    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [

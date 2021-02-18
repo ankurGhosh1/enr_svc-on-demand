@@ -116,7 +116,6 @@ class AllProcedures:
             alljobs = cursor.execute(f"EXEC dbo.getAllJobs")
         return alljobs
 
-<<<<<<< HEAD
     # @staticmethod
     # def updateJobPost(li):
     #     with connection.cursor() as cursor:
@@ -134,7 +133,6 @@ class AllProcedures:
 
 
     
-=======
 
     @staticmethod
     def getCountry():
@@ -209,4 +207,3 @@ class FastProcedures:
     @staticmethod
     def asset_query_add(file_name, file_ext, added_date, updated_date, addedby_id, topic_id, updatedby_id):
         return f"EXEC dbo.createTopicAsset @file_name='{file_name}', @file_ext='{file_ext}', @added_date='{added_date}', @updated_date='{updated_date}', @addedby_id='{addedby_id}', @topic_id='{topic_id}', @updatedby_id='{updatedby_id}';"
->>>>>>> 303ca3336d958deabc5b5945bb0aa4aa172923a9
