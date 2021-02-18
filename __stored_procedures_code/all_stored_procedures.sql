@@ -267,6 +267,8 @@ CREATE PROCEDURE [dbo].[getCategory]
 	@city varchar(30) = NULL
 AS
 SELECT * FROM [dbo].[accounts_userlist] LEFT JOIN [dbo].[accounts_categorylist] ON accounts_userlist.ID=accounts_categorylist.ID WHERE [City]=@city AND [usertype_id] = 1
+
+ye banadega? haa ruk
 GO
 
 -- Update Job Post
@@ -311,7 +313,6 @@ UPDATE [dbo].[accounts_topiclist]
 WHERE id = @id
 GO
 
-<<<<<<< HEAD
 --  Delete Job
 
 USE [testenr]
@@ -321,7 +322,6 @@ CREATE PROCEDURE [dbo].[deleteJob]
 AS
 DELETE FROM [dbo].[accounts_topiclist] WHERE [id] = @id
 GO
-=======
 
 
 USE [baghiService]
@@ -438,4 +438,5 @@ UPDATE [dbo].[accounts_topiclist]
       ,[content] = @content
  WHERE id=@id
 GO
->>>>>>> 303ca3336d958deabc5b5945bb0aa4aa172923a9
+
+
