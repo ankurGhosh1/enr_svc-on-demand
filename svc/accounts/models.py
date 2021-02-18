@@ -60,7 +60,6 @@ class StateList(models.Model):
     def __str__(self):
         return self.State
 
-
 class CityList(models.Model):
     City = models.CharField(max_length=100)
     StateId = models.ForeignKey(StateList,on_delete=models.CASCADE, null=True)
@@ -118,6 +117,14 @@ class CategoryList(models.Model):
 
     def __str__(self):
         return self.CategoryName
+
+
+
+class CategoryInCity(models.Model):
+    city = models.ForeignKey(CityList, on_delete=models.CASCADE)
+    category = models.ForeignKey(CategoryList, on_delete=models.SET_NULL)
+    
+
 
 
 class SubCategoryList(models.Model):
