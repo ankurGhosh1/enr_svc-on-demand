@@ -72,11 +72,11 @@ class AllProcedures:
         return status
 
     @staticmethod
-    def createjob(li):
+    def createjob(TopicName, content, Category, City, User, **kwargs):
         status = False
         id = None
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{request.user.id}', @AddedBy_id='{request.user.id}', @IsActive='True', @IsClose='False', @IsNotification='True'")
+            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{TopicName}', @content='{content}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{Category}', @City_id='{City}', @User_id='{User}', @AddedBy_id='{User}', @IsActive='True', @IsClose='False', @IsNotification='True'")
             id = cursor.execute('SELECT @@IDENTITY AS [@@IDENTITY];')
             print(id)
             id = id.fetchall()
@@ -84,8 +84,9 @@ class AllProcedures:
         return status, id[0][0]
 
 
+
     @staticmethod
-    def updatejob(id=None, TopicName=None, content=None, Category=None, SubCategory=None, City=None, User=None, AddedBy=None, UpdatedBy=None, IsActive=1, CloseBy=None, IsClose=0, ForceCloseReason=None, ForceCloseCategory=None, IsNotification=1, SMSText=None, WhatsAppText=None):
+    def updatejob(id=None, TopicName=None, content=None, Category=None, SubCategory=None, City=None, User=None, AddedBy=None, UpdatedBy=None, IsActive=1, CloseBy=None, IsClose=0, ForceCloseReason=None, ForceCloseCategory=None, IsNotification=1, SMSText=None, WhatsAppText=None, **kwargs):
         status = False
         closeDate = None
         closeBy_id = None
@@ -99,9 +100,9 @@ class AllProcedures:
             IsClose = 0
             closeDate = datetime.datetime.now()
             closeBy_id = User
-            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsClose='{IsClose}', @CloseDate='{closeDate}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @CloseBy_id='{closeBy_id}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsClose='{IsClose}', @CloseDate='{closeDate}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @CloseBy_id='{closeBy_id}',@UpdatedBy_id='{UpdatedBy}' "
         else:
-            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @UpdatedBy_id='{UpdatedBy}' "
         print(id)
         with connection.cursor() as cursor:
             cursor.execute(query)
@@ -194,6 +195,32 @@ class AllProcedures:
             connections = cursor.fetchall()
         return connections
 
+    @staticmethod
+    def getUserAddress(user_id):
+        address = None
+        with connection.cursor() as cursor:
+            address = cursor.execute(f"EXEC dbo.getUserAddress @user_id='{user_id}'")
+            address = dictfetchall(address)
+        return address
+
+    @staticmethod
+    def updateUser(li,user_id):
+        status = False
+        query = f"EXEC dbo.UpdateUser @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@ApplicationId='{li[4]}',@user_id='{user_id}',@street='{li[5]}',@city='{li[8]}',@zip_code='{li[9]}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
+    @staticmethod
+    def userPasswordChange(password,user_id):
+        status = False
+        query = f"EXEC dbo.userPasswordChange @password='{password}' ,@user_id='{user_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
 
 
 class FastProcedures:
@@ -202,6 +229,10 @@ class FastProcedures:
         with connection.cursor() as cursor:
             cursor.execute(query)
         return True
+
+    @staticmethod
+    def subcat_query_add(topic_id, subcat_id):
+        return f"EXEC dbo.createTopicSubCat @TopidId='{topic_id}', @subCatId='{subcat_id}';"
 
     @staticmethod
     def asset_query_add(file_name, file_ext, added_date, updated_date, addedby_id, topic_id, updatedby_id):

@@ -14,4 +14,6 @@ urlpatterns = [
     path('complete/facebook/',views.f_complete,name ='social_complete'),
     path('complete/typeSelection',views.selectUserType,name ='selectusertype'),
     path('address_add/',views.addressAdd,name ='address_add'),
+    path('update_profile/',views.update_profile,name ='update_profile'),
+    path('password_change/',views.password_change,name ='password_change'),
 ]

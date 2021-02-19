@@ -1,8 +1,8 @@
 from django import forms
 from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList, TopicSubCats
 
 class JobPostForm(forms.ModelForm):
-
     class Meta:
         model = TopicList
         fields = '__all__'  # ('TopicName',)
@@ -25,7 +25,7 @@ class JobUpdateForm(forms.ModelForm):
     class Meta:
         model = TopicList
         fields = '__all__'
-        exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'CloseBy_id', 'ForceCloseCategory', 'AddedBy', 'UpdatedBy', 'CloseBy', 'IsActive')
+        exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'CloseBy_id', 'ForceCloseCategory', 'AddedBy', 'UpdatedBy', 'City', 'Category', 'SubCategory', 'CloseBy', 'IsActive')
 
 
 class AssetsForm(forms.ModelForm):
@@ -37,4 +37,10 @@ class AssetsForm(forms.ModelForm):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = ReviewList
+        fields = '__all__'
+        exclude = ('ReviewDate', 'SubCategory', 'Category', 'City', 'ToUser', 'FromUser', 'AssetsDetail', 'User', 'AddedBy', 'AddedDate', 'UpdatedBy', 'UpdatedDate', 'IsActive', 'IsAdminApproved')
+
+class TopicSubCatsForm(forms.ModelForm):
+    class Meta:
+        model = TopicSubCats
         fields = '__all__'

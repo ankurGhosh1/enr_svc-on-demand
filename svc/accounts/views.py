@@ -11,7 +11,7 @@ from google_auth_oauthlib.flow import Flow
 from django.db import connection
 from django.conf import settings
 import os
-
+from django.contrib import messages
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -212,3 +212,54 @@ def addressAdd(request):
             return redirect('professional:dashboard')
     print(AllProcedures.getAddressList())
     return render(request,'address_add.html',{'country':country,'state':state,'city':city})
+
+
+
+def update_profile(request):
+    country = AllProcedures.getCountry()
+    state = AllProcedures.getState()
+    city = AllProcedures.getCityByState()
+    address = AllProcedures.getUserAddress(request.session['user']['id'])
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+        app = dictfetchall(cursor)
+    with connection.cursor() as cursor:
+        cursor.execute(f"EXEC dbo.getUserWithId @id='{request.session['user']['id']}'")
+        user = namedtuplefetchall(cursor)
+    if request.method == 'POST':
+        li = []
+        for i in request.POST:
+            if i!='csrfmiddlewaretoken':
+                li.append(request.POST[i])
+        user_id = user[0].id
+        saved = AllProcedures.updateUser(li,user_id)
+        print(li)
+        return redirect('professional:profile')
+    return render(request,'update_profile.html',{'user':user,'application':app,'country':country,'state':state,'city':city,'address':address})
+
+
+
+def password_change(request):
+    with connection.cursor() as cursor:
+        cursor.execute(f"EXEC dbo.getUserWithId @id='{request.session['user']['id']}'")
+        user = namedtuplefetchall(cursor)
+        print(user)
+
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if check_password(old_password, user[0].password):
+            if new_password == confirm_password:
+                password = make_password(new_password)
+                saved = AllProcedures.userPasswordChange(password, user[0].id)
+                del request.session['user']
+                return redirect('accounts:login')
+            else:
+                messages.error(request, 'Your new and confirm password not matched!')
+                return redirect('accounts:password_change')
+        else:
+            messages.error(request, 'Your old password is incorrect!')
+            return redirect('accounts:password_change')
+    return render(request,'password_change.html')

@@ -10,8 +10,7 @@
 <head>
   {{ form.media }}
 </head>
-{{ categories|json_script:"cats" }}
-{{ sub_categories|json_script:"subCats" }}
+{{ city|json_script:"city" }}
 
 
 <div class="">
@@ -26,10 +25,37 @@
   </section>
 
 <div class="container p-5 over-me border rounded shadow bg-white mt-3">
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST" enctype="multipart/form-data" onsubmit="cusSubmit(event)">
     {% csrf_token %}
     <table class="table">
       {{form.as_table}}
+      <tr>
+        <th>City:</th>
+        <td>
+          <select class="" onchange="makeCat(event)" id="id_city" name="City">
+            <option value="" selected="">---------</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th>Category:</th>
+        <td>
+          <select class="" onchange="makeSubCat(event)" id="id_category" name="Category">
+            <option value="" selected="">---------</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th>Sub Category:</th>
+        <td>
+          <div id="subCat_row">
+            <select onchange="appendMe(event)" id="id_sub_category-0" name="SubCategory-0">
+              <option value="" selected="">---------</option>
+            </select>
+          </div>
+          <button type="button" name="button" id="addMore" class="btn btn-warning" onclick="addmore()" ><i class="fa fa-plus"></i></button>
+        </td>
+      </tr>
     </table>
     <div class="row" id="assets">
       {{ assetsform.management_form }}
@@ -60,26 +86,111 @@
   });
 </script>
 <script type="text/javascript">
-  var cats = JSON.parse(document.getElementById('cats').textContent);
-  var subCats = JSON.parse(document.getElementById('subCats').textContent);
+  var city = JSON.parse(document.getElementById('city').textContent);
   var catDiv = document.getElementById('id_category');
-  var subCatDiv = document.getElementById('id_sub_category');
-  cats.forEach((item, index) => {
-      catDiv.innerHTML+=`<option value=${item[0]}>${item[1]}</option>`;
+  var cityDiv = document.getElementById('id_city');
+  var subCatDiv = document.getElementById('id_sub_category-0');
+  var subCat_row = document.getElementById('subCat_row');
+  var selected_subs = [];
+
+  function cusSubmit(event){
+    event.preventDefault();
+    for(let k=0;k<=i;k++){
+      document.getElementById(`id_sub_category-${k}`).removeAttribute('disabled')
+    }
+    event.target.submit();
+  }
+
+  function diableAdd(){
+    document.getElementById('addMore').setAttribute('disabled', true)
+  }
+  function enableAdd(){
+    document.getElementById('addMore').removeAttribute('disabled')
+  }
+  city.forEach((item, index) => {
+    console.log(item)
+    cityDiv.innerHTML+=`<option value=${item.id}>${item.City}</option>`;
   })
 
 
-  function makeSubCat(event){
-    var catId = event.target.value;
+  function makeCat(event){
+    var city_id = event.target.value;
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+    const formData = new FormData();
+    selected_subs = []
+    i = 0
+    enableAdd();
+    formData.append('city_id', city_id);
+    formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+    subCat_row.innerHTML = '<select onchange="appendMe(event)" id="id_sub_category-0" name="SubCategory-0"><option value="" selected="">---------</option></select>'
+    catDiv.innerHTML = '<option value="" selected="">---------</option>';
     subCatDiv.innerHTML = '<option value="" selected="">---------</option>';
-    subCats.forEach((item, index)=>{
-      if(catId==item[1]){
-        subCatDiv.innerHTML+=`<option value=${item[0]}>${item[2]}</option>`;
-      }
+    fetch('{% url "clients:getCats" %}', {
+      method: 'POST',
+      body: formData
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((item, index)=>{
+        console.log(item)
+          catDiv.innerHTML+=`<option value=${item.id}>${item.CategoryName}</option>`;
+      })
     })
   }
 
-  console.log(cats, subCats);
+  function appendMe(event){
+    selected_subs.push(event.target.value);
+    event.target.setAttribute('disabled', true)
+  }
+  var sub_cat_g;
+  var i = 0;
+  function addmore(){
+    i = i+1;
+    if(i>=2){
+      diableAdd();
+    }
+    var select = `<select onchange="appendMe(event)" id="id_sub_category-${i}" name="SubCategory-${i}">`;
+    select+='<option value="" selected="">---------</option>';
+    sub_cat_g.forEach((item, index)=>{
+      if(selected_subs.indexOf(`${item.id}`)==-1){
+        select+=`<option value=${item.id}>${item.SubCategoryName}</option>`;
+      }
+    })
+    select+="</select>";
+    subCat_row.innerHTML+=select;
+    for(let kk=0;kk<i;kk++){
+      console.log(selected_subs, selected_subs[kk], kk)
+      document.getElementById(`id_sub_category-${kk}`).value=selected_subs[kk];
+    }
+  }
+
+  function makeSubCat(event){
+    var cat_id = event.target.value;
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    var catDiv = document.getElementById('id_category');
+    var subCatDiv = document.getElementById('id_sub_category-0');
+
+    const formData = new FormData();
+
+    formData.append('cat_id', cat_id);
+    formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+    subCatDiv.innerHTML = '<option value="" selected="">---------</option>';
+    fetch('{% url "clients:getSubCats" %}', {
+      method: 'POST',
+      body: formData
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      sub_cat_g = data;
+      data.forEach((item, index)=>{
+        console.log(item)
+          subCatDiv.innerHTML+=`<option value=${item.id}>${item.SubCategoryName}</option>`;
+      })
+    })
+  }
+
 </script>
 
 {% endblock %}

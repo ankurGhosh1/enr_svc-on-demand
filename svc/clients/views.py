@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.views import generic
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from accounts.models import UserList
 from .forms import JobPostForm, JobUpdateForm, AssetsForm, ReviewForm
 from django.views.generic import View
@@ -167,9 +167,25 @@ class Review(View):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getUserWithId @id='{id}'")
         user = dictfetchall(cursor)
-        print(user)
-        return render(request, 'clients/review.html', {'user': user, 'form': form})
+        cursor.close()
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.myreviews @user_id='{id}'")
+        allreviews = dictfetchall(cursor)
+        print(allreviews)
+        return render(request, 'clients/review.html', {'user': user, 'form': form, 'allreviews': allreviews})
 
+    def post(self, request, pk):
+        if request.method =='POST':
+            topic = request.POST['Topic']
+            review = request.POST['ReviewNote']
+            touser = self.kwargs.get('pk')
+            fromuser = request.user.id
+            addedby = request.user.id
+            IsActive = 1
+            IsAdminApproved =1
+            cursor = connection.cursor()
+            cursor.execute(f"EXEC dbo.addreview @Topic='{topic}', @ReviewDate='{datetime.datetime.now()}', @ToUser='{touser}', @FromUser='{fromuser}', @ReviewNote='{review}', @User='{touser}', @AddedBy='{fromuser}', @AddedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsAdminApproved='{IsAdminApproved}'")
+            return HttpResponseRedirect(self.request.path_info)
 
 
 

@@ -83,19 +83,24 @@ SELECT [message],[side] FROM [dbo].[accounts_chatrecord] WHERE [client_id] = @cl
 GO
 
 
+
+
 USE [baghiService]
 GO
+
+
 CREATE PROCEDURE [dbo].[getClientConnections]
 	@client_id int = NULL
 AS
-SELECT [professional_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[client_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[client_id]=@client_id
-GO
+SELECT [professional_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[professional_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[client_id]=@client_id
+
 
 CREATE PROCEDURE [dbo].[getProfessionalConnections]
 	@professinoal_id int = NULL
 AS
-SELECT [client_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[professional_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[professional_id]=@professinoal_id
-GO
+SELECT [client_id], [first_name] FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[client_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[professional_id]=@professinoal_id
+
+
 
 
 
@@ -267,8 +272,6 @@ CREATE PROCEDURE [dbo].[getCategory]
 	@city varchar(30) = NULL
 AS
 SELECT * FROM [dbo].[accounts_userlist] LEFT JOIN [dbo].[accounts_categorylist] ON accounts_userlist.ID=accounts_categorylist.ID WHERE [City]=@city AND [usertype_id] = 1
-
-ye banadega? haa ruk
 GO
 
 -- Update Job Post
@@ -440,3 +443,62 @@ UPDATE [dbo].[accounts_topiclist]
 GO
 
 
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[userPasswordChange]
+	@password nvarchar(128) = NULL,
+	@user_id int = NULL
+AS
+UPDATE [dbo].[accounts_userlist]
+   SET [password] = @password
+ WHERE [id] = @user_id
+GO
+
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[addreview]
+	@Topic int = NULL,
+	@ReviewDate datetime2(7) = NULL,
+	@ToUser int = NULL,
+	@FromUser int = NULL,
+	@ReviewNote nvarchar(3999) = 0,
+	@User int = null,
+	@AddedBy int = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@IsActive bit = 1,
+	@IsAdminApproved bit = 1
+AS
+INSERT INTO [dbo].[accounts_reviewlist]
+           ([Topic_id]
+		   ,[ReviewDate]
+           ,[ToUser_id]
+           ,[FromUser_id]
+		   ,[ReviewNote]
+           ,[User_id]
+		   ,[AddedBy_id]
+           ,[AddedDate]
+           ,[IsActive]
+           ,[IsAdminApproved])
+VALUES
+	(
+		@Topic, 
+		@ReviewDate, 
+		@ToUser, 
+		@FromUser, 
+		@ReviewNote,
+		@User,
+		@AddedBy,
+		@AddedDate,
+		@IsActive,
+		@IsAdminApproved
+	)
+GO
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[getAllReview]
+AS
+Select * from [dbo].[accounts_reviewlist]
+GO

@@ -60,7 +60,6 @@ class StateList(models.Model):
     def __str__(self):
         return self.State
 
-
 class CityList(models.Model):
     City = models.CharField(max_length=100)
     StateId = models.ForeignKey(StateList,on_delete=models.CASCADE, null=True)
@@ -118,6 +117,14 @@ class CategoryList(models.Model):
 
     def __str__(self):
         return self.CategoryName
+
+
+
+class CategoryInCity(models.Model):
+    city = models.ForeignKey(CityList, on_delete=models.CASCADE)
+    category = models.ForeignKey(CategoryList, null=True, on_delete=models.SET_NULL)
+
+
 
 
 class SubCategoryList(models.Model):
@@ -184,7 +191,6 @@ class TopicList(models.Model):
     content = HTMLField()
     TopicDate = models.DateField(auto_now_add=True)
     Category = models.ForeignKey(CategoryList, on_delete=models.CASCADE)
-    SubCategory = models.ForeignKey(SubCategoryList, on_delete=models.CASCADE)
     City = models.ForeignKey(CityList, on_delete=models.CASCADE)
     User = models.ForeignKey(UserList, related_name="Topic_Subscriber", on_delete=models.CASCADE)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
@@ -234,6 +240,9 @@ class TopicDetailList(models.Model):
     IsActive = models.BooleanField(default=True)
 
 
+class TopicSubCats(models.Model):
+    Topic = models.ForeignKey(TopicList, on_delete=models.SET_NULL, null=True)
+    subcat = models.ForeignKey(SubCategoryList, on_delete=models.CASCADE)
 
 
 class NotificationList(models.Model):
@@ -266,7 +275,7 @@ class ReviewList(models.Model):
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Review_Updated_By", on_delete=models.CASCADE, null=True)
-    UpdatedDate = models.DateField(auto_now_add=True)
+    UpdatedDate = models.DateField(auto_now_add=True, null=True)
     IsActive = models.BooleanField(default=True)
     IsAdminApproved = models.BooleanField(default=True)
 

@@ -40,7 +40,6 @@ def chatApp(request):
     elif request.session['user'] and request.session['user']['type']=='Professional':
         my_id = request.session['user']['id']
         connections = AllProcedures.getProfessionalConnections(user_id=my_id)
-
     connections = list(set(connections))
 
 

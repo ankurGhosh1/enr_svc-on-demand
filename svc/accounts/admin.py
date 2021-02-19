@@ -17,10 +17,12 @@ from .models import (
     AssetsDetailList,
     TopicDetailList,
     NotificationList,
-    ReviewList
+    ReviewList,
+    CategoryInCity
 )
 # Register your models here.
 
+admin.site.register(CategoryInCity)
 admin.site.register(LanguageList)
 admin.site.register(AppliationList)
 admin.site.register(UserType)
