@@ -2,7 +2,6 @@ from django.db import connection
 import datetime
 
 
-
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
     return [
@@ -77,7 +76,7 @@ class AllProcedures:
         status = False
         id = None
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{li[7]}', @AddedBy_id='{li[7]}', @IsActive='True', @IsClose='False', @IsNotification='True'")
+            cursor.execute(f"EXEC dbo.addJobPost @TopicName='{li[0]}', @content='{li[1]}', @TopicDate='{datetime.datetime.now()}', @AddedDate='{datetime.datetime.now()}', @Category_id='{li[2]}', @SubCategory_id='{li[3]}', @City_id='{li[4]}', @User_id='{request.user.id}', @AddedBy_id='{request.user.id}', @IsActive='True', @IsClose='False', @IsNotification='True'")
             id = cursor.execute('SELECT @@IDENTITY AS [@@IDENTITY];')
             print(id)
             id = id.fetchall()

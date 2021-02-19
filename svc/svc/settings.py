@@ -144,7 +144,7 @@ DATABASES = {
     'default': {
     'ENGINE': 'sql_server.pyodbc',
         'NAME': 'testenr',
-        'HOST': 'INDIANLEO',
+        'HOST': 'DESKTOP-IREJPI3',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

@@ -5,7 +5,7 @@ from .views import JobPostView, GetJobPost, JobDetailView, JobUpdateView, JobDel
 app_name = 'clients'
 
 urlpatterns = [
-    # path('dashboard/',views.dashboard,name = 'dashboard'),
+    path('dashboard/',views.dashboard,name = 'dashboard'),
     path('jobpost/', JobPostView.as_view(), name="jobpost"),
     path('alljobs/', GetJobPost.as_view(), name="alljobs"),
     path('alljobs/<int:pk>/', JobDetailView.as_view(), name="jobdetail"),

@@ -262,7 +262,7 @@ class ReviewList(models.Model):
     FromUser = models.ForeignKey(UserList, related_name="Review_From_User", on_delete=models.CASCADE)
     ReviewNote = models.CharField(max_length=3999)
     AssetsDetail = models.ForeignKey(AssetsDetailList, on_delete=models.SET_NULL, null=True)
-    User = models.ForeignKey(UserList, related_name="Review_Subscriber", on_delete=models.CASCADE)
+    User = models.ForeignKey(UserList, related_name="Review_Subscriber", on_delete=models.CASCADE, null=True)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Review_Updated_By", on_delete=models.CASCADE, null=True)

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.views import generic
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from accounts.models import UserList
 from .forms import JobPostForm, JobUpdateForm, AssetsForm, ReviewForm
 from django.views.generic import View
@@ -19,6 +19,9 @@ from django.core.mail import send_mail
 import datetime
 
 # # Create your views here.
+
+def dashboard(request):
+    return render(request, 'clients/dashboard.html')
 
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
@@ -39,6 +42,7 @@ class JobPostView(generic.CreateView):
                 if i != 'csrfmiddlewaretoken':
                     li.append(request.POST[i])
             saved = AllProcedures.createjob(li)
+            print(li)
             return redirect('/client/alljobs')
 
 
@@ -120,7 +124,7 @@ class AllProfessionals(View):
             myId = request.user.id
         else:
             myId = request.session['user']['id']
-        cursor.execute(f"EXEC dbo.getProfessionalInCity @myId='{myId}'")      # dashboard kaha se aayega?konsa
+        cursor.execute(f"EXEC dbo.getProfessionalInCity @myId='{myId}'")     
         allcategories = dictfetchall(cursor)
         print(allcategories)
         paginator = Paginator(allcategories, 3)
