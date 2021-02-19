@@ -440,3 +440,16 @@ UPDATE [dbo].[accounts_topiclist]
       ,[content] = @content
  WHERE id=@id
 GO
+
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[userPasswordChange]
+	@password nvarchar(128) = NULL,
+	@user_id int = NULL
+AS
+UPDATE [dbo].[accounts_userlist]
+   SET [password] = @password
+ WHERE [id] = @user_id
+GO

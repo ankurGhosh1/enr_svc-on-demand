@@ -30,34 +30,42 @@
         <li class="nav-item">
           <a class="nav-link {% if 'dashboard' in request.path %} active {% endif %}" href="/">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if 'alljobs' in request.path %} active {% endif %}" href="{% url 'clients:alljobs' %}">Alljobs</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if 'jobpost' in request.path %} active {% endif %}" href="{% url 'clients:jobpost' %}">Post a Job</a>
-        </li>
         {% if request.session.user.is_authenticated %}
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'professional:profile' %}">My Profile</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link {% if 'chat' in request.path %} active {% endif %}" href="{% url 'chatApp:chatApp' %}">Chat</a>
           </li>
           {% if request.session.user.type == "Professional" %}
-            <li class="nav-item">
-              <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'professional:profile' %}">My Profile</a>
-            </li>
-          {% else %}
 
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link {% if 'alljobs' in request.path %} active {% endif %}" href="{% url 'clients:alljobs' %}">My Jobs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if 'jobpost' in request.path %} active {% endif %}" href="{% url 'clients:jobpost' %}">Post a Job</a>
+            </li>
           {% endif %}
         <li class="nav-item">
         <a href="{% url 'accounts:logout' %}"><button class="btn btn-outline-light">Logout</button></a>
         </li>
         {% else %}
-        <li class="nav-item">
-        <a href="{% url 'accounts:login' %}"> <button class="btn btn-outline-light">Login</button></a>
-        </li>
-        <span style="padding: 5px;"></span>
-        <li class="nav-item">
-        <a href="{% url 'accounts:signup' %}"><button class="btn btn-outline-light">Signup</button></a>
-        </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'alljobs' in request.path %} active {% endif %}" href="{% url 'clients:alljobs' %}">Explore Jobs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'alljobs' in request.path %} active {% endif %}" href="{% url 'clients:alljobs' %}">Explore Professionals</a>
+          </li>
+          <li class="nav-item">
+          <a href="{% url 'accounts:login' %}"> <button class="btn btn-outline-light">Login</button></a>
+          </li>
+          <span style="padding: 5px;"></span>
+          <li class="nav-item">
+          <a href="{% url 'accounts:signup' %}"><button class="btn btn-outline-light">Signup</button></a>
+          </li>
         {% endif %}
     </ul>
   </div>

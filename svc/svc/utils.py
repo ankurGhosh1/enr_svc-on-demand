@@ -87,7 +87,7 @@ class AllProcedures:
 
 
     @staticmethod
-    def updatejob(id=None, TopicName=None, content=None, Category=None, SubCategory=None, City=None, User=None, AddedBy=None, UpdatedBy=None, IsActive=1, CloseBy=None, IsClose=0, ForceCloseReason=None, ForceCloseCategory=None, IsNotification=1, SMSText=None, WhatsAppText=None):
+    def updatejob(id=None, TopicName=None, content=None, Category=None, SubCategory=None, City=None, User=None, AddedBy=None, UpdatedBy=None, IsActive=1, CloseBy=None, IsClose=0, ForceCloseReason=None, ForceCloseCategory=None, IsNotification=1, SMSText=None, WhatsAppText=None, **kwargs):
         status = False
         closeDate = None
         closeBy_id = None
@@ -101,9 +101,9 @@ class AllProcedures:
             IsClose = 0
             closeDate = datetime.datetime.now()
             closeBy_id = User
-            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsClose='{IsClose}', @CloseDate='{closeDate}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @CloseBy_id='{closeBy_id}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsClose='{IsClose}', @CloseDate='{closeDate}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @CloseBy_id='{closeBy_id}',@UpdatedBy_id='{UpdatedBy}' "
         else:
-            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @Category_id='{Category}', @City_id='{City}', @subCat_id='{SubCategory}', @UpdatedBy_id='{UpdatedBy}' "
+            query = f"EXEC dbo.updateJob @id='{id}', @content='{content}', @TopicName='{TopicName}', @UpdatedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @ForceCloseReason='{ForceCloseReason}', @IsNotification='{IsNotification}', @SMS='{SMSText}', @whatsApp='{WhatsAppText}', @UpdatedBy_id='{UpdatedBy}' "
         print(id)
         with connection.cursor() as cursor:
             cursor.execute(query)
@@ -191,6 +191,15 @@ class AllProcedures:
     def updateUser(li,user_id):
         status = False
         query = f"EXEC dbo.UpdateUser @first_name='{li[0]}',@last_name='{li[1]}',@email='{li[2]}',@ContactCell='{li[3]}',@ApplicationId='{li[4]}',@user_id='{user_id}',@street='{li[5]}',@city='{li[8]}',@zip_code='{li[9]}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
+    @staticmethod
+    def userPasswordChange(password,user_id):
+        status = False
+        query = f"EXEC dbo.userPasswordChange @password='{password}' ,@user_id='{user_id}';"
         with connection.cursor() as cursor:
             cursor.execute(query)
             status = True
