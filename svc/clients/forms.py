@@ -1,13 +1,27 @@
 from django import forms
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList
 from accounts.models import TopicList, TopicDetailList, AssetsDetailList, TopicSubCats
 
 class JobPostForm(forms.ModelForm):
     class Meta:
         model = TopicList
         fields = '__all__'  # ('TopicName',)
-        exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'SMSText', 'WhatsAppText', 'CloseBy_id', 'ForceCloseCategory', 'City', 'Category', 'SubCategory', 'UpdatedBy', 'AddedBy', 'CloseBy', 'IsClose', 'IsActive')
+        exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'SMSText', 'WhatsAppText', 'CloseBy_id', 'ForceCloseCategory', 'UpdatedBy', 'AddedBy', 'CloseBy', 'IsClose', 'IsActive', 'IsNotification')
 
 class JobUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(JobUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['ForceCloseReason'].required = False
+        self.fields['ForceCloseCategory'].required = False
+        self.fields['Category'].required = False
+        self.fields['SubCategory'].required = False
+        self.fields['IsActive'].required = False
+        self.fields['IsClose'].required = False
+        self.fields['CloseBy'].required = False
+        self.fields['IsNotification'].required = False
+        self.fields['SMSText'].required = False
+        self.fields['WhatsAppText'].required = False
+
     class Meta:
         model = TopicList
         fields = '__all__'
@@ -20,6 +34,11 @@ class AssetsForm(forms.ModelForm):
         fields = ['FileName']
 
 
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = ReviewList
+        fields = '__all__'
+        exclude = ('ReviewDate', 'SubCategory', 'Category', 'City', 'ToUser', 'FromUser', 'AssetsDetail', 'User', 'AddedBy', 'AddedDate', 'UpdatedBy', 'UpdatedDate', 'IsActive', 'IsAdminApproved')
 
 class TopicSubCatsForm(forms.ModelForm):
     class Meta:

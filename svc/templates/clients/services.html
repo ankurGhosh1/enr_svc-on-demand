@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        {% for each in professionals %}
+        <div class="col-md-4">
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img src="..." alt="...">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">{{each.CategoryName}}</h5>
+                      <p class="card-text">I am {{each.first_name}} {{each.last_name}} from {{each.City}} providing {{each.CategoryName}} service. You can contact me at {{each.email}} or request a callback.</p>
+                      <a href="/client/callback/{{each.username}}" class="btn btn-primary">Request a callback</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if professionals.has_previous %}
+                    <a href="?page={{ professionals.previous_page_number }}">previous</a>
+                {% endif %}
+                {% if professionals.has_next %}
+                    <a href="?page={{ professionals.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

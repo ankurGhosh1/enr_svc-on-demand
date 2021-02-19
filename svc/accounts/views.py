@@ -33,9 +33,10 @@ def _login(request, user, password, pass_req):
         request.session['user'] = {
         'is_authenticated': True,
         'id':user[0],
-        'email':user[4],
-        'info': user[2:10]+user[11:]
+        'email':user[7],
+        'info': user[3:10]+user[11:]
         }
+        print(user[9], user)
         type = AllProcedures.getUserType(user[-1])
         print(type)
         if(type and type[0]=="Customer"):
@@ -160,10 +161,10 @@ def login(request):
 
 def signup(request):
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
+    cursor.execute("SELECT * FROM testenr.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+    cursor.execute("SELECT * FROM testenr.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
