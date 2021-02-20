@@ -1,5 +1,11 @@
 /venv
 /clients/migrations/__pycache__
 /clients/__pycache__
+/admins/migrations/__pycache__
+/admins/__pycache__
+/professional/migrations/__pycache__
+/professional/__pycache__
+/accounts/migrations/__pycache__
+/accounts/__pycache__
 /svc/venv
 /svc/svc/settings.py
