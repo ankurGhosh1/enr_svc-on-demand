@@ -1,5 +1,5 @@
 from django import forms
-from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList, CategoryList
 from accounts.models import TopicList, TopicDetailList, AssetsDetailList, TopicSubCats
 
 class JobPostForm(forms.ModelForm):
@@ -43,4 +43,9 @@ class ReviewForm(forms.ModelForm):
 class TopicSubCatsForm(forms.ModelForm):
     class Meta:
         model = TopicSubCats
+        fields = '__all__'
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = CategoryList
         fields = '__all__'

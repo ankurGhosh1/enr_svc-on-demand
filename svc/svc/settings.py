@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'social_django',
 
     'phonenumber_field',
-    # 'crispy_forms',
+    'crispy_forms',
 
     'clients',
     'accounts',
@@ -150,8 +150,8 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
     'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'baghiService',
-        'HOST': 'DESKTOP-IUNO0HB',
+        'NAME': 'testenr',
+        'HOST': 'DESKTOP-IREJPI3',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
@@ -209,7 +209,7 @@ LOGOUT_REDIRECT_URL = '/login'
 
 AUTH_USER_MODEL = 'accounts.UserList'
 
-# CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 
