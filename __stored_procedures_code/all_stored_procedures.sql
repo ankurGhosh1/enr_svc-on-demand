@@ -453,3 +453,35 @@ UPDATE [dbo].[accounts_userlist]
    SET [password] = @password
  WHERE [id] = @user_id
 GO
+
+-- Get Jobs In My City
+
+CREATE PROCEDURE [dbo].[getMyCityJobs]
+	@user_id int = NULL
+
+AS
+SELECT * FROM [dbo].[accounts_addresslist] INNER JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_addresslist].[user_id]=[dbo].[accounts_userlist].[id] INNER JOIN [dbo].[accounts_topiclist] ON [dbo].[accounts_addresslist].[CityId_id]=[dbo].[accounts_topiclist].[City_id] WHERE [dbo].[accounts_userlist].[id]=@user_id
+
+
+
+--- generate OTP
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[generateOTP]
+	@Otp nvarchar(10) = NULL,
+	@expire_minute nvarchar(100) = NULL,
+	@user_email nvarchar(100) = NULL,
+	@doc datetime2(7) = NULL
+
+AS
+INSERT INTO [dbo].[accounts_otp]
+           ([Otp]
+           ,[expire_minute]
+           ,[user_email]
+           ,[doc])
+     VALUES
+           (@Otp
+           ,@expire_minute
+           ,@user_email
+           ,@doc)
+GO

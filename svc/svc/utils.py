@@ -205,6 +205,25 @@ class AllProcedures:
             status = True
         return status
 
+    @staticmethod
+    def getMyCityJobs(user_id):
+        status = False
+        query = f"EXEC dbo.getMyCityJobs @user_id='{user_id}';"
+        nearJobs = None
+        with connection.cursor() as cursor:
+            nearJobs = cursor.execute(query)
+            nearJobs = dictfetchall(nearJobs)
+        return nearJobs
+        
+    @staticmethod
+    def generateOTP(otp,email):
+        status = False
+        query = f"EXEC dbo.generateOTP @Otp='{otp}' ,@user_email='{email}' ,@expire_minute='{10}' ,@doc='{datetime.datetime.now()}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
 
 
 class FastProcedures:

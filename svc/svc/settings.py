@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
+os.environ['SENDGRID_API_KEY'] = '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'     #company API
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -204,4 +206,20 @@ AUTH_USER_MODEL = 'accounts.UserList'
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+MESSAGE_TAGS = {
+    messages.DEBUG : "alert-primary",
+    messages.SUCCESS:"alert-success",
+    messages.ERROR:"alert-danger",
+    messages.INFO:"alert-info",
+    messages.WARNING:"alert-warning",
+}

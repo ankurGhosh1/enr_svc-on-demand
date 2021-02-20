@@ -12,6 +12,9 @@ from django.db import connection
 from django.conf import settings
 import os
 from django.contrib import messages
+import random, string
+from django.core.mail import send_mail
+
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -262,3 +265,66 @@ def password_change(request):
             messages.error(request, 'Your old password is incorrect!')
             return redirect('accounts:password_change')
     return render(request,'password_change.html')
+
+
+def password_reset_form(request):
+    if request.session.has_key('user'):
+        del request.session['user']
+    if request.session.has_key('otp'):
+        del request.session['otp']
+
+    otp = ''.join(random.choices(string.digits, k=6))
+    email = request.POST.get('email')
+    with connection.cursor() as cursor:
+        users = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_userlist WHERE email = %s",[email]).fetchone()[0]
+    if request.method == 'POST':
+        if users == 1:
+            saved = AllProcedures.generateOTP(otp,email)
+            subject = "Password Reset"
+            message = f"Someone can try to  reset your password\nEmail: {email} \nYour OTP: {otp}"
+            sender = "pkkapoor98@gmail.com"
+            send_mail(subject, message, sender, [email])
+            request.session['otp'] = email
+            return redirect('accounts:password_reset_otp')
+        else:
+            messages.error(request, 'Your register email not matched!')
+            return redirect('accounts:password_reset_form')
+    return render(request,'registration/password_reset_form.html')
+
+def password_reset_otp(request):
+    if not request.session.has_key('otp'):
+        return redirect('accounts:password_reset_form')
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT TOP 1 * FROM baghiService.dbo.accounts_otp WHERE user_email = %s ORDER BY id DESC", [request.session['otp']])
+        otp = namedtuplefetchall(cursor)
+    minute_count = round((datetime.datetime.now()-otp[0].doc).total_seconds() / 60)
+    if request.method == 'POST':
+        otp_get = request.POST.get('otp')
+        if(otp[0].Otp == otp_get and minute_count <= int(otp[0].expire_minute)):
+            return redirect('accounts:password_reset_confirm')
+        else:
+            messages.error(request, 'You enter wrong otp or expire your otp!')
+            return redirect('accounts:password_reset_otp')
+    return render(request,'registration/password_reset_otp.html')
+
+def password_reset_confirm(request):
+    if not request.session.has_key('otp'):
+        return redirect('accounts:password_reset_form')
+    with connection.cursor() as cursor:
+        cursor.execute(f"EXEC dbo.getUser @email='{request.session['otp']}'")
+        user = namedtuplefetchall(cursor)
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        if new_password == confirm_password:
+            password = make_password(new_password)
+            saved = AllProcedures.userPasswordChange(password, user[0].id)
+            del request.session['otp']
+            return redirect('accounts:password_reset_complete')
+        else:
+            messages.error(request, 'Your new and confirm password not matched!')
+            return redirect('accounts:password_reset_confirm')
+    return render(request,'registration/password_reset_confirm.html')
+
+def password_reset_complete(request):
+    return render(request, 'registration/password_reset_complete.html')

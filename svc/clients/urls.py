@@ -11,5 +11,7 @@ urlpatterns = [
     path('alljobs/<int:pk>/', JobDetailView.as_view(), name="jobdetail"),
     path('alljobs/<int:pk>/update', JobUpdateView.as_view(), name="jobupdate"),
     path('get/subcats', getSubCats, name="getSubCats"),
-    path('get/cats', getCats, name="getCats")
+    path('get/cats', getCats, name="getCats"),
+    path('profile/',views.MyProfile,name = 'profile'),
+    
 ]

@@ -16,4 +16,8 @@ urlpatterns = [
     path('address_add/',views.addressAdd,name ='address_add'),
     path('update_profile/',views.update_profile,name ='update_profile'),
     path('password_change/',views.password_change,name ='password_change'),
+    path('password_reset_form/',views.password_reset_form,name ='password_reset_form'),
+    path('password_reset_otp/',views.password_reset_otp,name ='password_reset_otp'),
+    path('password_reset_confirm/',views.password_reset_confirm,name ='password_reset_confirm'),
+    path('password_reset_done/',views.password_reset_complete,name ='password_reset_complete')
 ]

@@ -33,14 +33,22 @@
         {% if request.session.user.is_authenticated %}
 
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'professional:profile' %}">My Profile</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link {% if 'chat' in request.path %} active {% endif %}" href="{% url 'chatApp:chatApp' %}">Chat</a>
           </li>
           {% if request.session.user.type == "Professional" %}
+            <li class="nav-item">
+              <a class="nav-link {% if 'explore' in request.path %} active {% endif %}" href="{% url 'professional:explore' %}">Explore Jobs</a>
+            </li>
 
+            <li class="nav-item">
+              <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'professional:profile' %}">My Profile</a>
+            </li>
           {% else %}
+          
+          <li class="nav-item">
+            <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'clients:profile' %}">My Profile</a>
+          </li>
+
             <li class="nav-item">
               <a class="nav-link {% if 'alljobs' in request.path %} active {% endif %}" href="{% url 'clients:alljobs' %}">My Jobs</a>
             </li>

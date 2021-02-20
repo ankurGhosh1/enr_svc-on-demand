@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="">
+    <section class="bg-svc">
+      <div class="p-5">
+        <div class="container p-3 text-white">
+          <div class="mx-auto text-left p-3">
+            <h3 class="banner-h1">All Jobs :</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bg-svc p-5 fixed-top" style="z-index:-1">
+     <div class="p-5">
+
+     </div>
+    </section>
+
+    <div class="container">
+      <div class="over-me bg-white shadow" style="border-radius:10px;overflow:hidden;">
+        {% for job in jobs %}
+        <div class="p-3 bg-white">
+          <div class="border-bottom p-3">
+            <div class="">
+              <small>By: <i>user_name</i></small>
+            </div>
+            <div class="pt-2">
+              <a href="{% url 'professional:indiJob' job_id=job.id %}"><div>{{job.TopicName}}</div></a>
+              <div class="">
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+<br><br><br><br><br><br><br>
+</div>
+
+{% endblock %}

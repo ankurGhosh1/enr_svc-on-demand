@@ -177,6 +177,11 @@ class JobUpdateView(generic.UpdateView):
 
 
 
+
+def MyProfile(request):
+    return render(request, 'clients/myprofile.html')
+
+
 # def jobpost(request):
 #     with connection.cursor() as cursor:
 #             cursor.execute(f'EXEC dbo.getCategory @city = {request.user.City}')

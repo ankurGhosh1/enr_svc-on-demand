@@ -226,11 +226,8 @@ class AssetsDetailList(models.Model):
 class TopicDetailList(models.Model):
     Topic = models.ForeignKey(TopicList, on_delete=models.SET_NULL, null=True)
     TopicDate = models.DateField(auto_now_add=True)
-    Category = models.ForeignKey(CategoryList, on_delete=models.SET_NULL, null=True)
-    SubCategory = models.ForeignKey(SubCategoryList, on_delete=models.SET_NULL, null=True)
-    City = models.ForeignKey(CityList, on_delete=models.SET_NULL, null=True)
-    AssetsDetail = models.ForeignKey(AssetsDetailList, on_delete=models.SET_NULL, null=True)
     User = models.ForeignKey(UserList, related_name="Topic_details_Subscriber", on_delete=models.CASCADE)
+    Selected = models.BooleanField(default=False)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Topic_details_Updated_By", on_delete=models.CASCADE, null=True)
@@ -286,3 +283,10 @@ class ChatRecord(models.Model):
     room_name = models.CharField(max_length=300 )
     TimeStamp = models.DateTimeField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+
+
+class OTP(models.Model):
+    Otp = models.CharField(max_length=10)
+    expire_minute = models.CharField(max_length=100)
+    user_email = models.CharField(max_length=100)
+    doc = models.DateTimeField(auto_now_add=True)
