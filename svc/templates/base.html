@@ -31,12 +31,6 @@
           <a class="nav-link {% if 'dashboard' in request.path %} active {% endif %}" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'alljobs' in request.path %} active {% endif %}" href="{% url 'clients:alljobs' %}">Alljobs</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if 'jobpost' in request.path %} active {% endif %}" href="{% url 'clients:jobpost' %}">Post a Job</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="{% url 'clients:services' %}">Services</a>
         </li>
         {% if request.session.user.is_authenticated %}
@@ -53,7 +47,7 @@
               <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'professional:profile' %}">My Profile</a>
             </li>
           {% else %}
-          
+
           <li class="nav-item">
             <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'clients:profile' %}">My Profile</a>
           </li>

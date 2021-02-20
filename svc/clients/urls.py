@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from .views import JobPostView, GetJobPost, JobDetailView, JobUpdateView, JobDeleteView, AllProfessionals, Callback, Review # getSubCats, getCats
+from .views import JobPostView, GetJobPost, JobDetailView, JobUpdateView, JobDeleteView, AllProfessionals, Callback, Review , getSubCats, getCats
 
 app_name = 'clients'
 

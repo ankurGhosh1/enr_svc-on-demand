@@ -455,7 +455,54 @@ UPDATE [dbo].[accounts_userlist]
  WHERE [id] = @user_id
 GO
 
-<<<<<<< HEAD
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[addreview]
+	@Topic int = NULL,
+	@ReviewDate datetime2(7) = NULL,
+	@ToUser int = NULL,
+	@FromUser int = NULL,
+	@ReviewNote nvarchar(3999) = 0,
+	@User int = null,
+	@AddedBy int = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@IsActive bit = 1,
+	@IsAdminApproved bit = 1
+AS
+INSERT INTO [dbo].[accounts_reviewlist]
+           ([Topic_id]
+		   ,[ReviewDate]
+           ,[ToUser_id]
+           ,[FromUser_id]
+		   ,[ReviewNote]
+           ,[User_id]
+		   ,[AddedBy_id]
+           ,[AddedDate]
+           ,[IsActive]
+           ,[IsAdminApproved])
+VALUES
+	(
+		@Topic,
+		@ReviewDate,
+		@ToUser,
+		@FromUser,
+		@ReviewNote,
+		@User,
+		@AddedBy,
+		@AddedDate,
+		@IsActive,
+		@IsAdminApproved
+	)
+GO
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[getAllReview]
+AS
+Select * from [dbo].[accounts_reviewlist]
+GO
+
 -- Get Jobs In My City
 
 CREATE PROCEDURE [dbo].[getMyCityJobs]
@@ -487,52 +534,3 @@ INSERT INTO [dbo].[accounts_otp]
            ,@user_email
            ,@doc)
 GO
-=======
-
-USE [testenr]
-GO
-CREATE PROCEDURE [dbo].[addreview]
-	@Topic int = NULL,
-	@ReviewDate datetime2(7) = NULL,
-	@ToUser int = NULL,
-	@FromUser int = NULL,
-	@ReviewNote nvarchar(3999) = 0,
-	@User int = null,
-	@AddedBy int = NULL,
-	@AddedDate datetime2(7) = NULL,
-	@IsActive bit = 1,
-	@IsAdminApproved bit = 1
-AS
-INSERT INTO [dbo].[accounts_reviewlist]
-           ([Topic_id]
-		   ,[ReviewDate]
-           ,[ToUser_id]
-           ,[FromUser_id]
-		   ,[ReviewNote]
-           ,[User_id]
-		   ,[AddedBy_id]
-           ,[AddedDate]
-           ,[IsActive]
-           ,[IsAdminApproved])
-VALUES
-	(
-		@Topic, 
-		@ReviewDate, 
-		@ToUser, 
-		@FromUser, 
-		@ReviewNote,
-		@User,
-		@AddedBy,
-		@AddedDate,
-		@IsActive,
-		@IsAdminApproved
-	)
-GO
-
-USE [testenr]
-GO
-CREATE PROCEDURE [dbo].[getAllReview]
-AS
-Select * from [dbo].[accounts_reviewlist]
-GO
->>>>>>> 467ea3cee005110b3ad239f854763c1bd4dc8fa6
