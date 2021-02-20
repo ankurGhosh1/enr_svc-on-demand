@@ -281,8 +281,6 @@ GO
 CREATE PROCEDURE [dbo].[updateJobPost]
 	@id int = Null,
 	@TopicName nvarchar(300) = NULL,
-	@TopicDate datetime2(7) = NULL,
-	@AddedDate datetime2(7) = NULL,
 	@UpdatedDate datetime2(7) = NULL,
 	@IsActive bit = 0,
 	@IsClose bit = 1,
@@ -291,20 +289,16 @@ CREATE PROCEDURE [dbo].[updateJobPost]
 	@IsNotification bit = 0,
 	@SMSText nvarchar(150) = NULL,
 	@WhatsAppText nvarchar(1000) = NULL,
-	@AddedBy_id int = NULL,
 	@Category_id int = NULL,
 	@City_id int = NULL,
 	@CloseBy_id int = NULL,
 	@ForceCloseCategory_id int = NULL,
 	@SubCategory_id int = NULL,
-	@UpdatedBy_id int = NULL,
 	@User_id int = NULL
 
 AS
 UPDATE [dbo].[accounts_topiclist]
    SET     [TopicName]=@TopicName,
-		   [TopicDate]=@TopicDate,
-           [AddedDate]=@AddedDate,
            [UpdatedDate]=@UpdatedDate,
 		   [IsActive]=@IsActive,
            [IsClose]=@IsClose,
@@ -313,17 +307,24 @@ UPDATE [dbo].[accounts_topiclist]
            [IsNotification]=@IsNotification,
            [SMSText]=@SMSText,
            [WhatsAppText]=@WhatsAppText,
-           [AddedBy_id]=@AddedBy_id,
 		   [Category_id]=Category_id,
 		   [City_id]=@City_id,
 		   [CloseBy_id]=@CloseBy_id,
 		   [ForceCloseCategory_id]=@ForceCloseCategory_id,
 		   [SubCategory_id]=@SubCategory_id,
-		   [UpdatedBy_id]=@UpdatedBy_id,
 		   [User_id]=@User_id
 WHERE id = @id
 GO
 
+--  Delete Job
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[deleteJob]
+	@id int = NULL
+AS
+DELETE FROM [dbo].[accounts_topiclist] WHERE [id] = @id
+GO
 
 
 USE [baghiService]
@@ -454,6 +455,7 @@ UPDATE [dbo].[accounts_userlist]
  WHERE [id] = @user_id
 GO
 
+<<<<<<< HEAD
 -- Get Jobs In My City
 
 CREATE PROCEDURE [dbo].[getMyCityJobs]
@@ -485,3 +487,52 @@ INSERT INTO [dbo].[accounts_otp]
            ,@user_email
            ,@doc)
 GO
+=======
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[addreview]
+	@Topic int = NULL,
+	@ReviewDate datetime2(7) = NULL,
+	@ToUser int = NULL,
+	@FromUser int = NULL,
+	@ReviewNote nvarchar(3999) = 0,
+	@User int = null,
+	@AddedBy int = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@IsActive bit = 1,
+	@IsAdminApproved bit = 1
+AS
+INSERT INTO [dbo].[accounts_reviewlist]
+           ([Topic_id]
+		   ,[ReviewDate]
+           ,[ToUser_id]
+           ,[FromUser_id]
+		   ,[ReviewNote]
+           ,[User_id]
+		   ,[AddedBy_id]
+           ,[AddedDate]
+           ,[IsActive]
+           ,[IsAdminApproved])
+VALUES
+	(
+		@Topic, 
+		@ReviewDate, 
+		@ToUser, 
+		@FromUser, 
+		@ReviewNote,
+		@User,
+		@AddedBy,
+		@AddedDate,
+		@IsActive,
+		@IsAdminApproved
+	)
+GO
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[getAllReview]
+AS
+Select * from [dbo].[accounts_reviewlist]
+GO
+>>>>>>> 467ea3cee005110b3ad239f854763c1bd4dc8fa6

@@ -10,7 +10,7 @@ from svc.utils import AllProcedures, FastProcedures, dictfetchall
 
 def dashboard(request):
     cursor = connection.cursor()
-    address = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_addresslist WHERE user_id = %s", [request.session['user']['id']]).fetchone()[0]
+    address = cursor.execute("SELECT COUNT(*) FROM testenr.dbo.accounts_addresslist WHERE user_id = %s", [request.session['user']['id']]).fetchone()[0]
     if address == 0 :
         return redirect('accounts:address_add')
     return render(request, 'professional/dashboard.html')

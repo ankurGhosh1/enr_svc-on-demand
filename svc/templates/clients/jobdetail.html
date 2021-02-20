@@ -8,10 +8,13 @@
       <div class="row g-0">
         <div class="col-md-8">
           <div class="card-body">
-            <h5 class="card-title">{{job.TopicName}}</h5>
-            <p class="card-text">{{job.AddedDate}}</p>
-            <p class="card-text">{{job.Category}}</p>
-            <p class="card-text"><small class="text-muted">{{job.Subcategory_id}}</small></p>
+            <h5 class="card-title">Topic: {{job.TopicName}}</h5>
+            <p class="card-text">Added: {{job.AddedDate}}</p>
+            <p class="card-text">Category: {{job.Category_id}}</p>
+            {% for user in user %}
+            <p class="card-text">Posted By: <a href="/client/profile/{{user.id}}">{{user.email}}</p></a>
+            {% endfor %}
+            <p class="card-text"><small class="text-muted">Sub Category: {{job.SubCategory_id}}</small></p>
           </div>
         </div>
         <div class="col-md-4 m-auto text-center">

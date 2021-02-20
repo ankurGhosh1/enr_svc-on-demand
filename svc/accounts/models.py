@@ -29,7 +29,7 @@ class UserList(AbstractUser):
     usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
     Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
     ContactCell = models.CharField(max_length=100, null=True)
-    City = models.CharField(max_length=30)
+    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
@@ -207,6 +207,8 @@ class TopicList(models.Model):
     SMSText = models.CharField(max_length=150, null=True)
     WhatsAppText = models.CharField(max_length=1000, null=True)
 
+    def __str__(self):
+        return self.TopicName
 
 def get_upload_path(instance, filename):
     return '{0}/{1}'.format(instance.Topic.TopicName, filename)
@@ -266,11 +268,11 @@ class ReviewList(models.Model):
     FromUser = models.ForeignKey(UserList, related_name="Review_From_User", on_delete=models.CASCADE)
     ReviewNote = models.CharField(max_length=3999)
     AssetsDetail = models.ForeignKey(AssetsDetailList, on_delete=models.SET_NULL, null=True)
-    User = models.ForeignKey(UserList, related_name="Review_Subscriber", on_delete=models.CASCADE)
+    User = models.ForeignKey(UserList, related_name="Review_Subscriber", on_delete=models.CASCADE, null=True)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Review_Updated_By", on_delete=models.CASCADE, null=True)
-    UpdatedDate = models.DateField(auto_now_add=True)
+    UpdatedDate = models.DateField(auto_now_add=True, null=True)
     IsActive = models.BooleanField(default=True)
     IsAdminApproved = models.BooleanField(default=True)
 
