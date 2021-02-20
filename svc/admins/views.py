@@ -26,4 +26,5 @@ class AllUsersView(View):
         paginator = Paginator(alluser, 1)
         page_number = request.GET.get('page')
         allusers = paginator.get_page(page_number)
+        print(alluser)
         return render(request, 'admins/allusers.html', {'allusers': allusers})

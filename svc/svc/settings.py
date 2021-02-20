@@ -100,6 +100,10 @@ TEMPLATES = [
                 'social_django.context_processors.login_redirect',
 
             ],
+            'libraries':{
+            'customtags': 'admins.templatetags.customtags',
+
+            }
         },
     },
 ]

@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
+{% load customtags %}
 
 {% block content %}
 <div class="container">
-    <table class="table">
+    <table class="table table-hover table-info" id="all">
         <thead>
         <tr>
             <th scope="col">User Id</th>
@@ -23,17 +24,17 @@
             <td>{{user.lastname}}</td>
             <td>{{user.email}}</td>
             <td>{{user.ContactCell}}</td>
-            {% if allusers.usertype == '1' %}
+            {% if user.usertype_id == 1 %}
             <td>Client</td>
             {% else %}
             <td>Professional</td>
             {% endif %}
-            {% if user.isadmin == 1 %}
+            {% if user.is_superuser == 1 %}
             <td>Yes</td>
             {% else %}
             <td>No</td>
             {% endif %}
-            {% if user.isstaff == 1 %}
+            {% if user.is_staff == 1 %}
             <td>Yes</td>
             {% else %}
             <td>No</td>
