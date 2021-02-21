@@ -17,7 +17,7 @@ class AllProcedures:
         user = None
         with connection.cursor() as cursor:
             cursor.execute(f"EXEC dbo.getUser @email='{email}'")
-            user = cursor.fetchone()
+            user = dictfetchall(cursor)
         return user
 
     @staticmethod
@@ -25,7 +25,7 @@ class AllProcedures:
         user = None
         with connection.cursor() as cursor:
             cursor.execute(f"EXEC dbo.getUserWithId @id='{user_id}'")
-            user = cursor.fetchone()
+            user = dictfetchall(cursor)
         return user
 
     @staticmethod
@@ -56,20 +56,29 @@ class AllProcedures:
         return status
 
     @staticmethod
-    def getChatRecord(client_id, professional_id):
+    def getChatRecord(client_id, professional_id, room_name):
         messages = []
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.getChatRecord @client_id='{client_id}', @professional_id='{professional_id}'")
+            cursor.execute(f"EXEC dbo.getChatRecord @client_id='{client_id}', @professional_id='{professional_id}', @room_name='{room_name}'")
             messages = cursor.fetchall()
         return messages
 
     @staticmethod
-    def createChatRecord(message, client_id, professional_id, room_name, side):
+    def createChatRecord(message, client_id, professional_id, room_name, side, topic_id):
         status = False
         with connection.cursor() as cursor:
-            cursor.execute(f"EXEC dbo.createChatRecord @time_stamp='{datetime.datetime.now()}', @client_id='{client_id}', @professional_id='{professional_id}', @message='{message}', @room_name='{room_name}', @side='{side}'")
+            cursor.execute(f"EXEC dbo.createChatRecord @topic_id='{topic_id}', @time_stamp='{datetime.datetime.now()}', @client_id='{client_id}', @professional_id='{professional_id}', @message='{message}', @room_name='{room_name}', @side='{side}'")
             status = True
         return status
+
+    @staticmethod
+    def getJobById(job_id):
+        status = False
+        job = []
+        with connection.cursor() as cursor:
+            cursor.execute(f"EXEC dbo.getJobById @job_id='{job_id}'")
+            job = dictfetchall(cursor)
+        return job
 
     @staticmethod
     def createjob(TopicName, content, Category, City, User, **kwargs):
@@ -129,10 +138,10 @@ class AllProcedures:
         else:
             return 0
 
-    
 
 
-    
+
+
 
     @staticmethod
     def getCountry():
@@ -183,7 +192,7 @@ class AllProcedures:
         connections = None
         with connection.cursor() as cursor:
             cursor.execute(f'EXEC dbo.getProfessionalConnections @professinoal_id="{user_id}"')
-            connections = cursor.fetchall()
+            connections = dictfetchall(cursor)
         return connections
 
 
@@ -192,7 +201,7 @@ class AllProcedures:
         connections = None
         with connection.cursor() as cursor:
             cursor.execute(f'EXEC dbo.getClientConnections @client_id="{user_id}"')
-            connections = cursor.fetchall()
+            connections = dictfetchall(cursor)
         return connections
 
     @staticmethod
@@ -202,6 +211,14 @@ class AllProcedures:
             address = cursor.execute(f"EXEC dbo.getUserAddress @user_id='{user_id}'")
             address = dictfetchall(address)
         return address
+
+    @staticmethod
+    def getFilterJobs(city_id, cat_id, subcat_id):
+        jobs = None
+        with connection.cursor() as cursor:
+            cursor.execute(f"EXEC dbo.getFilterJobs @city_id='{city_id}', @subcat_id='{subcat_id}', @cat_id='{cat_id}'")
+            jobs = dictfetchall(cursor)
+        return jobs
 
     @staticmethod
     def updateUser(li,user_id):
@@ -230,7 +247,7 @@ class AllProcedures:
             nearJobs = cursor.execute(query)
             nearJobs = dictfetchall(nearJobs)
         return nearJobs
-        
+
     @staticmethod
     def generateOTP(otp,email):
         status = False
@@ -239,6 +256,25 @@ class AllProcedures:
             cursor.execute(query)
             status = True
         return status
+
+    def applyJob(user_id, job_id):
+        status = False
+        query = f"EXEC dbo.applyJob @user_id='{user_id}' ,@job_id='{job_id}' , @topic_date='{datetime.datetime.now()}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
+    def getAppliedJobsList(user_id):
+        jobsList = []
+        query = f"EXEC dbo.getAppliedJobsList @user_id='{user_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        res = []
+        for i in jobsList:
+            res.append(i['Topic_id'])
+        return res
 
 
 

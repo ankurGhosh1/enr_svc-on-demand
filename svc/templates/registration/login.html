@@ -62,8 +62,11 @@
                 <button type="submit" class="btn bg-svc-match border-0 btn-block btn-primary"><h5>Login</h5></button>
             </div>
         </form>
+
         <div class="text-left">
           <small class="text-secondary">Not a member? <a href="{% url 'accounts:signup' %}">Signup</a></small>
+          <br>
+          <small class="text-secondary">Forgot Password?<a href="{% url 'accounts:password_reset_form' %}" class=""> Click Here</a></small>
         </div>
       </div>
     </div>

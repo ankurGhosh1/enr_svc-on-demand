@@ -9,18 +9,18 @@ class JobPostForm(forms.ModelForm):
         exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'SMSText', 'WhatsAppText', 'CloseBy_id', 'ForceCloseCategory', 'UpdatedBy', 'AddedBy', 'CloseBy', 'IsClose', 'IsActive', 'IsNotification')
 
 class JobUpdateForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(JobUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['ForceCloseReason'].required = False
-        self.fields['ForceCloseCategory'].required = False
-        self.fields['Category'].required = False
-        self.fields['SubCategory'].required = False
-        self.fields['IsActive'].required = False
-        self.fields['IsClose'].required = False
-        self.fields['CloseBy'].required = False
-        self.fields['IsNotification'].required = False
-        self.fields['SMSText'].required = False
-        self.fields['WhatsAppText'].required = False
+    # def __init__(self, *args, **kwargs):
+    #     super(JobUpdateForm, self).__init__(*args, **kwargs)
+    #     self.fields['ForceCloseReason'].required = False
+    #     self.fields['ForceCloseCategory'].required = False
+    #     self.fields['Category'].required = False
+    #     self.fields['SubCategory'].required = False
+    #     self.fields['IsActive'].required = False
+    #     self.fields['IsClose'].required = False
+    #     self.fields['CloseBy'].required = False
+    #     self.fields['IsNotification'].required = False
+    #     self.fields['SMSText'].required = False
+    #     self.fields['WhatsAppText'].required = False
 
     class Meta:
         model = TopicList

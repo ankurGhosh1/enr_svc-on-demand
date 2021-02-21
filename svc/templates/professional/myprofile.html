@@ -58,12 +58,12 @@
                   <tr>
                     <th>Name</th>
                     <th>:</th>
-                    <td>{{request.session.user.info.2}} {{request.session.user.info.3}}</td>
+                    <td>{{request.session.user.first_name}} {{request.session.user.last_name}}</td>
                   </tr>
                   <tr>
                     <th>Email</th>
-                    <th>:</th> 
-                    <td>{{request.session.user.info.4}}</td>
+                    <th>:</th>
+                    <td>{{request.session.user.email}}</td>
                   </tr>
                   <tr>
                     <th>Language</th>
@@ -73,9 +73,9 @@
                   <tr>
                     <th>Phone Number</th>
                     <th>:</th>
-                    <td>{{request.session.user.info.9}}</td>
+                    <td>{{request.session.user.ContactCell}}</td>
                   </tr>
-                  <tr>        
+                  <tr>
                     <td><a href="#" class="btn btn-primary">Submit A Review</a></td>
                   </tr>
                 </table>
@@ -83,7 +83,7 @@
             </div>
             <div class="col-sm-4 m-auto">
               <div class="p-2">
-                <a href="{% url 'accounts:password_reset_form' %}" class="btn btn-danger">Change Password</a>
+                <a href="{% url 'accounts:password_change' %}" class="btn btn-danger">Change Password</a>
               </div>
             </div>
           </div>

@@ -132,7 +132,11 @@ class JobDetailView(generic.DetailView):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
         eachjob = dictfetchall(cursor)
-        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob})
+        id = eachjob[0]['User_id']
+        cursor = connection.cursor()
+        cursor.execute(f"EXEC dbo.getUserWithId @id='{id}'")
+        user = dictfetchall(cursor)
+        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user':user[0]})
 
 class JobUpdateView(generic.UpdateView):
     # template_name = 'jobupdate.html'

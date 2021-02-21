@@ -12,12 +12,20 @@
             <p class="card-text">{{job.AddedDate}}</p>
             <p class="card-text">{{job.Category}}</p>
             <p class="card-text"><small class="text-muted">{{job.Subcategory_id}}</small></p>
+            <p class="card-text">Posted By: <a href="/client/profile/{{user.id}}">{{user.email}}</p>
           </div>
         </div>
         <div class="col-md-4 m-auto text-center">
           <div class="row">
             <div class="col-sm-6 m-auto">
-              <a href="{% url 'chatApp:chat' user_id=job.User_id %}" class="btn btn-outline-danger" title="Update">Chat</a>
+              <a href="{% url 'chatApp:chat' user_id=job.User_id job_id=job.id %}" class="btn btn-outline-danger" title="Update">Chat</a>
+            </div>
+            <div class="col-sm-6 m-auto">
+              {% if applied %}
+                <a class="btn diabled text-success" title="Update"><i class="fa fa-check"></i> Applied</a>
+              {% else %}
+                <a href="{% url 'professional:apply' job_id=job.id %}" class="btn btn-outline-primary" title="Update">Apply</a>
+              {% endif %}
             </div>
           </div>
         </div>

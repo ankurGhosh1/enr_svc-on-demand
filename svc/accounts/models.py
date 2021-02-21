@@ -29,7 +29,7 @@ class UserList(AbstractUser):
     usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
     Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
     ContactCell = models.CharField(max_length=100, null=True)
-    
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [
@@ -285,6 +285,7 @@ class ChatRecord(models.Model):
     room_name = models.CharField(max_length=300 )
     TimeStamp = models.DateTimeField(auto_now_add=True)
     IsActive = models.BooleanField(default=True)
+    topic = models.ForeignKey(TopicList, on_delete=models.CASCADE)
 
 
 class OTP(models.Model):

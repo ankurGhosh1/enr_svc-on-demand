@@ -14,6 +14,8 @@ import os
 from django.contrib import messages
 import random, string
 from django.core.mail import send_mail
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,24 +33,23 @@ def home(request):
 
     return render(request, 'home.html')
 
+
+
 def _login(request, user, password, pass_req):
-    if check_password(password, user[1]) or pass_req:
-        request.session['user'] = {
-        'is_authenticated': True,
-        'id':user[0],
-        'email':user[7],
-        'info': user[3:10]+user[11:]
-        }
-        print(user[9], user)
-        type = AllProcedures.getUserType(user[-1])
-        print(type)
+    if check_password(password, user[0]['password']) or pass_req:
+        user[0]['is_authenticated'] = True
+        type = AllProcedures.getUserType(user[0]['usertype_id'])
         if(type and type[0]=="Customer"):
-            request.session['user']['type'] = "Client"
+            user[0]['type'] = "Client"
+            request.session['user']=json.loads(json.dumps(user[0], sort_keys=True, indent=1, cls=DjangoJSONEncoder))
+            print(request.session['user'])
             return redirect('clients:dashboard')
         elif not type:
             return redirect('accounts:login')
         else:
-            request.session['user']['type'] = "Professional"
+            user[0]['type'] = "Professional"
+            request.session['user']=json.loads(json.dumps(user[0], sort_keys=True, indent=1, cls=DjangoJSONEncoder))
+            print(request.session['user'])
             return redirect('professional:dashboard')
     return redirect('accounts:login')
 
