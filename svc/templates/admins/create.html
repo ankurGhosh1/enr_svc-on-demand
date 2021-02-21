@@ -3,10 +3,78 @@
 {% block content %}
 
 <div class="container">
-    <form method="POST">
-        {% csrf_token %}
-        {{ categoryform|crispy }}
-        <button class="btn btn-primary">Submit</button>
-    </form>
+    <div class="row">
+
+        <div class="col-md-6">
+            <h1>Insert New Category</h1>
+            <form method="POST" name='CategoryList'>
+                {% csrf_token %}
+                {{ categoryform|crispy }}
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-6" style="padding: 1%;">
+            <h1>All Categories</h1>
+            <ul class="list-group">
+                {% for category in allcategory %}
+                <li class="list-group-item">
+                    {{category.CategoryName}} 
+                    <a href="/staff/deletecategory/{{category.id}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x float-right" style="margin: 1%;" viewBox="0 0 16 16">
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h1>Insert New SubCategory</h1>
+            <form method="POST" name='SubCategoryList' action='/staff/addsub/'> 
+                {% csrf_token %}
+                {{ subcategoryform|crispy }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h1>All Sub-Categories</h1>
+            <ul class="list-group">
+                {% for subcategory in allsubcategory %}
+                <li class="list-group-item">
+                    {{subcategory.SubCategoryName}} 
+                    <a href="/staff/deletecategory/{{subcategory.id}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x float-right" style="margin: 1%;" viewBox="0 0 16 16">
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h1>Insert New Country</h1>
+            <form method="POST" name='SubCategoryList' action="/staff/addcountry/"> 
+                {% csrf_token %}
+                {{ countryform|crispy }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h1>All Countries</h1>
+            <ul class="list-group">
+                {% for con in allcon %}
+                <li class="list-group-item">
+                    {{con.Country}} 
+                    <a href="/staff/deletecountry/{{con.id}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x float-right" style="margin: 1%;" viewBox="0 0 16 16">
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
 </div>
 {% endblock %}
