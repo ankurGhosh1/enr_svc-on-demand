@@ -112,7 +112,7 @@ class CategoryList(models.Model):
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="Category_Updated_By", on_delete=models.CASCADE, null=True)
-    UpdatedDate = models.DateField(auto_now_add=True)
+    UpdatedDate = models.DateField(auto_now_add=True, null=True)
     IsActive = models.BooleanField(default=True)
 
     def __str__(self):
@@ -133,7 +133,7 @@ class SubCategoryList(models.Model):
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="SubCat_Updated_By", on_delete=models.CASCADE, null=True)
-    UpdatedDate = models.DateField(auto_now_add=True)
+    UpdatedDate = models.DateField(auto_now_add=True, null=True)
     IsActive = models.BooleanField(default=True)
 
     def __str__(self):

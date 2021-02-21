@@ -5,6 +5,7 @@ from .models import (
     UserType,
     UserList,
     CityList,
+    CountryList,
     ResponseTypeList,
     TemplateTypeList,
     CategoryList,
@@ -29,6 +30,7 @@ admin.site.register(UserType)
 admin.site.register(UserList)
 admin.site.register(CityList)
 admin.site.register(ResponseTypeList)
+admin.site.register(CountryList)
 admin.site.register(TemplateTypeList)
 admin.site.register(CategoryList)
 admin.site.register(SubCategoryList)
