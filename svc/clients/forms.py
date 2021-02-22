@@ -6,7 +6,7 @@ class JobPostForm(forms.ModelForm):
     class Meta:
         model = TopicList
         fields = '__all__'  # ('TopicName',)
-        exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'SMSText', 'WhatsAppText', 'CloseBy_id', 'ForceCloseCategory', 'UpdatedBy', 'AddedBy', 'CloseBy', 'IsClose', 'IsActive', 'IsNotification')
+        exclude = ('UpdatedDate', 'CloseDate', 'User', 'ForceCloseReason', 'SMSText', 'WhatsAppText', 'CloseBy_id', 'Category','City', 'ForceCloseCategory', 'UpdatedBy', 'AddedBy', 'CloseBy', 'IsClose', 'IsActive', 'IsNotification')
 
 class JobUpdateForm(forms.ModelForm):
     # def __init__(self, *args, **kwargs):

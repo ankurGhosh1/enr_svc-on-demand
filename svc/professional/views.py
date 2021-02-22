@@ -75,7 +75,7 @@ def applyJob(request, job_id):
         user_id = request.session['user']['id']
         if job_id not in appliedList:
             AllProcedures.applyJob(user_id, job_id)
-        return redirect('professional:explore')
+        return redirect('professional:indiJob', job_id=job_id)
     return redirect('accounts:signup')
 
 

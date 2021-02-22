@@ -15,13 +15,13 @@ def chat(request, user_id, job_id):
             messages = AllProcedures.getChatRecord(client_id=my_id, professional_id=user_id, room_name=room_name)
             professional_id = user_id
             client_id = my_id
-            messages = [(i[0], i[1], name) for i in messages]
+            messages = [(i[0], i[1], name, i[2]) for i in messages]
         else:
             room_name = f'chat{my_id}{user_id}-{job_id}-s'
             messages = AllProcedures.getChatRecord(client_id=user_id, professional_id=my_id, room_name=room_name)
             professional_id = my_id
             client_id = user_id
-            messages = [(i[0], not i[1], name) for i in messages]
+            messages = [(i[0], not i[1], name, i[2]) for i in messages]
         job = AllProcedures.getJobById(job_id)
         context = {
             'senderId': (user_id, name),

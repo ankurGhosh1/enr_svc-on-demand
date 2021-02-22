@@ -13,6 +13,7 @@
                   </div>
                   <div class="col-md-8">
                     <div class="card-body">
+                      {{each}}
                       <h5 class="card-title">{{each.CategoryName}}</h5>
                       <p class="card-text">I am {{each.first_name}} {{each.last_name}} from {{each.City}} providing {{each.CategoryName}} service. You can contact me at {{each.email}} or request a callback.</p>
                       <a href="/client/callback/{{each.username}}" class="btn btn-primary">Request a callback</a>

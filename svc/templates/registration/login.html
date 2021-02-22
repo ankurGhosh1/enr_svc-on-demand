@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <style media="screen">
   .bg-svc{
@@ -59,7 +59,8 @@
                 <input type="password" class="form-control" placeholder="Enter Password" name="password">
             </div>
             <div class="form-group">
-                <button type="submit" class="btn bg-svc-match border-0 btn-block btn-primary"><h5>Login</h5></button>
+                <button type="submit" id="submitBtn" class="btn bg-svc-match border-0 btn-block btn-primary"><h5>Login</h5></button>
+                <small id="help"></small>
             </div>
         </form>
 
@@ -72,4 +73,8 @@
     </div>
   </div>
 </div>
+<script src="{% static 'validate_inputs.js' %}">
+
+</script>
+
 {% endblock %}

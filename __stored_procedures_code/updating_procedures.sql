@@ -41,10 +41,9 @@ UPDATE [dbo].[accounts_topiclist]
  WHERE id=@id
 
 
-
  USE [baghiService]
  GO
- /****** Object:  StoredProcedure [dbo].[getChatRecord]    Script Date: 21-02-2021 01:30:57 PM ******/
+ /****** Object:  StoredProcedure [dbo].[getChatRecord]    Script Date: 22-02-2021 02:49:28 PM ******/
  SET ANSI_NULLS ON
  GO
  SET QUOTED_IDENTIFIER ON
@@ -55,8 +54,7 @@ UPDATE [dbo].[accounts_topiclist]
  	@room_name nvarchar(300) = NULL
  AS
 
- SELECT [message],[side] FROM [dbo].[accounts_chatrecord] WHERE [client_id] = @client_id AND [professional_id] = @professional_id AND [room_name]=@room_name
-
+ SELECT [message],[side],[TimeStamp] FROM [dbo].[accounts_chatrecord] WHERE [client_id] = @client_id AND [professional_id] = @professional_id AND [room_name]=@room_name
 
 
 

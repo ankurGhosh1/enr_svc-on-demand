@@ -26,15 +26,21 @@
         {% for message in messages %}
         {% if message.1 %}
         <div class="w-100">
-          <div class="recieved">
-            <small>{{message.2}}</small><br>
-            {{message.0}}
+          <div class="recieved p-0 text-left">
+            <small class="border-bottom w-100 small pb-1 pt-1 pl-2 pr-2">{{message.3|date:'d-M-Y, h:i a'}}</small>
+            <div class="p-2">
+              <small>{{message.2}}</small><br>
+              {{message.0}}<br>
+            </div>
           </div>
         </div>
         {% else %}
         <div class="w-100 invert">
-          <div class="bg-dark sent">
-            {{message.0}}
+          <div class="bg-dark p-0 text-right sent">
+            <small class="border-bottom w-100 small pb-1 pt-1 pl-2 pr-2">{{message.3|date:'d-M-Y, h:i a'}}</small>
+            <div class="p-2">
+              {{message.0}}
+            </div>
           </div>
         </div>
         {% endif %}

@@ -165,10 +165,10 @@ def login(request):
 
 def signup(request):
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM testenr.dbo.accounts_usertype")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM testenr.dbo.accounts_appliationlist")
+    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
@@ -209,7 +209,7 @@ def addressAdd(request):
         saved = AllProcedures.addressAddUser(li)
         print(li)
         user = AllProcedures.getUserWithEmail(request.session['user']['email'])
-        type = AllProcedures.getUserType(user[-1])
+        type = AllProcedures.getUserType(user[0]['usertype_id'])
         if (type and type[0] == "Customer"):
             return redirect('clients:dashboard')
         elif (type and type[0] == "Professional"):
