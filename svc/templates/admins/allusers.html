@@ -3,9 +3,9 @@
 
 {% block content %}
 <div class="container">
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          Filter
+    <div class="dropdown filter">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          UserType
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
           <li><a class="dropdown-item" href="{% url 'admins:allusers' %}">All</a></li>
@@ -13,9 +13,9 @@
           <li><a class="dropdown-item" href="{% url 'admins:allpro' %}">Professionals</a></li>
         </ul>
     </div>
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          UserType
+    <div class="dropdown filter float-right">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          Permissions
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
           <li><a class="dropdown-item" href="{% url 'admins:alladmin' %}">Admin</a></li>
@@ -40,7 +40,7 @@
         <tr>
             <th scope="row">{{user.id}}</th>
             <td><a href="/client/profile/{{user.id}}">{{user.first_name}}</a></td>
-            <td>{{user.lastname}}</td>
+            <td>{{user.last_name}}</td>
             <td>{{user.email}}</td>
             <td>{{user.ContactCell}}</td>
             {% if user.usertype_id == 1 %}

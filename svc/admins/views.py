@@ -25,10 +25,10 @@ class AllUsersView(View):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getAllUser")
         alluser = dictfetchall(cursor)
-        paginator = Paginator(alluser, 1)
+        paginator = Paginator(alluser, 9)
         page_number = request.GET.get('page')
         allusers = paginator.get_page(page_number)
-        print(alluser) 
+        # print(alluser) 
         return render(request, 'admins/allusers.html', {'allusers': allusers})
 
 class AllCusView(View):
@@ -36,10 +36,10 @@ class AllCusView(View):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getAllClient")
         alluser = dictfetchall(cursor)
-        paginator = Paginator(alluser, 1)
+        paginator = Paginator(alluser, 9)
         page_number = request.GET.get('page')
         allusers = paginator.get_page(page_number)
-        print(alluser) 
+        # print(alluser) 
         return render(request, 'admins/allusers.html', {'allusers': allusers})
 
 
@@ -48,10 +48,10 @@ class AllProView(View):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getAllProfessional")
         alluser = dictfetchall(cursor)
-        paginator = Paginator(alluser, 1)
+        paginator = Paginator(alluser, 9)
         page_number = request.GET.get('page')
         allusers = paginator.get_page(page_number)
-        print(alluser) 
+        # print(alluser) 
         return render(request, 'admins/allusers.html', {'allusers': allusers})
 
 class AddAll(View):
@@ -121,6 +121,7 @@ class AddCountryView(View):
             cursor.execute(f"EXEC dbo.createCountry @Country='{country}', @IsActive='{1}' ")
             return redirect('/staff/addall')
 
+# Delete Country View
 
 class DeleteCountryView(View):
     def get(self, request, pk):
@@ -129,26 +130,28 @@ class DeleteCountryView(View):
         cursor.execute(f"EXEC dbo.deleteCountry @id='{_id}'")
         return redirect('/staff/addall')
 
+# Admin View
 
 class AllAdminView(View):
     def get(self, request):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getAllAdmin")
         alluser = dictfetchall(cursor)
-        paginator = Paginator(alluser, 1)
+        paginator = Paginator(alluser, 9)
         page_number = request.GET.get('page')
         allusers = paginator.get_page(page_number)
         print(alluser) 
         return render(request, 'admins/allusers.html', {'allusers': allusers})
 
+# Staff View
 
 class AllStaffView(View):
     def get(self, request):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getAllStaff")
         alluser = dictfetchall(cursor)
-        paginator = Paginator(alluser, 1)
+        paginator = Paginator(alluser, 9)
         page_number = request.GET.get('page')
         allusers = paginator.get_page(page_number)
-        print(alluser) 
+        # print(alluser) 
         return render(request, 'admins/allusers.html', {'allusers': allusers})

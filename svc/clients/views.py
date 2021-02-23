@@ -17,11 +17,16 @@ from svc.utils import AllProcedures
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 import datetime
+from .mixins import ClientLoginMixin
 
 # # Create your views here.
 
+# Client Dashboard
+
 def dashboard(request):
     return render(request, 'clients/dashboard.html')
+
+# Fetch Objects as List
 
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
@@ -30,6 +35,7 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
+# Get Sub Categoreis
 
 def getSubCats(request):
     if request.method=='POST':
@@ -41,6 +47,8 @@ def getSubCats(request):
         print(subCategory)
         return JsonResponse(subCategory, safe=False)
 
+# Get Categoreis
+
 def getCats(request):
     if request.method=='POST':
         print(request)
@@ -51,6 +59,7 @@ def getCats(request):
         print(subCategory)
         return JsonResponse(subCategory, safe=False)
 
+# Post A job
 
 class JobPostView(generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
@@ -114,6 +123,7 @@ class JobPostView(generic.CreateView):
             return redirect('clients:alljobs')
 
 
+# List of all Jobs
 
 class GetJobPost(generic.ListView):
     def get(self, request):
@@ -125,6 +135,8 @@ class GetJobPost(generic.ListView):
         for i in joblist:
             print(i)
         return render(request, 'clients/alljobs.html', {'jobs': joblist})
+
+# Details of each jobs
 
 class JobDetailView(generic.DetailView):
     def get(self, request, pk):
@@ -139,6 +151,9 @@ class JobDetailView(generic.DetailView):
         user = dictfetchall(cursor)
         print(user)
         return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user': user})
+
+
+# Job Update view
 
 class JobUpdateView(generic.UpdateView):
     # template_name = 'jobupdate.html'
@@ -173,6 +188,8 @@ class JobUpdateView(generic.UpdateView):
             saved = AllProcedures.updatejob(**dict)
             return redirect('clients:alljobs')
 
+# Deleting a jOb
+
 class JobDeleteView(View):
     def post(self, request, pk):
         pk = self.kwargs.get('pk')
@@ -180,6 +197,8 @@ class JobDeleteView(View):
         cursor.execute(f"EXEC dbo.deleteJob @id='{pk}'")
         return redirect('/client/alljobs')
 
+
+# List of All Professionals
 
 class AllProfessionals(View):
     def get(self, request):
@@ -197,6 +216,7 @@ class AllProfessionals(View):
         page_obj = paginator.get_page(page_number)
         return render(request, 'clients/services.html', {'professionals': page_obj})
 
+# Arranging a Callback
 
 class Callback(View):
     def get(self, request, slug):
@@ -223,6 +243,7 @@ class Callback(View):
             )
             return render(request, 'clients/successemail.html')
 
+# Adding a review to a user
 
 class Review(View):
     def get(self, request, pk):
@@ -253,7 +274,7 @@ class Review(View):
 
 
 
-
+# Profile view
 
 
 def MyProfile(request):

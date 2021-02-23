@@ -188,3 +188,14 @@ form.w-75:hover{
 }
 
 /* All jobs Card */
+
+/* allusers page admin */
+
+
+.filter{
+  display: inline-block; 
+}
+
+#id_TopicName{
+  width: 100%;
+}
