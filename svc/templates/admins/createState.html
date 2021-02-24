@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container mb-5">
+  <a href="{% url 'admins:dashboard' %}" class="btn btn-danger mt-2">Go to Home</a>
+    <div class="row mt-4">
+      <div class="col-md-6">
+          <h1>Insert New State</h1>
+          <form method="POST" name='SubCategoryList'>
+              {% csrf_token %}
+              <table class="table">
+                <tr>
+                  <th>Select Country</th>
+                  <td>{{stateFrom.CountryId}}
+                  <a href="{% url 'admins:addcon' %}"><i class="fa fa-plus m-auto"></i></a></td>
+                </tr>
+                <tr>
+                  <th>Enter State Name</th>
+                  <td>{{ stateFrom.State }}</td>
+                </tr>
+              </table>
+              <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+      </div>
+
+      <div class="col-md-6">
+          <h1>All States</h1>
+          <ul class="list-group">
+              {% for states in grouped_states %}
+              <li class="list-group-item">
+                  {{states.0.CountryName}}
+                  <ul>
+                    {% for state in states %}
+                      {% if state.IsActive %}
+                        <li class="border-bottom p-2">
+                          {{state.State}}
+                          <a href="{% url 'admins:deletestate' state_id=state.id %}" class="m-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x float-right" viewBox="0 0 16 16">
+                              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
+                          </a>
+                      {% else %}
+                        <li class="border-bottom text-secondary bg-light p-2" title="Inactive">
+                          {{state.State}}
+                          <a href="{% url 'admins:activate' state_id=state.id %}" class="m-0">
+                            <i class="fa fa-plus float-right" title="Activate"></i>
+                          </a>
+                      {% endif %}
+                        </li>
+                    {% endfor %}
+                  </ul>
+              </li>
+              {% endfor %}
+          </ul>
+      </div>
+    </div>
+  </div>
+
+  {% endblock %}

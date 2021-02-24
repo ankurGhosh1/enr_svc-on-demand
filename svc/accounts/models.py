@@ -53,8 +53,8 @@ class CountryList(models.Model):
 
 
 class StateList(models.Model):
-    State = models.CharField(max_length=100,blank=True,null=True)
     CountryId = models.ForeignKey(CountryList,on_delete=models.CASCADE, null=True)
+    State = models.CharField(max_length=100,blank=True,null=True)
     IsActive = models.BooleanField(default=True)
 
     def __str__(self):
@@ -128,8 +128,8 @@ class CategoryInCity(models.Model):
 
 
 class SubCategoryList(models.Model):
-    SubCategoryName = models.CharField(max_length=300)
     Category = models.ForeignKey(CategoryList, on_delete=models.CASCADE)
+    SubCategoryName = models.CharField(max_length=300)
     AddedBy = models.ForeignKey(UserList, on_delete=models.CASCADE)
     AddedDate = models.DateField(auto_now_add=True)
     UpdatedBy = models.ForeignKey(UserList, related_name="SubCat_Updated_By", on_delete=models.CASCADE, null=True)

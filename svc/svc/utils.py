@@ -265,6 +265,15 @@ class AllProcedures:
             status = True
         return status
 
+
+    def addCatInCity(cat_id, city_id):
+        status = False
+        query = f"EXEC dbo.addCatInCity @cat_id='{cat_id}' ,@city_id='{city_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        return status
+
     def getAppliedJobsList(user_id):
         jobsList = []
         query = f"EXEC dbo.getAppliedJobsList @user_id='{user_id}';"
@@ -274,7 +283,13 @@ class AllProcedures:
         res = []
         for i in jobsList:
             res.append(i['Topic_id'])
-        return res
+        ids = str(res).replace("[", "").replace("]", "")
+        query = f"EXEC dbo.getJobsInId @job_id_list='{ids}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        print(jobsList)
+        return res, jobsList
 
 
 

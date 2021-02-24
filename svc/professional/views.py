@@ -42,9 +42,27 @@ def filter(request):
         jobs = AllProcedures.getFilterJobs(city_id=city, subcat_id=subCat, cat_id=cat)
         if request.session.has_key('user'):
             user_id = request.session['user']['id']
-            appliedList = AllProcedures.getAppliedJobsList(user_id)
+            appliedList, appliedJobs = AllProcedures.getAppliedJobsList(user_id)
         return render(request, 'professional/explore.html', {'jobs':jobs, 'city':cities, 'appliedList':appliedList})
     return HttpResponse(f"heheheh-{city}-{cat}-{subCat}")
+
+
+def Applied(request):
+    appliedList = []
+    if request.session.has_key('user'):
+        user_id = request.session['user']['id']
+        appliedList, appliedJobs = AllProcedures.getAppliedJobsList(user_id)
+        print(appliedList)
+        script = '''
+            <script>
+                document.getElementById('page-heading').innerHTML = "Applied Jobs";
+                var k = document.getElementById('filter_button');
+                k.parentNode.removeChild(k);
+            </script>
+        '''
+        return render(request, 'professional/explore.html', {'jobs':appliedJobs, 'appliedList':appliedList, 'script':script})
+    return redierct('accounts:login')
+
 
 
 
@@ -60,7 +78,7 @@ def indiJob(request, job_id):
     appliedList = []
     if request.session.has_key('user'):
         user_id = request.session['user']['id']
-        appliedList = AllProcedures.getAppliedJobsList(user_id)
+        appliedList, appliedJobs = AllProcedures.getAppliedJobsList(user_id)
     applied = False
     if job_id in appliedList:
         applied = True

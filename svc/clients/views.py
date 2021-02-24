@@ -31,6 +31,28 @@ def dictfetchall(cursor):
     ]
 
 
+def getCities(request):
+    if request.method=='POST':
+        print(request)
+        state_id = request.POST['state_id']
+        cursor = connection.cursor()
+        cities = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_citylist WHERE StateId_id='{state_id}'")
+        cities =  dictfetchall(cities)
+        print(cities)
+        return JsonResponse(cities, safe=False)
+
+
+
+def getStates(request):
+    if request.method=='POST':
+        print(request)
+        country_id = request.POST['country_id']
+        cursor = connection.cursor()
+        states = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_statelist WHERE countryId_id='{country_id}'")
+        states =  dictfetchall(states)
+        print(states)
+        return JsonResponse(states, safe=False)
+
 def getSubCats(request):
     if request.method=='POST':
         print(request)

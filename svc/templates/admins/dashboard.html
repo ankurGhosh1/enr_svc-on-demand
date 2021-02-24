@@ -4,5 +4,11 @@
 
 <h1>Dashboard</h1>
 <h3><a href="/staff/allusers">All Users</a></h3>
+<h3><a href="{% url 'admins:addcon' %}">Add Country</a></h3>
+<h3><a href="{% url 'admins:addstate' %}">Add State</a></h3>
+
+
+<h3><a href="{% url 'admins:addcity' %}">Add City</a></h3>
 <h3><a href="{% url 'admins:addall' %}">Add Category</a></h3>
+<h3><a href="{% url 'admins:addsubcat' %}">Add Sub Category</a></h3>
 {% endblock %}
