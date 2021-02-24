@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>You are not permitted to view this page. You are logged in as: {{request.session.user.first_name}} {{request.session.user.last_name}} with the email: {{request.session.user.email}} </h1>
+
+{{request.session.user}}
+
+{% endblock %}

@@ -130,7 +130,7 @@ def f_complete(request):
     return redirect("accounts:selectusertype")
 
 def selectUserType(request):
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+    cursor.execute("SELECT * FROM testenr.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
     if request.method=='POST':
         type = request.POST.get('userType');
@@ -165,10 +165,10 @@ def login(request):
 
 def signup(request):
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
+    cursor.execute("SELECT * FROM testenr.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+    cursor.execute("SELECT * FROM testenr.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
@@ -225,7 +225,7 @@ def update_profile(request):
     city = AllProcedures.getCityByState()
     address = AllProcedures.getUserAddress(request.session['user']['id'])
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+        cursor.execute("SELECT * FROM testenr.dbo.accounts_appliationlist")
         app = dictfetchall(cursor)
     with connection.cursor() as cursor:
         cursor.execute(f"EXEC dbo.getUserWithId @id='{request.session['user']['id']}'")
@@ -278,7 +278,7 @@ def password_reset_form(request):
     otp = ''.join(random.choices(string.digits, k=6))
     email = request.POST.get('email')
     with connection.cursor() as cursor:
-        users = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_userlist WHERE email = %s",[email]).fetchone()[0]
+        users = cursor.execute("SELECT COUNT(*) FROM testenr.dbo.accounts_userlist WHERE email = %s",[email]).fetchone()[0]
     if request.method == 'POST':
         if users == 1:
             saved = AllProcedures.generateOTP(otp,email)
@@ -297,7 +297,7 @@ def password_reset_otp(request):
     if not request.session.has_key('otp'):
         return redirect('accounts:password_reset_form')
     with connection.cursor() as cursor:
-        cursor.execute("SELECT TOP 1 * FROM baghiService.dbo.accounts_otp WHERE user_email = %s ORDER BY id DESC", [request.session['otp']])
+        cursor.execute("SELECT TOP 1 * FROM testenr.dbo.accounts_otp WHERE user_email = %s ORDER BY id DESC", [request.session['otp']])
         otp = namedtuplefetchall(cursor)
     minute_count = round((datetime.datetime.now()-otp[0].doc).total_seconds() / 60)
     if request.method == 'POST':

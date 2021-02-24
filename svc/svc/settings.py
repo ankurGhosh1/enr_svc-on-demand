@@ -150,8 +150,8 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
     'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'baghiService',
-        'HOST': 'DESKTOP-IUNO0HB',
+        'NAME': 'testenr',
+        'HOST': 'DESKTOP-IREJPI3',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

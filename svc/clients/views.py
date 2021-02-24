@@ -17,7 +17,7 @@ from svc.utils import AllProcedures
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 import datetime
-from .mixins import ClientLoginMixin
+from .mixins import ClientLoginMixin, ProfessinonalLoginMixin
 
 # # Create your views here.
 
@@ -42,9 +42,9 @@ def getSubCats(request):
         print(request)
         cat_id = request.POST['cat_id']
         cursor = connection.cursor()
-        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
+        subCategory = cursor.execute(f"SELECT * FROM testenr.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
         subCategory =  dictfetchall(subCategory)
-        print(subCategory)
+        # print(subCategory)
         return JsonResponse(subCategory, safe=False)
 
 # Get Categoreis
@@ -54,22 +54,22 @@ def getCats(request):
         print(request)
         city_id = request.POST['city_id']
         cursor = connection.cursor()
-        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM baghiService.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
+        subCategory = cursor.execute(f"SELECT * FROM testenr.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM testenr.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
         subCategory =  dictfetchall(subCategory)
-        print(subCategory)
+        # print(subCategory)
         return JsonResponse(subCategory, safe=False)
 
 # Post A job
 
-class JobPostView(generic.CreateView):
+class JobPostView(ClientLoginMixin, generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
     def get(self, request):
         cursor = connection.cursor()
-        city = cursor.execute("SELECT * FROM baghiService.dbo.accounts_citylist")
+        city = cursor.execute("SELECT * FROM testenr.dbo.accounts_citylist")
         city =  dictfetchall(city)
-        category = cursor.execute("SELECT * FROM baghiService.dbo.accounts_categorylist")
+        category = cursor.execute("SELECT * FROM testenr.dbo.accounts_categorylist")
         category =  dictfetchall(category)
-        subCategory = cursor.execute("SELECT * FROM baghiService.dbo.accounts_subcategorylist")
+        subCategory = cursor.execute("SELECT * FROM testenr.dbo.accounts_subcategorylist")
         subCategory =  dictfetchall(subCategory)
         form_class = {'form': JobPostForm, 'cat':category, 'city':city, 'subCat':subCategory, 'assetsform': self.assetForm}
         return render(request, 'clients/jobposting.html', form_class)
@@ -94,13 +94,13 @@ class JobPostView(generic.CreateView):
                     kwargs[i] = request.POST[i]
             _, id = AllProcedures.createjob(**kwargs, User=user_id)
             for i in request.POST:
-                print(i)
+                # print(i)
                 if 'SubCategory-' in i:
                     query+=FastProcedures.subcat_query_add(topic_id=id, subcat_id=request.POST[i])
             if query:
                 FastProcedures.execute_query(query)
             query = ''
-            print(id, request.FILES)
+            # print(id, request.FILES)
             for i in request.FILES:
                 myfile = request.FILES[i]
                 filename = fs.save(myfile.name, myfile)
@@ -116,7 +116,7 @@ class JobPostView(generic.CreateView):
                     'updatedby_id':user_id
                 }
                 query+=FastProcedures.asset_query_add(**values)
-            print(query)
+            # print(query)
             if query:
                 FastProcedures.execute_query(query)
             return redirect('clients:alljobs')
@@ -126,6 +126,7 @@ class JobPostView(generic.CreateView):
 
 class GetJobPost(generic.ListView):
     def get(self, request):
+        print(request.session['user']['usertype_id'])
         cursor = connection.cursor()
         userId = request.session['user']['id']
         print(userId)
@@ -137,8 +138,9 @@ class GetJobPost(generic.ListView):
 
 # Details of each jobs
 
-class JobDetailView(generic.DetailView):
+class JobDetailView(ClientLoginMixin, generic.DetailView):
     def get(self, request, pk):
+        print(request.session['user']['usertype_id'])
         pk = self.kwargs.get('pk')
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
@@ -147,12 +149,12 @@ class JobDetailView(generic.DetailView):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getUserWithId @id='{id}'")
         user = dictfetchall(cursor)
-        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user':user[0]})
+        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user':user})
 
 
 # Job Update view
 
-class JobUpdateView(generic.UpdateView):
+class JobUpdateView(ClientLoginMixin, generic.UpdateView):
     # template_name = 'jobupdate.html'
     # form_class = JobPostForm
     # context_object_name = "job"
@@ -169,7 +171,7 @@ class JobUpdateView(generic.UpdateView):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
         eachjob = dictfetchall(cursor)
-        print(eachjob)
+        # print(eachjob)
         form_class = {'form': JobUpdateForm(instance=TopicList(**eachjob[0]))}
         return render(request, 'clients/jobupdate.html', form_class)
 
@@ -181,13 +183,13 @@ class JobUpdateView(generic.UpdateView):
                 if i != 'csrfmiddlewaretoken':
                     li.append(request.POST[i])
                     dict[i] = request.POST[i]
-            print(dict)
+            # print(dict)
             saved = AllProcedures.updatejob(**dict)
             return redirect('clients:alljobs')
 
 # Deleting a jOb
 
-class JobDeleteView(View):
+class JobDeleteView(ClientLoginMixin, View):
     def post(self, request, pk):
         pk = self.kwargs.get('pk')
         cursor = connection.cursor()
@@ -206,7 +208,7 @@ class AllProfessionals(View):
             myId = request.session['user']['id']
         cursor.execute(f"EXEC dbo.getMyCityJobs @user_Id='{myId}'")
         allcategories = dictfetchall(cursor)
-        print(allcategories)
+        # print(allcategories)
         paginator = Paginator(allcategories, 3)
 
         page_number = request.GET.get('page')
@@ -215,7 +217,7 @@ class AllProfessionals(View):
 
 # Arranging a Callback
 
-class Callback(View):
+class Callback(ClientLoginMixin, View):
     def get(self, request, slug):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getUser @id='{request.user.id}'")
@@ -253,7 +255,7 @@ class Review(View):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.myreviews @user_id='{id}'")
         allreviews = dictfetchall(cursor)
-        print(allreviews)
+        # print(allreviews)
         return render(request, 'clients/review.html', {'user': user, 'form': form, 'allreviews': allreviews})
 
     def post(self, request, pk):
@@ -261,10 +263,9 @@ class Review(View):
             topic = request.POST['Topic']
             review = request.POST['ReviewNote']
             touser = self.kwargs.get('pk')
-            fromuser = request.user.id
-            addedby = request.user.id
+            fromuser = request.session['user']['id']
             IsActive = 1
-            IsAdminApproved =1
+            IsAdminApproved = 1
             cursor = connection.cursor()
             cursor.execute(f"EXEC dbo.addreview @Topic='{topic}', @ReviewDate='{datetime.datetime.now()}', @ToUser='{touser}', @FromUser='{fromuser}', @ReviewNote='{review}', @User='{touser}', @AddedBy='{fromuser}', @AddedDate='{datetime.datetime.now()}', @IsActive='{IsActive}', @IsAdminApproved='{IsAdminApproved}'")
             return HttpResponseRedirect(self.request.path_info)
