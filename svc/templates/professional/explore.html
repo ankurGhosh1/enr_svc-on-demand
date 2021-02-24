@@ -1,14 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{{ city|json_script:"city" }}
 
+<div class="modal fade" id="modalId">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Filter</h5>
+	      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      	   <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="" action="{% url 'professional:filter' %}" method="post">
+          {% csrf_token %}
+          <div class="">
+            <select class="form-control mt-2 mb-2" name="city" id="id_city" onchange="makeCat(event)">
+              <option value="">Select City</option>
+            </select>
+          </div>
+          <div class="">
+            <select class="form-control mt-2 mb-2" name="cat" id="id_category" onchange="makeSubCat(event)">
+              <option value="">Select Category</option>
+            </select>
+          </div>
+          <div class="">
+            <select class="form-control mt-2 mb-2" name="subCat" id="id_subCategory">
+              <option value="">Select Sub Category</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-outline-success" name="button">Filter</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="">
     <section class="bg-svc">
       <div class="p-5">
         <div class="container p-3 text-white">
-          <div class="mx-auto text-left p-3">
-            <h3 class="banner-h1">All Jobs :</h3>
+          <div class="mx-auto row text-left p-3">
+            <h3 class="col-sm-10 banner-h1">All Jobs :</h3>
+            <div class="col-sm-2 m-auto" data-toggle="modal" data-target="#modalId">
+              <div class="btn btn-outline-light">
+                <i class="fa fa-filter"></i> Filter
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -22,22 +63,87 @@
     <div class="container">
       <div class="over-me bg-white shadow" style="border-radius:10px;overflow:hidden;">
         {% for job in jobs %}
-        <div class="p-3 bg-white">
-          <div class="border-bottom p-3">
-            <div class="">
-              <small>By: <i>user_name</i></small>
-            </div>
-            <div class="pt-2">
-              <a href="{% url 'professional:indiJob' job_id=job.id %}"><div>{{job.TopicName}}</div></a>
+          <div class="bg-white p-3">
+            <div class="border-bottom p-3">
               <div class="">
+                <small>By: <i>{{job.first_name}}</i></small>
+              </div>
+              <div class="pt-2">
+                <a href="{% url 'professional:indiJob' job_id=job.id %}"><div>{{job.TopicName}}</div></a>
+                <div class="">
+                  {% if job.id in appliedList %}
+                    <small class="text-secondary"><i class="text-success fa fa-check"></i> Applied</small>
+                  {% endif %}
+                </div>
               </div>
             </div>
           </div>
-        </div>
         {% endfor %}
       </div>
     </div>
 <br><br><br><br><br><br><br>
 </div>
+
+<script type="text/javascript">
+  var city = JSON.parse(document.getElementById('city').textContent);
+  var catDiv = document.getElementById('id_category');
+  var cityDiv = document.getElementById('id_city');
+  var subCatDiv = document.getElementById('id_subCategory');
+  city.forEach((item, index) => {
+    console.log(item)
+    cityDiv.innerHTML+=`<option value=${item.id}>${item.City}</option>`;
+  })
+
+
+  function makeCat(event){
+    var city_id = event.target.value;
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    const formData = new FormData();
+    i = 0
+    formData.append('city_id', city_id);
+    formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+    catDiv.innerHTML = '<option value="" selected="">Select Category</option>';
+    subCatDiv.innerHTML = '<option value="" selected="">Select Sub Category</option>';
+    fetch('{% url "clients:getCats" %}', {
+      method: 'POST',
+      body: formData
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((item, index)=>{
+        console.log(item)
+          catDiv.innerHTML+=`<option value=${item.id}>${item.CategoryName}</option>`;
+      })
+    })
+  }
+
+
+  function makeSubCat(event){
+    var cat_id = event.target.value;
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    var catDiv = document.getElementById('id_category');
+    var subCatDiv = document.getElementById('id_subCategory');
+
+    const formData = new FormData();
+    subCatDiv.innerHTML = '<option value="" selected="">Select Sub Category</option>';
+
+    formData.append('cat_id', cat_id);
+    formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+    fetch('{% url "clients:getSubCats" %}', {
+      method: 'POST',
+      body: formData
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      sub_cat_g = data;
+      data.forEach((item, index)=>{
+        console.log(item)
+          subCatDiv.innerHTML+=`<option value=${item.id}>${item.SubCategoryName}</option>`;
+      })
+    })
+  }
+
+</script>
 
 {% endblock %}

@@ -5,13 +5,18 @@
 <script type="text/javascript">
   document.getElementsByTagName('body')[0].classList.add('bg-match-nh');
 </script>
-<section class="chat text-center mt-5">
+<div class="container mt-3 text-center">
+  <div class="bg-white m-auto shadow btn" style="">
+    {{job.TopicName}}
+  </div>
+
+</div>
+<section class="chat text-center mt-3">
   <div class="input-chat-wrap shadow m-auto">
     <div class="m-auto mt-3 border-light border-top p-2 bg-light">
       <div class="row">
         <div class="col-sm-12 text-left">
           <div class="p-1" id="with">
-
           </div>
         </div>
       </div>
@@ -21,15 +26,21 @@
         {% for message in messages %}
         {% if message.1 %}
         <div class="w-100">
-          <div class="recieved">
-            <small>{{message.2}}</small><br>
-            {{message.0}}
+          <div class="recieved p-0 text-left">
+            <small class="border-bottom w-100 small pb-1 pt-1 pl-2 pr-2">{{message.3|date:'d-M-Y, h:i a'}}</small>
+            <div class="p-2">
+              <small>{{message.2}}</small><br>
+              {{message.0}}<br>
+            </div>
           </div>
         </div>
         {% else %}
         <div class="w-100 invert">
-          <div class="bg-dark sent">
-            {{message.0}}
+          <div class="bg-dark p-0 text-right sent">
+            <small class="border-bottom w-100 small pb-1 pt-1 pl-2 pr-2">{{message.3|date:'d-M-Y, h:i a'}}</small>
+            <div class="p-2">
+              {{message.0}}
+            </div>
           </div>
         </div>
         {% endif %}

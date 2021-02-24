@@ -8,7 +8,29 @@
       <div class="row g-0">
         <div class="col-md-8">
           <div class="card-body">
-            <a href="/chatApp/chat/{{connection.0}}">{{connection.1}}</a>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="head">
+                  {{connection.TopicName}}
+                </div>
+                <small>
+                  {% if request.session.user.type == "Professional" %}
+                    Client Name : {{connection.first_name}}
+                  {% else %}
+                    Professional Name : {{connection.first_name}}
+                  {% endif %}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 m-auto">
+          <div class="m-auto">
+            {% if request.session.user.type == "Professional" %}
+            <a href="{% url 'chatApp:chat' user_id=connection.client_id job_id=connection.topic_id %}">Continue Chat</a>
+            {% else %}
+            <a href="{% url 'chatApp:chat' user_id=connection.professional_id job_id=connection.topic_id %}">Continue Chat</a>
+            {% endif %}
           </div>
         </div>
       </div>

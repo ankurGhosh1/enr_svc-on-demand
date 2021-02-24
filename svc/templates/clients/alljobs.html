@@ -11,8 +11,8 @@
         </div>
         <div class="card-body">
           <h5 class="card-title"></h5>
-          <p class="card-text">{{job.TopicName}}</p>
-          <h5 class="card-title">{{job.AddedDate}}</h5>
+          <h6 class="card-title text-secondary">{{job.AddedDate|date:'d-M-Y'}}</h6>
+          <h5 class="card-text">{{job.TopicName}}</h5>
           <h5 class="card-title">{{job.Category_id}}</h5>
           <h5 class="card-title">{{job.City.id}}</h5>
           <a href="/client/alljobs/{{job.id}}/" class="btn btn-primary">Details</a>

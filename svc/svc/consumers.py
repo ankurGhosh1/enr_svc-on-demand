@@ -15,7 +15,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             bool=False
         else:
             bool=True
-        status = AllProcedures.createChatRecord(message, client_id, professional_id, roomName, bool)
+        topic_id = int(roomName.split("-")[1])
+        status = AllProcedures.createChatRecord(message, client_id, professional_id, roomName, bool, topic_id)
 
     async def connect(self):
         self.user = self.scope['session']['user']

@@ -534,3 +534,85 @@ INSERT INTO [dbo].[accounts_otp]
            ,@user_email
            ,@doc)
 GO
+
+
+-- Apply Job
+
+USE [baghiService]
+GO
+
+CREATE PROCEDURE dbo.applyJob
+	@user_id int = NULL,
+	@job_id int = NULL,
+	@topic_date datetime2(7) = NULL
+
+AS
+
+INSERT INTO [dbo].[accounts_topicdetaillist]
+           ([TopicDate]
+           ,[AddedDate]
+           ,[UpdatedDate]
+           ,[IsActive]
+           ,[AddedBy_id]
+           ,[Topic_id]
+           ,[UpdatedBy_id]
+           ,[User_id]
+           ,[Selected])
+     VALUES
+           (@topic_date,
+		   @topic_date,
+		   @topic_date,
+		   1,
+		   @user_id,
+		   @job_id,
+		   @user_id,
+		   @user_id,
+		   0)
+GO
+
+
+-- Get My Applied Jobs
+
+
+USE [baghiService]
+GO
+
+CREATE PROCEDURE dbo.getAppliedJobsList
+	@user_id int = NULL
+
+AS
+SELECT [id] FROM [dbo].[accounts_topicdetaillist] WHERE [User_id]=@user_id
+GO
+
+
+
+
+-- Get Job By Id
+
+USE [baghiService]
+GO
+
+CREATE PROCEDURE [dbo].[getJobById]
+	@job_id int = NULL
+AS
+
+SELECT * FROM [dbo].[accounts_topiclist] WHERE id=@job_id
+
+
+
+-- filter jobs
+
+
+
+USE [baghiService]
+GO
+
+CREATE PROCEDURE [dbo].[getFilterJobs]
+	@city_id int = NULL,
+	@subcat_id int=NULL,
+	@cat_id int = NULL
+AS
+
+SELECT * FROM [dbo].[accounts_topiclist] INNER JOIN [dbo].[accounts_topicsubcats] ON [dbo].[accounts_topiclist].[id] = [dbo].[accounts_topicsubcats].[Topic_id]  WHERE [dbo].[accounts_topicsubcats].[subcat_id]=@subcat_id AND [dbo].[accounts_topiclist].[City_id]=@city_id
+
+GO

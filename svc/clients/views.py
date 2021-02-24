@@ -42,7 +42,7 @@ def getSubCats(request):
         print(request)
         cat_id = request.POST['cat_id']
         cursor = connection.cursor()
-        subCategory = cursor.execute(f"SELECT * FROM testenr.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
+        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
         subCategory =  dictfetchall(subCategory)
         print(subCategory)
         return JsonResponse(subCategory, safe=False)
@@ -54,7 +54,7 @@ def getCats(request):
         print(request)
         city_id = request.POST['city_id']
         cursor = connection.cursor()
-        subCategory = cursor.execute(f"SELECT * FROM testenr.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM testenr.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
+        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM baghiService.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
         subCategory =  dictfetchall(subCategory)
         print(subCategory)
         return JsonResponse(subCategory, safe=False)
@@ -65,11 +65,11 @@ class JobPostView(generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
     def get(self, request):
         cursor = connection.cursor()
-        city = cursor.execute("SELECT * FROM testenr.dbo.accounts_citylist")
+        city = cursor.execute("SELECT * FROM baghiService.dbo.accounts_citylist")
         city =  dictfetchall(city)
-        category = cursor.execute("SELECT * FROM testenr.dbo.accounts_categorylist")
+        category = cursor.execute("SELECT * FROM baghiService.dbo.accounts_categorylist")
         category =  dictfetchall(category)
-        subCategory = cursor.execute("SELECT * FROM testenr.dbo.accounts_subcategorylist")
+        subCategory = cursor.execute("SELECT * FROM baghiService.dbo.accounts_subcategorylist")
         subCategory =  dictfetchall(subCategory)
         form_class = {'form': JobPostForm, 'cat':category, 'city':city, 'subCat':subCategory, 'assetsform': self.assetForm}
         return render(request, 'clients/jobposting.html', form_class)
@@ -115,7 +115,6 @@ class JobPostView(generic.CreateView):
                     'topic_id':id,
                     'updatedby_id':user_id
                 }
-                print(FastProcedures.asset_query_add(**values), end="\n\n\n\n\n\n")
                 query+=FastProcedures.asset_query_add(**values)
             print(query)
             if query:
@@ -144,13 +143,11 @@ class JobDetailView(generic.DetailView):
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getEachJob @id='{pk}'")
         eachjob = dictfetchall(cursor)
-        print(eachjob)
         id = eachjob[0]['User_id']
         cursor = connection.cursor()
         cursor.execute(f"EXEC dbo.getUserWithId @id='{id}'")
         user = dictfetchall(cursor)
-        print(user)
-        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user': user})
+        return render(request, 'clients/jobdetail.html', {'jobdetail': eachjob, 'user':user[0]})
 
 
 # Job Update view

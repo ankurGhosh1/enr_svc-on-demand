@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="container mt-5">
   {% for job in jobdetail %}
   <div class="card m-3">
@@ -9,7 +10,7 @@
         <div class="col-md-8">
           <div class="card-body">
             <h5 class="card-title">Topic: {{job.TopicName}}</h5>
-            <p class="card-text">Added: {{job.AddedDate}}</p>
+            <p class="card-text">Updated Date: {{job.UpdatedDate|date:'d-M-Y'}}</p>
             <p class="card-text">Category: {{job.Category_id}}</p>
             {% for user in user %}
             <p class="card-text">Posted By: <a href="/client/profile/{{user.id}}">{{user.first_name}} {{user.last_name}}</p></a>
@@ -21,16 +22,11 @@
           <div class="row">
             <div class="col-sm-6 m-auto">
               <a href="/client/alljobs/{{job.id}}/update" title="Update"><i class="fa mr-3 fa-edit fa-2x"></i>
-              <div class="border rounded bg-dark text-light mr-3">
-                <small>Last Update on</small><br>
-                <small>{{job.UpdatedDate}}</small>
-              </div></a>
+              </a>
             </div>
             <div class="col-sm-6">
               <a href="/jobpost/{{jobdetail.pk}}delete" class="m-auto" title="delete"><i class="fa fa-times fa-2x mr-3 text-danger"></i>
-              <div class="border rounded bg-danger text-light mr-3">
-                <small>Delete</small><br><br>
-              </div></a>
+              </a>
             </div>
           </div>
         </div>
@@ -53,4 +49,3 @@
 </div>
 <br><br><br><br>
 {% endblock %}
-
