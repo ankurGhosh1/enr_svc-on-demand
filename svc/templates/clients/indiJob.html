@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  {% for job in jobdetail %}
+  <div class="card m-3">
+    <div class="mt-3">
+      <div class="row g-0">
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">{{job.TopicName}}</h5>
+            <p class="card-text">Posted On: {{job.AddedDate}}</p>
+            <p class="card-text">{{job.Category}}</p>
+            <p class="card-text"><small class="text-muted">{{job.Subcategory_id}}</small></p>
+            <p class="card-text">Appled By: <a href="/client/profile/{{user.id}}">{{user.first_name}}</p>
+          </div>
+        </div>
+        <div class="col-md-4 m-auto text-center">
+          <div class="row">
+            <div class="col-sm-6 m-auto">
+              <a href="{% url 'chatApp:chat' user_id=user.id job_id=job.id %}" class="btn btn-outline-danger" title="Update">Chat</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row w-100 m-auto">
+        <div class="container m-auto card p-0 bg-svc-match">
+          <div class="card-title ml-3 mt-3 text-light bold">
+            <h5>Content</h5>
+          </div>
+          <div class="card-body bg-white">
+            <div class="col-md-12">
+              <p class="card-text ml-5">{{job.content|safe}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<br><br><br><br>
+{% endblock %}

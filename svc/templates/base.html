@@ -51,9 +51,11 @@
           <li class="nav-item">
             <a class="nav-link {% if 'profile' in request.path %} active {% endif %}" href="{% url 'clients:profile' %}">My Profile</a>
           </li>
-
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'clients:services' %}">Services</a>
+            <a class="nav-link {% if 'review' in request.path %} active {% endif %}" href="{% url 'clients:reviewapplications' %}">Review Applications</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'service' in request.path %} active {% endif %}" href="{% url 'clients:services' %}">Services</a>
           </li>
 
             <li class="nav-item">

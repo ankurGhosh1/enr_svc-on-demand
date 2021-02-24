@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ city|json_script:"city" }}
+
+
+<div class="">
+    <section class="bg-svc">
+      <div class="p-5">
+        <div class="container p-3 text-white">
+          <div class="mx-auto row text-left p-3">
+            <h3 class="col-sm-10 banner-h1" id='page-heading'>Review Applications :</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bg-svc p-5 fixed-top" style="z-index:-1">
+     <div class="p-5">
+
+     </div>
+    </section>
+
+    <div class="container">
+      <div class="over-me bg-white shadow" style="border-radius:10px;overflow:hidden;">
+        {% for job in jobs %}
+          <div class="bg-white p-3">
+            <div class="border-bottom p-3">
+              <div class="">
+                <small>Applied By: <a href="{{applied_by_id}}" class="link"><i>{{job.applier_name}}</i></a></small>
+              </div>
+              <div class="pt-2">
+                <a href="{% url 'clients:indiJob' job_id=job.job_id applier_id=job.applied_by_id %}"><div>{{job.TopicName}}</div></a>
+                <div class="">
+                  <small class="text-secondary"><i class="text-success fa fa-check"></i>{{job.applied_date}}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+<br><br><br><br><br><br><br>
+</div>
+
+{{script|safe}}
+
+<script type="text/javascript">
+  var city = JSON.parse(document.getElementById('city').textContent);
+  var catDiv = document.getElementById('id_category');
+  var cityDiv = document.getElementById('id_city');
+  var subCatDiv = document.getElementById('id_subCategory');
+  city.forEach((item, index) => {
+    console.log(item)
+    cityDiv.innerHTML+=`<option value=${item.id}>${item.City}</option>`;
+  })
+
+
+  function makeCat(event){
+    var city_id = event.target.value;
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    const formData = new FormData();
+    i = 0
+    formData.append('city_id', city_id);
+    formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+    catDiv.innerHTML = '<option value="" selected="">Select Category</option>';
+    subCatDiv.innerHTML = '<option value="" selected="">Select Sub Category</option>';
+    fetch('{% url "clients:getCats" %}', {
+      method: 'POST',
+      body: formData
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((item, index)=>{
+        console.log(item)
+          catDiv.innerHTML+=`<option value=${item.id}>${item.CategoryName}</option>`;
+      })
+    })
+  }
+
+
+  function makeSubCat(event){
+    var cat_id = event.target.value;
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    var catDiv = document.getElementById('id_category');
+    var subCatDiv = document.getElementById('id_subCategory');
+
+    const formData = new FormData();
+    subCatDiv.innerHTML = '<option value="" selected="">Select Sub Category</option>';
+
+    formData.append('cat_id', cat_id);
+    formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+    fetch('{% url "clients:getSubCats" %}', {
+      method: 'POST',
+      body: formData
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      sub_cat_g = data;
+      data.forEach((item, index)=>{
+        console.log(item)
+          subCatDiv.innerHTML+=`<option value=${item.id}>${item.SubCategoryName}</option>`;
+      })
+    })
+  }
+
+</script>
+
+{% endblock %}

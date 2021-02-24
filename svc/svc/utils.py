@@ -274,6 +274,14 @@ class AllProcedures:
             status = True
         return status
 
+    def getApplicationsForReview(user_id):
+        jobsList = []
+        query = f"EXEC dbo.getApplicationsForReview @user_id='{user_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        return jobsList
+
     def getAppliedJobsList(user_id):
         jobsList = []
         query = f"EXEC dbo.getAppliedJobsList @user_id='{user_id}';"

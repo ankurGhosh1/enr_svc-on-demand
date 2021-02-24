@@ -1,7 +1,6 @@
 from django.urls import path, include
 from . import views
 from .views import JobPostView, GetJobPost, JobDetailView, JobUpdateView, JobDeleteView, AllProfessionals, Callback, Review , getSubCats, getCats, getStates, getCities
-
 app_name = 'clients'
 
 urlpatterns = [
@@ -15,7 +14,9 @@ urlpatterns = [
     path('callback/<slug:slug>', Callback.as_view(), name='callback'),
     path('profile/<int:pk>', Review.as_view(), name='review'),
     path('get/subcats', getSubCats, name="getSubCats"),
+    path('reviewapplications/', views.reviewapplications, name="reviewapplications"),
     path('get/cats', getCats, name="getCats"),
+    path('indiJob/<int:job_id>/<int:applier_id>',views.indiJob,name = 'indiJob'),
     path('get/states', getStates, name="getStates"),
     path('get/cities', getCities, name="getCities"),
     path('profile/',views.MyProfile,name = 'profile'),

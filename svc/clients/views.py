@@ -74,6 +74,30 @@ def getCats(request):
         return JsonResponse(subCategory, safe=False)
 
 
+
+def reviewapplications(request):
+    if request.session.has_key('user'):
+        jobApplications = AllProcedures.getApplicationsForReview(user_id=request.session['user']['id'])
+        print(jobApplications)
+        return render(request, 'clients/reviewapplication.html', {'jobs':jobApplications})
+    return redierct('accounts:login')
+
+
+
+
+def indiJob(request, job_id, applier_id):
+    cursor = connection.cursor()
+    cursor.execute(f"EXEC dbo.getEachJob @id='{job_id}'")
+    eachjob = dictfetchall(cursor)
+    id = eachjob[0]['User_id']
+    cursor = connection.cursor()
+    cursor.execute(f"EXEC dbo.getUserWithId @id='{applier_id}'")
+    user = dictfetchall(cursor)
+    appliedList = []
+    return render(request, 'clients/indiJob.html', {'jobdetail': eachjob, 'user':user[0]})
+
+
+
 class JobPostView(generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
     def get(self, request):

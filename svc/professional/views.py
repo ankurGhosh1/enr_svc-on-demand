@@ -17,17 +17,18 @@ def dashboard(request):
 
 
 def Explore(request):
-    nearJobs = AllProcedures.getMyCityJobs(user_id=request.session['user']['id'])
-    print(nearJobs)
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_citylist")
-    city = dictfetchall(cursor)
-    appliedList = []
     if request.session.has_key('user'):
+        nearJobs = AllProcedures.getMyCityJobs(user_id=request.session['user']['id'])
+        print(nearJobs)
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM baghiService.dbo.accounts_citylist")
+        city = dictfetchall(cursor)
+        appliedList = []
         user_id = request.session['user']['id']
         appliedList = AllProcedures.getAppliedJobsList(user_id)
-    print(appliedList)
-    return render(request, 'professional/explore.html', {'jobs':nearJobs, 'city':city, 'appliedList':appliedList})
+        print(appliedList)
+        return render(request, 'professional/explore.html', {'jobs':nearJobs, 'city':city, 'appliedList':appliedList})
+    return redirect('accounts:login')
 
 
 def filter(request):
