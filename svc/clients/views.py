@@ -14,13 +14,20 @@ import os
 import datetime
 from django.db import connection
 from svc.utils import AllProcedures
+from svc.decorators import login_required_cus, is_client
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 import datetime
 
+
 # # Create your views here.
 
+@is_client
 def dashboard(request):
+    cursor = connection.cursor()
+    address = cursor.execute("SELECT COUNT(*) FROM baghiService2.dbo.accounts_addresslist WHERE user_id = %s", [request.session['user']['id']]).fetchone()[0]
+    if address == 0 :
+        return redirect('accounts:address_add')
     return render(request, 'clients/dashboard.html')
 
 def dictfetchall(cursor):
@@ -36,7 +43,7 @@ def getCities(request):
         print(request)
         state_id = request.POST['state_id']
         cursor = connection.cursor()
-        cities = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_citylist WHERE StateId_id='{state_id}'")
+        cities = cursor.execute(f"SELECT * FROM baghiService2.dbo.accounts_citylist WHERE StateId_id='{state_id}'")
         cities =  dictfetchall(cities)
         print(cities)
         return JsonResponse(cities, safe=False)
@@ -48,7 +55,7 @@ def getStates(request):
         print(request)
         country_id = request.POST['country_id']
         cursor = connection.cursor()
-        states = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_statelist WHERE countryId_id='{country_id}'")
+        states = cursor.execute(f"SELECT * FROM baghiService2.dbo.accounts_statelist WHERE countryId_id='{country_id}'")
         states =  dictfetchall(states)
         print(states)
         return JsonResponse(states, safe=False)
@@ -58,7 +65,7 @@ def getSubCats(request):
         print(request)
         cat_id = request.POST['cat_id']
         cursor = connection.cursor()
-        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
+        subCategory = cursor.execute(f"SELECT * FROM baghiService2.dbo.accounts_subcategorylist WHERE Category_id='{cat_id}'")
         subCategory =  dictfetchall(subCategory)
         print(subCategory)
         return JsonResponse(subCategory, safe=False)
@@ -68,13 +75,14 @@ def getCats(request):
         print(request)
         city_id = request.POST['city_id']
         cursor = connection.cursor()
-        subCategory = cursor.execute(f"SELECT * FROM baghiService.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM baghiService.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
+        subCategory = cursor.execute(f"SELECT * FROM baghiService2.dbo.accounts_categorylist WHERE id IN (SELECT [category_id] FROM baghiService2.dbo.accounts_categoryincity WHERE city_id='{city_id}')")
         subCategory =  dictfetchall(subCategory)
         print(subCategory)
         return JsonResponse(subCategory, safe=False)
 
 
 
+@is_client
 def reviewapplications(request):
     if request.session.has_key('user'):
         jobApplications = AllProcedures.getApplicationsForReview(user_id=request.session['user']['id'])
@@ -85,6 +93,7 @@ def reviewapplications(request):
 
 
 
+@is_client
 def indiJob(request, job_id, applier_id):
     cursor = connection.cursor()
     cursor.execute(f"EXEC dbo.getEachJob @id='{job_id}'")
@@ -100,13 +109,14 @@ def indiJob(request, job_id, applier_id):
 
 class JobPostView(generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
+
     def get(self, request):
         cursor = connection.cursor()
-        city = cursor.execute("SELECT * FROM baghiService.dbo.accounts_citylist")
+        city = cursor.execute("SELECT * FROM baghiService2.dbo.accounts_citylist")
         city =  dictfetchall(city)
-        category = cursor.execute("SELECT * FROM baghiService.dbo.accounts_categorylist")
+        category = cursor.execute("SELECT * FROM baghiService2.dbo.accounts_categorylist")
         category =  dictfetchall(category)
-        subCategory = cursor.execute("SELECT * FROM baghiService.dbo.accounts_subcategorylist")
+        subCategory = cursor.execute("SELECT * FROM baghiService2.dbo.accounts_subcategorylist")
         subCategory =  dictfetchall(subCategory)
         form_class = {'form': JobPostForm, 'cat':category, 'city':city, 'subCat':subCategory, 'assetsform': self.assetForm}
         return render(request, 'clients/jobposting.html', form_class)
@@ -129,7 +139,7 @@ class JobPostView(generic.CreateView):
             for i in request.POST:
                 if i !="csrfmiddlewaretoken":
                     kwargs[i] = request.POST[i]
-            _, id = AllProcedures.createjob(**kwargs, User=user_id)
+            _, id = AllProcedures.createjob(**kwargs, User=user_id, user_email=request.session['user']['username'])
             for i in request.POST:
                 print(i)
                 if 'SubCategory-' in i:
@@ -299,6 +309,7 @@ class Review(View):
 
 
 
+@is_client
 def MyProfile(request):
     return render(request, 'clients/myprofile.html')
 

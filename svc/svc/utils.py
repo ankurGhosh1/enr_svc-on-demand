@@ -1,6 +1,6 @@
 from django.db import connection
 import datetime
-
+from .notifications import Notification
 
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
@@ -81,7 +81,7 @@ class AllProcedures:
         return job
 
     @staticmethod
-    def createjob(TopicName, content, Category, City, User, **kwargs):
+    def createjob(TopicName, content, Category, City, User, user_email, **kwargs):
         status = False
         id = None
         with connection.cursor() as cursor:
@@ -90,6 +90,10 @@ class AllProcedures:
             print(id)
             id = id.fetchall()
             status = True
+        if id:
+            Notification.createjobNoti(user_email, content, TopicName)
+        else:
+            id = [[None]]
         return status, id[0][0]
 
 
@@ -257,12 +261,19 @@ class AllProcedures:
             status = True
         return status
 
+    @staticmethod
     def applyJob(user_id, job_id):
         status = False
         query = f"EXEC dbo.applyJob @user_id='{user_id}' ,@job_id='{job_id}' , @topic_date='{datetime.datetime.now()}';"
+        job = AllProcedures.getJobById(job_id)[0]
+        print(job)
+        user = AllProcedures.getUserWithId(job['AddedBy_id'])[0]
+        print(user)
         with connection.cursor() as cursor:
             cursor.execute(query)
             status = True
+        if status:
+            Notification.appliedOnJob(user['username'], job['TopicName'])
         return status
 
 

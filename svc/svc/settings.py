@@ -150,7 +150,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
     'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'baghiService',
+        'NAME': 'baghiService2',
         'HOST': 'DESKTOP-IUNO0HB',
 
         'OPTIONS': {

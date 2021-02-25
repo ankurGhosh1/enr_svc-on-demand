@@ -16,23 +16,21 @@ import random, string
 from django.core.mail import send_mail
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from svc.decorators import login_required_cus, is_client, is_professional, redirect_to_dash
 
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-
+@login_required_cus
 def home(request):
     if request.session.has_key('user'):
         if request.session['user']['type']:
             if request.session['user']['type'] == "Client":
                 return redirect(f'clients:dashboard')
-
             if request.session['user']['type'] == "Professional":
                 return redirect(f'professional:dashboard')
-
     return render(request, 'home.html')
-
 
 
 def _login(request, user, password, pass_req):
@@ -130,7 +128,7 @@ def f_complete(request):
     return redirect("accounts:selectusertype")
 
 def selectUserType(request):
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+    cursor.execute("SELECT * FROM baghiService2.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
     if request.method=='POST':
         type = request.POST.get('userType');
@@ -151,7 +149,7 @@ def selectUserType(request):
             return _login(request, user, "a", True)
     return render(request, 'registration/selectType.html', {'application':app})
 
-
+@redirect_to_dash
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -165,10 +163,10 @@ def login(request):
 
 def signup(request):
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_usertype")
+    cursor.execute("SELECT * FROM baghiService2.dbo.accounts_usertype")
     user_t = dictfetchall(cursor)
 
-    cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+    cursor.execute("SELECT * FROM baghiService2.dbo.accounts_appliationlist")
     app = dictfetchall(cursor)
 
     if request.method == 'POST':
@@ -183,7 +181,7 @@ def signup(request):
         return redirect('accounts:login')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
 
-
+@login_required_cus
 def logout(request):
     try:
         del request.session['user']
@@ -193,7 +191,7 @@ def logout(request):
 
 
 
-
+@login_required_cus
 def addressAdd(request):
     country = AllProcedures.getCountry()
     state = AllProcedures.getState()
@@ -206,7 +204,12 @@ def addressAdd(request):
                 li.append(request.POST[i])
                 li.append(request.session['user']['id'])
         print(li)
-        saved = AllProcedures.addressAddUser(li)
+        try:
+            saved = AllProcedures.addressAddUser(li)
+        except:
+            messages.error(request, 'Your new and confirm password not matched!')
+            return redirect('accounts:address_add')
+
         print(li)
         user = AllProcedures.getUserWithEmail(request.session['user']['email'])
         type = AllProcedures.getUserType(user[0]['usertype_id'])
@@ -218,14 +221,14 @@ def addressAdd(request):
     return render(request,'address_add.html',{'country':country,'state':state,'city':city})
 
 
-
+@login_required_cus
 def update_profile(request):
     country = AllProcedures.getCountry()
     state = AllProcedures.getState()
     city = AllProcedures.getCityByState()
     address = AllProcedures.getUserAddress(request.session['user']['id'])
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM baghiService.dbo.accounts_appliationlist")
+        cursor.execute("SELECT * FROM baghiService2.dbo.accounts_appliationlist")
         app = dictfetchall(cursor)
     with connection.cursor() as cursor:
         cursor.execute(f"EXEC dbo.getUserWithId @id='{request.session['user']['id']}'")
@@ -243,6 +246,7 @@ def update_profile(request):
 
 
 
+@login_required_cus
 def password_change(request):
     with connection.cursor() as cursor:
         cursor.execute(f"EXEC dbo.getUserWithId @id='{request.session['user']['id']}'")
@@ -269,6 +273,7 @@ def password_change(request):
     return render(request,'password_change.html')
 
 
+@login_required_cus
 def password_reset_form(request):
     if request.session.has_key('user'):
         del request.session['user']
@@ -278,7 +283,7 @@ def password_reset_form(request):
     otp = ''.join(random.choices(string.digits, k=6))
     email = request.POST.get('email')
     with connection.cursor() as cursor:
-        users = cursor.execute("SELECT COUNT(*) FROM baghiService.dbo.accounts_userlist WHERE email = %s",[email]).fetchone()[0]
+        users = cursor.execute("SELECT COUNT(*) FROM baghiService2.dbo.accounts_userlist WHERE email = %s",[email]).fetchone()[0]
     if request.method == 'POST':
         if users == 1:
             saved = AllProcedures.generateOTP(otp,email)
@@ -297,7 +302,7 @@ def password_reset_otp(request):
     if not request.session.has_key('otp'):
         return redirect('accounts:password_reset_form')
     with connection.cursor() as cursor:
-        cursor.execute("SELECT TOP 1 * FROM baghiService.dbo.accounts_otp WHERE user_email = %s ORDER BY id DESC", [request.session['otp']])
+        cursor.execute("SELECT TOP 1 * FROM baghiService2.dbo.accounts_otp WHERE user_email = %s ORDER BY id DESC", [request.session['otp']])
         otp = namedtuplefetchall(cursor)
     minute_count = round((datetime.datetime.now()-otp[0].doc).total_seconds() / 60)
     if request.method == 'POST':
