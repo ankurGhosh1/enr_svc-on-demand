@@ -253,6 +253,16 @@ class AllProcedures:
         return nearJobs
 
     @staticmethod
+    def getMyCityJobsP(user_id):
+        status = False
+        query = f"EXEC dbo.getMyCityJobsP @user_id='{user_id}';"
+        nearJobs = None
+        with connection.cursor() as cursor:
+            nearJobs = cursor.execute(query)
+            nearJobs = dictfetchall(nearJobs)
+        return nearJobs
+
+    @staticmethod
     def generateOTP(otp,email):
         status = False
         query = f"EXEC dbo.generateOTP @Otp='{otp}' ,@user_email='{email}' ,@expire_minute='{10}' ,@doc='{datetime.datetime.now()}';"
@@ -285,6 +295,26 @@ class AllProcedures:
             status = True
         return status
 
+    def jobHireStatus(user_id, job_id):
+        status = False
+        query = f"EXEC dbo.jobHireStatus @user_id='{user_id}' ,@job_id='{job_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = cursor.fetchall()
+        return status[0][0]
+
+    def hireProfessional(user_id, job_id):
+        status = False
+        query = f"EXEC dbo.hireProfessional @user_id='{user_id}' ,@job_id='{job_id}';"
+        job = AllProcedures.getJobById(job_id)[0]
+        user = AllProcedures.getUserWithId(user_id)[0]
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        if status:
+            Notification.hiredNoti(user['username'], job['TopicName'], job_id)
+        return status
+
     def getApplicationsForReview(user_id):
         jobsList = []
         query = f"EXEC dbo.getApplicationsForReview @user_id='{user_id}';"
@@ -292,6 +322,19 @@ class AllProcedures:
             cursor.execute(query)
             jobsList = dictfetchall(cursor)
         return jobsList
+
+
+    def getHiredJobsList(user_id):
+        jobsList = []
+        query = f"EXEC dbo.getHiredJobsList @user_id='{user_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        res = []
+        for i in jobsList:
+            res.append(i['Topic_id'])
+        return res
+
 
     def getAppliedJobsList(user_id):
         jobsList = []

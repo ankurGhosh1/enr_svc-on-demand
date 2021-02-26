@@ -3,15 +3,33 @@
 {%block content%}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 <script type="text/javascript">
-  document.getElementsByTagName('body')[0].classList.add('bg-match-nh');
+  // document.getElementsByTagName('body')[0].classList.add('bg-match-nh');
 </script>
-<div class="container mt-3 text-center">
-  <div class="bg-white m-auto shadow btn" style="">
-    {{job.TopicName}}
-  </div>
 
-</div>
-<section class="chat text-center mt-3">
+<section class="bg-svc">
+  <div class="pb-5 pt-4">
+    <div class="container pb-3 text-white">
+      <div class="mx-auto row text-left pt-0 pb-3">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="mx-auto text-left pb-3 pt-3">
+              <h3 class=banner-h1" id='page-heading'>Chat for job:
+                  <div class="bg-white shadow btn" style="">
+                    {% if request.session.user.type == "Professional" %}
+                      <a href="{% url 'professional:indiJob' job_id=job.id %}" class="btn p-0">{{job.TopicName}}</a>
+                    {% else %}
+                      <a href="{% url 'clients:jobdetail' pk=job.id %}" class="btn p-0">{{job.TopicName}}</a>
+                    {% endif %}
+                  </div>
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="chat text-center over-me">
   <div class="input-chat-wrap shadow m-auto">
     <div class="m-auto mt-3 border-light border-top p-2 bg-light">
       <div class="row">

@@ -72,7 +72,11 @@
                 <a href="{% url 'professional:indiJob' job_id=job.id %}"><div>{{job.TopicName}}</div></a>
                 <div class="">
                   {% if job.id in appliedList %}
-                    <small class="text-secondary"><i class="text-success fa fa-check"></i> Applied</small>
+                    {% if job.id in hiredList %}
+                      <small class="text-secondary"><i class="text-primary fa fa-check"></i> Hired</small>
+                    {% else %}
+                      <small class="text-secondary"><i class="text-success fa fa-check"></i> Applied</small>
+                    {% endif %}
                   {% endif %}
                 </div>
               </div>

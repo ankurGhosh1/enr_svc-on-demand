@@ -13,12 +13,19 @@ from django.core.files.storage import FileSystemStorage
 import os
 import datetime
 from django.db import connection
+from svc.emails import send_html_mail
 from svc.utils import AllProcedures
 from svc.decorators import login_required_cus, is_client
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 import datetime
 
+def dictfetchall(cursor):
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
 
 # # Create your views here.
 
@@ -30,13 +37,13 @@ def dashboard(request):
         return redirect('accounts:address_add')
     return render(request, 'clients/dashboard.html')
 
-def dictfetchall(cursor):
-    columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row))
-        for row in cursor.fetchall()
-    ]
-
+@is_client
+def hire(request, applier_id, job_id):
+    job = AllProcedures.getJobById(job_id)[0]
+    hired = AllProcedures.jobHireStatus(applier_id, job_id)
+    if job['User_id']==request.session['user']['id'] and not hired:
+        AllProcedures.hireProfessional(applier_id, job_id)
+    return redirect('clients:indiJob', job_id=job_id, applier_id=applier_id)
 
 def getCities(request):
     if request.method=='POST':
@@ -102,8 +109,9 @@ def indiJob(request, job_id, applier_id):
     cursor = connection.cursor()
     cursor.execute(f"EXEC dbo.getUserWithId @id='{applier_id}'")
     user = dictfetchall(cursor)
+    hired = AllProcedures.jobHireStatus(applier_id, job_id)
     appliedList = []
-    return render(request, 'clients/indiJob.html', {'jobdetail': eachjob, 'user':user[0]})
+    return render(request, 'clients/indiJob.html', {'jobdetail': eachjob, 'user':user[0], 'selected':hired})
 
 
 
@@ -241,21 +249,19 @@ class AllProfessionals(View):
             myId = request.user.id
         else:
             myId = request.session['user']['id']
-        cursor.execute(f"EXEC dbo.getMyCityJobs @user_Id='{myId}'")
+        cursor.execute(f"EXEC dbo.getMyCityProfessionals @user_Id='{myId}'")
         allcategories = dictfetchall(cursor)
         print(allcategories)
         paginator = Paginator(allcategories, 3)
-
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'clients/services.html', {'professionals': page_obj})
 
 
+
 class Callback(View):
     def get(self, request, slug):
-        cursor = connection.cursor()
-        cursor.execute(f"EXEC dbo.getUser @id='{request.user.id}'")
-        user = dictfetchall(cursor)
+        user = AllProcedures.getUserWithId(request.session['user']['id'])
         return render(request, 'clients/callback.html', {'user': user})
 
     def post(self, request, slug):
@@ -263,15 +269,13 @@ class Callback(View):
             slug = self.kwargs.get('slug')
             email = request.POST['email']
             number = request.POST['number']
-            cursor = connection.cursor()
-            cursor.execute(f"EXEC dbo.getEmail @username='{slug}'")
-            user = dictfetchall(cursor)
+            user = AllProcedures.getUserWithId(slug)
             rec_email = [user[0]['email']]
-            message = request.user.username + " has requested you for a callback. You may email here:" + email + ", or you may call at " + number
-            send_mail(
+            print(rec_email)
+            message = "<div>"+request.user.username + " has requested you for a callback. You may email here:" + email + ", or you may call at " + number+"</div>"
+            send_html_mail(
                 subject="Request for a Callback",
-                message= message,
-                from_email = "ouremail@gmail.com",
+                html_content= message,
                 recipient_list= rec_email
             )
             return render(request, 'clients/successemail.html')

@@ -20,7 +20,7 @@ def dashboard(request):
 @is_professional
 def Explore(request):
     if request.session.has_key('user'):
-        nearJobs = AllProcedures.getMyCityJobs(user_id=request.session['user']['id'])
+        nearJobs = AllProcedures.getMyCityJobsP(user_id=request.session['user']['id'])
         print(nearJobs)
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM baghiService2.dbo.accounts_citylist")
@@ -58,6 +58,7 @@ def Applied(request):
         user_id = request.session['user']['id']
         appliedList, appliedJobs = AllProcedures.getAppliedJobsList(user_id)
         print(appliedList)
+        hiredList = AllProcedures.getHiredJobsList(user_id)
         script = '''
             <script>
                 document.getElementById('page-heading').innerHTML = "Applied Jobs";
@@ -65,7 +66,7 @@ def Applied(request):
                 k.parentNode.removeChild(k);
             </script>
         '''
-        return render(request, 'professional/explore.html', {'jobs':appliedJobs, 'appliedList':appliedList, 'script':script})
+        return render(request, 'professional/explore.html', {'jobs':appliedJobs, 'appliedList':appliedList, 'script':script, 'hiredList':hiredList})
     return redierct('accounts:login')
 
 
@@ -73,7 +74,7 @@ def Applied(request):
 
 @is_professional
 def indiJob(request, job_id):
-
+    hired = AllProcedures.jobHireStatus(request.session['user']['id'], job_id)
     cursor = connection.cursor()
     cursor.execute(f"EXEC dbo.getEachJob @id='{job_id}'")
     eachjob = dictfetchall(cursor)
@@ -88,7 +89,7 @@ def indiJob(request, job_id):
     applied = False
     if job_id in appliedList:
         applied = True
-    return render(request, 'professional/indiJob.html', {'jobdetail': eachjob, 'user':user[0], 'applied':applied})
+    return render(request, 'professional/indiJob.html', {'jobdetail': eachjob, 'user':user[0], 'applied':applied, 'hired':hired})
 
 
 @is_professional

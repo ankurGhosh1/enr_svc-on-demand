@@ -1,22 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<section class="bg-svc">
+  <div class="p-5">
+    <div class="container p-3 text-white">
+      <div class="mx-auto row text-left pt-3 pb-3">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="mx-auto text-left pb-3 pt-3">
+              <h3 class=banner-h1" id='page-heading'>All Professionals near you :</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="bg-svc p-5 fixed-top" style="z-index:-1">
+ <div class="p-5">
 
-<div class="container">
+ </div>
+</section>
+<div class="container over-me">
     <div class="row">
         {% for each in professionals %}
         <div class="col-md-4">
             <div class="card mb-3" style="max-width: 540px;">
                 <div class="row g-0">
-                  <div class="col-md-4">
+                  <!-- <div class="col-md-4">
                     <img src="..." alt="...">
-                  </div>
-                  <div class="col-md-8">
+                  </div> -->
+                  <div class="col-md-12">
                     <div class="card-body">
-                      {{each}}
                       <h5 class="card-title">{{each.CategoryName}}</h5>
-                      <p class="card-text">I am {{each.first_name}} {{each.last_name}} from {{each.City}} providing {{each.CategoryName}} service. You can contact me at {{each.email}} or request a callback.</p>
-                      <a href="/client/callback/{{each.username}}" class="btn btn-primary">Request a callback</a>
+                      <p class="card-text">I am {{each.first_name}} {{each.last_name}} from {{each.City}} providing {{each.CategoryName}} service. You can contact me at {{each.email|slice:":4"}}...... or request a callback.</p>
+                      <a href="{% url 'clients:callback' slug=each.user_id %}" class="btn btn-primary">Request a callback</a>
                     </div>
                   </div>
                 </div>

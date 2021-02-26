@@ -9,7 +9,13 @@
       <div class="p-5">
         <div class="container p-3 text-white">
           <div class="mx-auto row text-left p-3">
-            <h3 class="col-sm-10 banner-h1" id='page-heading'>Review Applications :</h3>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="mx-auto text-left p-3">
+                  <h3 class=banner-h1" id='page-heading'>Review Applications :</h3>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -31,8 +37,13 @@
               <div class="pt-2">
                 <a href="{% url 'clients:indiJob' job_id=job.job_id applier_id=job.applied_by_id %}"><div>{{job.TopicName}}</div></a>
                 <div class="">
-                  <small class="text-secondary"><i class="text-success fa fa-check"></i>{{job.applied_date}}</small>
+                  <small class="text-secondary">{{job.applied_date}}</small>
                 </div>
+                {% if job.Selected %}
+                <div class="">
+                  <small><i class="text-success fa fa-check"></i>Hired</small>
+                </div>
+                {% endif %}
               </div>
             </div>
           </div>
