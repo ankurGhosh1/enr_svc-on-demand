@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import AccessMixin
-
+from django.contrib.auth.decorators import user_passes_test
+from accounts.models import UserList, UserType
+from django.db import connection
 
 ## Restricting user Mixin 
 

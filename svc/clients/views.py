@@ -1,23 +1,25 @@
-from django.shortcuts import render, redirect, reverse
-from django.views import generic
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from accounts.models import UserList
-from .forms import JobPostForm, JobUpdateForm, AssetsForm, ReviewForm
-from django.views.generic import View
-from django.db import connection
-from svc.utils import AllProcedures, FastProcedures
-from django.forms import inlineformset_factory
-from accounts.models import TopicList, AssetsDetailList
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 import os
 import datetime
+import random
+import string 
+
+from django.conf import settings
 from django.db import connection
-from svc.utils import AllProcedures
-from django.core.paginator import Paginator
+from django.views import generic
+from django.db import connection
+from django.views.generic import View
 from django.core.mail import send_mail
-import datetime
+from django.core.paginator import Paginator
+from django.forms import inlineformset_factory
+from django.shortcuts import render, redirect, reverse
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+
+from accounts.models import UserList
+from svc.utils import AllProcedures, FastProcedures
+from accounts.models import TopicList, AssetsDetailList
 from .mixins import ClientLoginMixin, ProfessinonalLoginMixin
+from .forms import JobPostForm, JobUpdateForm, AssetsForm, ReviewForm, UserJobPostForm
 
 # # Create your views here.
 
@@ -121,6 +123,53 @@ class JobPostView(ClientLoginMixin, generic.CreateView):
                 FastProcedures.execute_query(query)
             return redirect('clients:alljobs')
 
+
+# Unauthorized Job Post
+
+def id_generator(size=6, chars=string.ascii_uppercase+ string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+    
+
+class AnonJobPost(View):
+    assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
+    def get(self, request):
+        cursor = connection.cursor()
+        city = cursor.execute("SELECT * FROM testenr.dbo.accounts_citylist")
+        city =  dictfetchall(city)
+        category = cursor.execute("SELECT * FROM testenr.dbo.accounts_categorylist")
+        category =  dictfetchall(category)
+        subCategory = cursor.execute("SELECT * FROM testenr.dbo.accounts_subcategorylist")
+        subCategory =  dictfetchall(subCategory)
+        form_class = {'form': JobPostForm, 'cat':category, 'city':city, 'subCat':subCategory, 'assetsform': self.assetForm, 'userform': UserJobPostForm}
+        return render(request, 'clients/anonjobpost.html', form_class)
+
+    def post(self, request):
+        if request.method == 'POST':
+            topic = request.POST['TopicName']
+            content = request.POST['content']
+            username = request.POST['username']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            contactcell = request.POST['ContactCell']
+            city = request.POST['City']
+            category = 11 # request.POST['Category']
+            randompass = id_generator()
+            # print(contactcell)
+            
+            cursor = connection.cursor()
+            cursor.execute(f'EXEC dbo.createanonuser @password="{randompass}", @is_superuser="{0}", @username="{username}", @date_joined="{datetime.datetime.now()}", @first_name="{first_name}", @last_name="{last_name}", @email="{email}", @contact="{contactcell}", @is_staff="{0}", @is_active="{0}", @usertype_id="{1}"')
+
+            cursor = connection.cursor()
+            cursor.execute(f'EXEC dbo.getuser @email="{email}"')
+            user_id = dictfetchall(cursor)
+            _id = user_id[0]['id']
+
+            cursor = connection.cursor()
+            cursor.execute(f'EXEC dbo.createanonjob @TopicName="{topic}", @content="{content}", @TopicDate="{datetime.datetime.now()}", @AddedDate="{datetime.datetime.now()}", @IsActive="{1}", @IsClose="{0}", @IsNotification="{0}", @AddedBy_id="{_id}", @Category_id="{category}", @City_id="{city}", @user_id="{_id}"')
+            return JsonResponse({'message': 'Posted Job Successfully'})
+        
 
 # List of all Jobs
 

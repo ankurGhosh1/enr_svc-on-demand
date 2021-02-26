@@ -4,10 +4,6 @@ from django.db import connection
 from svc.utils import AllProcedures, FastProcedures, dictfetchall
 
 
-
-
-
-
 def dashboard(request):
     cursor = connection.cursor()
     address = cursor.execute("SELECT COUNT(*) FROM testenr.dbo.accounts_addresslist WHERE user_id = %s", [request.session['user']['id']]).fetchone()[0]
@@ -15,10 +11,9 @@ def dashboard(request):
         return redirect('accounts:address_add')
     return render(request, 'professional/dashboard.html')
 
-
 def Explore(request):
     nearJobs = AllProcedures.getMyCityJobs(user_id=request.session['user']['id'])
-    print(nearJobs)
+    # print(nearJobs)
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM testenr.dbo.accounts_citylist")
     city = dictfetchall(cursor)
@@ -26,7 +21,7 @@ def Explore(request):
     if request.session.has_key('user'):
         user_id = request.session['user']['id']
         appliedList = AllProcedures.getAppliedJobsList(user_id)
-    print(appliedList)
+    # print(appliedList)
     return render(request, 'professional/explore.html', {'jobs':nearJobs, 'city':city, 'appliedList':appliedList})
 
 

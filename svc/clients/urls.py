@@ -1,12 +1,13 @@
 from django.urls import path, include
 from . import views
-from .views import JobPostView, GetJobPost, JobDetailView, JobUpdateView, JobDeleteView, AllProfessionals, Callback, Review , getSubCats, getCats
+from .views import JobPostView, GetJobPost, JobDetailView, JobUpdateView, JobDeleteView, AllProfessionals, Callback, Review , getSubCats, getCats, AnonJobPost
 
 app_name = 'clients'
 
 urlpatterns = [
     path('dashboard/',views.dashboard,name = 'dashboard'),
     path('jobpost/', JobPostView.as_view(), name="jobpost"),
+    path('anonjobpost/', AnonJobPost.as_view(), name='anonjobpost'),
     path('alljobs/', GetJobPost.as_view(), name="alljobs"),
     path('alljobs/<int:pk>/', JobDetailView.as_view(), name="jobdetail"),
     path('alljobs/<int:pk>/update', JobUpdateView.as_view(), name="jobupdate"),

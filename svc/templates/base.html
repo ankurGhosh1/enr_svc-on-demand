@@ -31,6 +31,9 @@
         <li class="nav-item">
           <a class="nav-link {% if 'dashboard' in request.path %} active {% endif %}" href="/">Home</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'anonjobpost' in request.path %} active {% endif %}" href="{% url 'clients:anonjobpost' %}">Post a Job</a>
+        </li>
         {% if request.session.user.is_authenticated %}
 
           <li class="nav-item">

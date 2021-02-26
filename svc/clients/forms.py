@@ -1,5 +1,5 @@
 from django import forms
-from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList, CategoryList, SubCategoryList, CountryList
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList, CategoryList, SubCategoryList, CountryList, UserList
 from accounts.models import TopicList, TopicDetailList, AssetsDetailList, TopicSubCats
 
 class JobPostForm(forms.ModelForm):
@@ -61,3 +61,10 @@ class CountryForm(forms.ModelForm):
         model = CountryList
         fields = '__all__'
         exclude = ('IsActive',)
+
+
+class UserJobPostForm(forms.ModelForm):
+    class Meta:
+        model = UserList
+        fields = '__all__'
+        exclude = ('password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'UserMiddleName', 'Application', 'usertype', 'groups', 'user_permissions', 'date_joined')
