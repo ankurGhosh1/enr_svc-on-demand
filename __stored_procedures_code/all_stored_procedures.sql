@@ -616,3 +616,146 @@ AS
 SELECT * FROM [dbo].[accounts_topiclist] INNER JOIN [dbo].[accounts_topicsubcats] ON [dbo].[accounts_topiclist].[id] = [dbo].[accounts_topicsubcats].[Topic_id]  WHERE [dbo].[accounts_topicsubcats].[subcat_id]=@subcat_id AND [dbo].[accounts_topiclist].[City_id]=@city_id
 
 GO
+
+
+CREATE PROCEDURE [dbo].[getCountry]
+AS
+SELECT * FROM [dbo].[accounts_countrylist]
+
+
+CREATE PROCEDURE [dbo].[getCityByState]
+AS
+SELECT [id]
+      ,[City]
+      ,[StateId_id]
+FROM [dbo].[accounts_citylist]  WHERE IsActive=1
+
+
+CREATE PROCEDURE [dbo].[getAddressList]
+AS
+SELECT * FROM [dbo].[accounts_addresslist]  WHERE IsActive=1
+
+ALTER PROCEDURE [dbo].[addUserAddressList]
+	@street nvarchar(500) = NULL,
+	@zip_code nvarchar(50) = NULL,
+	@added_date datetime2(7) = NULL,
+	@user_id int = NULL,
+	@city int = NULL,
+	@isActive bit = 1
+
+AS
+
+INSERT INTO [dbo].[accounts_addresslist]
+           ([Street]
+           ,[ZipCode]
+           ,[AddedDate]
+           ,[user_id]
+           ,[CityId_id]
+		   ,[isActive])
+     VALUES
+           (@street
+           ,@zip_code
+           ,@added_date
+           ,@user_id
+           ,@city
+		   ,@isActive)
+
+
+--  Create Anon Job
+
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[createanonjob]
+	@TopicName nvarchar(300) = NULL,
+	@content nvarchar(max) = NULL,
+	@TopicDate datetime2(7) = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@IsActive bit = 1,
+	@IsClose bit = 0,
+	@IsNotification bit = 0,
+	@AddedBy_id int = NULL, 
+	@Category_id int = NULL, 
+	@City_id int = NULL, 
+	@User_id int = NULL
+
+AS
+
+	INSERT INTO [dbo].[accounts_topiclist]
+           ([TopicName]
+           ,[content]
+           ,[TopicDate]
+		   ,[AddedDate]
+           ,[IsActive]
+		   ,[IsClose]
+		   ,[IsNotification]
+           ,[AddedBy_id]
+           ,[Category_id]
+           ,[City_id]
+           ,[User_id])
+
+	VALUES
+		  (	@TopicName,
+			@content,
+			@TopicDate,
+			@AddedDate,
+			@IsActive,
+			@IsClose,
+			@IsNotification,
+			@AddedBy_id,
+			@Category_id,
+			@City_id ,
+			@User_id
+		   )
+
+GO
+
+
+--  Anon User Creation
+
+
+USE [testenr]
+GO
+CREATE PROCEDURE [dbo].[createanonuser]
+	@password nvarchar(128) = NULL,
+	@is_superuser bit = NULL,
+	@username nvarchar(300)  = NULL,
+	@first_name nvarchar(300)  = NULL,
+	@last_name nvarchar(300)  = NULL,
+	@email nvarchar(254)  = NULL,
+	@is_staff bit = 0,
+	@is_active int = NULL, 
+	@date_joined datetime2(7) = NULL,
+	@contact nvarchar(100) = NULL,
+	@usertype_id int = NULL
+
+AS
+
+	INSERT INTO [dbo].[accounts_userlist]
+           ([password]
+           ,[is_superuser]
+           ,[username]
+		   ,[first_name]
+           ,[last_name]
+		   ,[email]
+		   ,[is_staff]
+           ,[is_active]
+           ,[date_joined]
+           ,[ContactCell]
+           ,[usertype_id])
+
+	VALUES
+		  (	@password,
+			@is_superuser,
+			@username,
+			@first_name,
+			@last_name,
+			@email,
+			@is_staff,
+			@is_active, 
+			@date_joined,
+			@contact,
+			@usertype_id
+		   )
+
+GO
