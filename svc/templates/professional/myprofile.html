@@ -52,7 +52,7 @@
             </div>
             <div class="col-sm-4 m-0 p-5 mt-auto mb-auto">
               <div class="row">
-                <a href="{% url 'accounts:update_profile' %}" class="fa fa-edit mt-2 p-1"></a>
+                <!-- <a href="{% url 'accounts:update_profile' %}" class="fa fa-edit mt-2 p-1"></a> -->
                 <table class="" cellpadding="5" cellspacing="5">
                   <tr>
                     <th>Name</th>
@@ -73,9 +73,6 @@
                     <th>Phone Number</th>
                     <th>:</th>
                     <td>{{request.session.user.ContactCell}}</td>
-                  </tr>
-                  <tr>
-                    <td><a href="#" class="btn btn-primary">Submit A Review</a></td>
                   </tr>
                 </table>
               </div>

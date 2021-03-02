@@ -140,3 +140,35 @@ VALUES
 		@client_id int = NULL
 	AS
 	SELECT DISTINCT [professional_id], [first_name], [room_name], [topic_id], TopicName=(SELECT [TopicName] FROM [dbo].[accounts_topiclist] WHERE id=topic_id) FROM [dbo].[accounts_chatrecord] LEFT JOIN [dbo].[accounts_userlist] ON [dbo].[accounts_chatrecord].[professional_id]=[dbo].[accounts_userlist].[id] AND [dbo].[accounts_chatrecord].[client_id]=@client_id
+
+
+
+
+
+	USE [baghiService]
+	GO
+	/****** Object:  StoredProcedure [dbo].[createCategory]    Script Date: 22-02-2021 09:22:23 PM ******/
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	ALTER PROCEDURE [dbo].[createCategory]
+		@CategoryName nvarchar(300) = NULL,
+		@AddedBy int = NULL,
+		@AddedDate datetime2(7) = NULL,
+		@IsActive bit = 1
+	AS
+	INSERT INTO [dbo].[accounts_categorylist]
+	           ([CategoryName]
+			   ,[AddedBy_id]
+			   ,[UpdatedDate]
+			   ,[AddedDate]
+	           ,[IsActive])
+	VALUES
+		(
+			@CategoryName,
+			@AddedBy,
+			@AddedDate,
+			@AddedDate,
+			@IsActive
+		)

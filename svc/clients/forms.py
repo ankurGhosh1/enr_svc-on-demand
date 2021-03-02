@@ -1,6 +1,5 @@
 from django import forms
-from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList, CategoryList, SubCategoryList, CountryList, UserList
-from accounts.models import TopicList, TopicDetailList, AssetsDetailList, TopicSubCats
+from accounts.models import TopicList, TopicDetailList, AssetsDetailList, ReviewList, CategoryList, SubCategoryList, CountryList, StateList, CityList, UserList, TopicSubCats
 
 class JobPostForm(forms.ModelForm):
     class Meta:
@@ -75,3 +74,16 @@ class UserJobPostForm(forms.ModelForm):
         super(UserJobPostForm, self).__init__(*args, **kwargs)
         self.fields['ContactCell'].label = "Contact Number"
         self.fields['email'].type = "email"
+
+class StateForm(forms.ModelForm):
+    class Meta:
+        model = StateList
+        fields = '__all__'
+        exclude = ('IsActive',)
+
+
+class CityForm(forms.ModelForm):
+    class Meta:
+        model = CityList
+        fields = '__all__'
+        exclude = ('IsActive',)

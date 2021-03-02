@@ -195,7 +195,7 @@ GO
 
 -- Create a job
 
-USE [testenr]
+USE [baghiService]
 GO
 CREATE PROCEDURE [dbo].[addJobPost]
 	@TopicName nvarchar(300) = NULL,
@@ -266,7 +266,7 @@ GO
 
 -- Filter category by City
 
-USE [testenr]
+USE [baghiService]
 GO
 CREATE PROCEDURE [dbo].[getCategory]
 	@city varchar(30) = NULL
@@ -276,7 +276,7 @@ GO
 
 -- Update Job Post
 
-USE [testenr]
+USE [baghiService]
 GO
 CREATE PROCEDURE [dbo].[updateJobPost]
 	@id int = Null,
@@ -318,7 +318,7 @@ GO
 
 --  Delete Job
 
-USE [testenr]
+USE [baghiService]
 GO
 CREATE PROCEDURE [dbo].[deleteJob]
 	@id int = NULL
@@ -456,7 +456,7 @@ UPDATE [dbo].[accounts_userlist]
 GO
 
 
-USE [testenr]
+USE [baghiService]
 GO
 CREATE PROCEDURE [dbo].[addreview]
 	@Topic int = NULL,
@@ -496,7 +496,7 @@ VALUES
 	)
 GO
 
-USE [testenr]
+USE [baghiService]
 GO
 CREATE PROCEDURE [dbo].[getAllReview]
 AS
@@ -758,4 +758,122 @@ AS
 			@usertype_id
 		   )
 
+GO
+
+
+
+
+--  Add Category
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[createCategory]
+	@CategoryName nvarchar(300) = NULL,
+	@AddedBy int = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@IsActive bit = 1
+AS
+INSERT INTO [dbo].[accounts_categorylist]
+           ([CategoryName]
+		   ,[AddedBy_id]
+		   ,[AddedDate]
+           ,[IsActive])
+VALUES
+	(
+		@CategoryName,
+		@AddedBy,
+		@AddedDate,
+		@IsActive
+	)
+GO
+
+--  Sub Category
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[createSubCategory]
+	@SubCategoryName nvarchar(300) = NULL,
+	@Category int = NULL,
+	@AddedBy int = NULL,
+	@AddedDate datetime2(7) = NULL,
+	@IsActive bit = 1
+AS
+INSERT INTO [dbo].[accounts_subcategorylist]
+           ([SubCategoryName]
+		   ,[Category_id]
+		   ,[AddedBy_id]
+		   ,[AddedDate]
+           ,[IsActive])
+VALUES
+	(
+		@SubCategoryName,
+		@Category,
+		@AddedBy,
+		@AddedDate,
+		@IsActive
+	)
+GO
+
+-- All Staff
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getAllStaff]
+AS
+Select * from [dbo].[accounts_userlist] WHERE is_staff = 1
+GO
+
+-- All Admin
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[getAllAdmin]
+AS
+Select * from [dbo].[accounts_userlist] WHERE is_superuser = 1
+GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[deleteCategory]
+	@id int = NULL
+AS
+DELETE FROM [dbo].[accounts_categorylist] WHERE [id] = @id
+GO
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[deleteCountry]
+	@id int = NULL
+AS
+DELETE FROM [dbo].[accounts_countrylist] WHERE [id] = @id
+GO
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[allCategory]
+AS
+SELECT * FROM [dbo].[accounts_categorylist]
+GO
+
+
+
+
+-- Adding category in a area
+
+
+USE [baghiService]
+GO
+CREATE PROCEDURE [dbo].[addCatInCity]
+	@cat_id int = NULL,
+	@city_id int = NULL
+AS
+
+INSERT INTO [dbo].[accounts_categoryincity]
+           ([category_id]
+           ,[city_id])
+     VALUES
+           (@cat_id
+           ,@city_id)
 GO

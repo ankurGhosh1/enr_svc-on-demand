@@ -18,6 +18,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from accounts.models import UserList
 from svc.utils import AllProcedures, FastProcedures
 from accounts.models import TopicList, AssetsDetailList
+from svc.decorators import login_required_cus, is_client
 from .mixins import ClientLoginMixin, ProfessinonalLoginMixin
 from .forms import JobPostForm, JobUpdateForm, AssetsForm, ReviewForm, UserJobPostForm
 
@@ -37,7 +38,45 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
-# Get Sub Categoreis
+# # Create your views here.
+
+@is_client
+def dashboard(request):
+    cursor = connection.cursor()
+    address = cursor.execute("SELECT COUNT(*) FROM baghiService2.dbo.accounts_addresslist WHERE user_id = %s", [request.session['user']['id']]).fetchone()[0]
+    if address == 0 :
+        return redirect('accounts:address_add')
+    return render(request, 'clients/dashboard.html')
+
+@is_client
+def hire(request, applier_id, job_id):
+    job = AllProcedures.getJobById(job_id)[0]
+    hired = AllProcedures.jobHireStatus(applier_id, job_id)
+    if job['User_id']==request.session['user']['id'] and not hired:
+        AllProcedures.hireProfessional(applier_id, job_id)
+    return redirect('clients:indiJob', job_id=job_id, applier_id=applier_id)
+
+def getCities(request):
+    if request.method=='POST':
+        print(request)
+        state_id = request.POST['state_id']
+        cursor = connection.cursor()
+        cities = cursor.execute(f"SELECT * FROM baghiService2.dbo.accounts_citylist WHERE StateId_id='{state_id}'")
+        cities =  dictfetchall(cities)
+        print(cities)
+        return JsonResponse(cities, safe=False)
+
+
+
+def getStates(request):
+    if request.method=='POST':
+        print(request)
+        country_id = request.POST['country_id']
+        cursor = connection.cursor()
+        states = cursor.execute(f"SELECT * FROM baghiService2.dbo.accounts_statelist WHERE countryId_id='{country_id}'")
+        states =  dictfetchall(states)
+        print(states)
+        return JsonResponse(states, safe=False)
 
 def getSubCats(request):
     if request.method=='POST':
@@ -63,8 +102,36 @@ def getCats(request):
 
 # Post A job
 
-class JobPostView(ClientLoginMixin, generic.CreateView):
+
+@is_client
+def reviewapplications(request):
+    if request.session.has_key('user'):
+        jobApplications = AllProcedures.getApplicationsForReview(user_id=request.session['user']['id'])
+        print(jobApplications)
+        return render(request, 'clients/reviewapplication.html', {'jobs':jobApplications})
+    return redierct('accounts:login')
+
+
+
+
+@is_client
+def indiJob(request, job_id, applier_id):
+    cursor = connection.cursor()
+    cursor.execute(f"EXEC dbo.getEachJob @id='{job_id}'")
+    eachjob = dictfetchall(cursor)
+    id = eachjob[0]['User_id']
+    cursor = connection.cursor()
+    cursor.execute(f"EXEC dbo.getUserWithId @id='{applier_id}'")
+    user = dictfetchall(cursor)
+    hired = AllProcedures.jobHireStatus(applier_id, job_id)
+    appliedList = []
+    return render(request, 'clients/indiJob.html', {'jobdetail': eachjob, 'user':user[0], 'selected':hired})
+
+
+
+class JobPostView(generic.CreateView):
     assetForm = inlineformset_factory(TopicList, AssetsDetailList, AssetsForm, extra=1)
+
     def get(self, request):
         cursor = connection.cursor()
         city = cursor.execute("SELECT * FROM testenr.dbo.accounts_citylist")
@@ -94,7 +161,7 @@ class JobPostView(ClientLoginMixin, generic.CreateView):
             for i in request.POST:
                 if i !="csrfmiddlewaretoken":
                     kwargs[i] = request.POST[i]
-            _, id = AllProcedures.createjob(**kwargs, User=user_id)
+            _, id = AllProcedures.createjob(**kwargs, User=user_id, user_email=request.session['user']['username'])
             for i in request.POST:
                 # print(i)
                 if 'SubCategory-' in i:
@@ -255,22 +322,20 @@ class AllProfessionals(View):
             myId = request.user.id
         else:
             myId = request.session['user']['id']
-        cursor.execute(f"EXEC dbo.getMyCityJobs @user_Id='{myId}'")
+        cursor.execute(f"EXEC dbo.getMyCityProfessionals @user_Id='{myId}'")
         allcategories = dictfetchall(cursor)
         # print(allcategories)
         paginator = Paginator(allcategories, 3)
-
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'clients/services.html', {'professionals': page_obj})
 
 # Arranging a Callback
 
-class Callback(ClientLoginMixin, View):
+
+class Callback(View):
     def get(self, request, slug):
-        cursor = connection.cursor()
-        cursor.execute(f"EXEC dbo.getUser @email='{request.user.email}'")
-        user = dictfetchall(cursor)
+        user = AllProcedures.getUserWithId(request.session['user']['id'])
         return render(request, 'clients/callback.html', {'user': user})
 
     def post(self, request, slug):
@@ -278,15 +343,13 @@ class Callback(ClientLoginMixin, View):
             slug = self.kwargs.get('slug')
             email = request.POST['email']
             number = request.POST['number']
-            cursor = connection.cursor()
-            cursor.execute(f"EXEC dbo.getEmail @username='{slug}'")
-            user = dictfetchall(cursor)
+            user = AllProcedures.getUserWithId(slug)
             rec_email = [user[0]['email']]
-            message = request.user.username + " has requested you for a callback. You may email here:" + email + ", or you may call at " + number
-            send_mail(
+            print(rec_email)
+            message = "<div>"+request.user.username + " has requested you for a callback. You may email here:" + email + ", or you may call at " + number+"</div>"
+            send_html_mail(
                 subject="Request for a Callback",
-                message= message,
-                from_email = "ouremail@gmail.com",
+                html_content= message,
                 recipient_list= rec_email
             )
             return render(request, 'clients/successemail.html')
@@ -324,6 +387,7 @@ class Review(View):
 # Profile view
 
 
+@is_client
 def MyProfile(request):
     cursor = connection.cursor()
     reviews = cursor.execute(f"EXEC dbo.myreviews @User_id='{request.user.id}'")

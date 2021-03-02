@@ -1,6 +1,6 @@
 from django.db import connection
 import datetime
-
+from .notifications import Notification
 
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
@@ -81,7 +81,7 @@ class AllProcedures:
         return job
 
     @staticmethod
-    def createjob(TopicName, content, Category, City, User, **kwargs):
+    def createjob(TopicName, content, Category, City, User, user_email, **kwargs):
         status = False
         id = None
         with connection.cursor() as cursor:
@@ -90,6 +90,10 @@ class AllProcedures:
             print(id)
             id = id.fetchall()
             status = True
+        if id:
+            Notification.createjobNoti(user_email, content, TopicName)
+        else:
+            id = [[None]]
         return status, id[0][0]
 
 
@@ -249,6 +253,16 @@ class AllProcedures:
         return nearJobs
 
     @staticmethod
+    def getMyCityJobsP(user_id):
+        status = False
+        query = f"EXEC dbo.getMyCityJobsP @user_id='{user_id}';"
+        nearJobs = None
+        with connection.cursor() as cursor:
+            nearJobs = cursor.execute(query)
+            nearJobs = dictfetchall(nearJobs)
+        return nearJobs
+
+    @staticmethod
     def generateOTP(otp,email):
         status = False
         query = f"EXEC dbo.generateOTP @Otp='{otp}' ,@user_email='{email}' ,@expire_minute='{10}' ,@doc='{datetime.datetime.now()}';"
@@ -257,13 +271,70 @@ class AllProcedures:
             status = True
         return status
 
+    @staticmethod
     def applyJob(user_id, job_id):
         status = False
         query = f"EXEC dbo.applyJob @user_id='{user_id}' ,@job_id='{job_id}' , @topic_date='{datetime.datetime.now()}';"
+        job = AllProcedures.getJobById(job_id)[0]
+        print(job)
+        user = AllProcedures.getUserWithId(job['AddedBy_id'])[0]
+        print(user)
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        if status:
+            Notification.appliedOnJob(user['username'], job['TopicName'])
+        return status
+
+
+    def addCatInCity(cat_id, city_id):
+        status = False
+        query = f"EXEC dbo.addCatInCity @cat_id='{cat_id}' ,@city_id='{city_id}';"
         with connection.cursor() as cursor:
             cursor.execute(query)
             status = True
         return status
+
+    def jobHireStatus(user_id, job_id):
+        status = False
+        query = f"EXEC dbo.jobHireStatus @user_id='{user_id}' ,@job_id='{job_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = cursor.fetchall()
+        return status[0][0]
+
+    def hireProfessional(user_id, job_id):
+        status = False
+        query = f"EXEC dbo.hireProfessional @user_id='{user_id}' ,@job_id='{job_id}';"
+        job = AllProcedures.getJobById(job_id)[0]
+        user = AllProcedures.getUserWithId(user_id)[0]
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            status = True
+        if status:
+            Notification.hiredNoti(user['username'], job['TopicName'], job_id)
+        return status
+
+    def getApplicationsForReview(user_id):
+        jobsList = []
+        query = f"EXEC dbo.getApplicationsForReview @user_id='{user_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        return jobsList
+
+
+    def getHiredJobsList(user_id):
+        jobsList = []
+        query = f"EXEC dbo.getHiredJobsList @user_id='{user_id}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        res = []
+        for i in jobsList:
+            res.append(i['Topic_id'])
+        return res
+
 
     def getAppliedJobsList(user_id):
         jobsList = []
@@ -274,7 +345,13 @@ class AllProcedures:
         res = []
         for i in jobsList:
             res.append(i['Topic_id'])
-        return res
+        ids = str(res).replace("[", "").replace("]", "")
+        query = f"EXEC dbo.getJobsInId @job_id_list='{ids}';"
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            jobsList = dictfetchall(cursor)
+        print(jobsList)
+        return res, jobsList
 
 
 

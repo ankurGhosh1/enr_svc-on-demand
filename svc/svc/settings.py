@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'social_django',
 
     'phonenumber_field',
-    # 'crispy_forms',
+    'crispy_forms',
 
     'clients',
     'accounts',
