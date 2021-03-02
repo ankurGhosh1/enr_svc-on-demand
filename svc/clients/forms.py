@@ -11,6 +11,7 @@ class JobPostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(JobPostForm, self).__init__(*args, **kwargs)
         self.fields['TopicName'].label = "Topic Name"
+        
 
 class JobUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -62,9 +63,15 @@ class CountryForm(forms.ModelForm):
         fields = '__all__'
         exclude = ('IsActive',)
 
+# Form 
 
 class UserJobPostForm(forms.ModelForm):
     class Meta:
         model = UserList
         fields = '__all__'
         exclude = ('password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'UserMiddleName', 'Application', 'usertype', 'groups', 'user_permissions', 'date_joined')
+
+    def __init__(self, *args, **kwargs):
+        super(UserJobPostForm, self).__init__(*args, **kwargs)
+        self.fields['ContactCell'].label = "Contact Number"
+        self.fields['email'].type = "email"

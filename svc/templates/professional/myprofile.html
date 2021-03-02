@@ -44,10 +44,9 @@
               <div class="p-3">
                 <h6 class="text-secondary">Recent Reviews</h6>
                 <ul>
-                  <li>Review 1</li>
-                  <li>Review 2</li>
-                  <li>Review 3</li>
-                  <li>Review 4</li>
+                  {% for review in myreviews %}
+                  <li>{{review.ReviewNote}}</li>
+                  {% endfor %}
                 </ul>
               </div>
             </div>

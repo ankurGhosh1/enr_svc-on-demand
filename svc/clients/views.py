@@ -173,7 +173,7 @@ class AnonJobPost(View):
 
 # List of all Jobs
 
-class GetJobPost(generic.ListView):
+class GetJobPost(ClientLoginMixin, generic.ListView):
     def get(self, request):
         print(request.session['user']['usertype_id'])
         cursor = connection.cursor()
@@ -269,7 +269,7 @@ class AllProfessionals(View):
 class Callback(ClientLoginMixin, View):
     def get(self, request, slug):
         cursor = connection.cursor()
-        cursor.execute(f"EXEC dbo.getUser @id='{request.user.id}'")
+        cursor.execute(f"EXEC dbo.getUser @email='{request.user.email}'")
         user = dictfetchall(cursor)
         return render(request, 'clients/callback.html', {'user': user})
 
@@ -325,7 +325,9 @@ class Review(View):
 
 
 def MyProfile(request):
-    return render(request, 'clients/myprofile.html')
+    cursor = connection.cursor()
+    reviews = cursor.execute(f"EXEC dbo.myreviews @User_id='{request.user.id}'")
+    return render(request, 'clients/myprofile.html', {'myreviews': reviews})
 
 
 # def jobpost(request):

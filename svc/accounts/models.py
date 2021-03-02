@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from tinymce.models import HTMLField
-
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class LanguageList(models.Model):
@@ -28,7 +28,7 @@ class UserList(AbstractUser):
     UserMiddleName = models.CharField(max_length=100, null=True)
     usertype = models.ForeignKey(UserType, on_delete=models.CASCADE)
     Application = models.ForeignKey(AppliationList,on_delete=models.CASCADE, null=True)
-    ContactCell = models.CharField(max_length=100, null=True)
+    ContactCell = PhoneNumberField(blank=True)
 
 
     USERNAME_FIELD = 'email'

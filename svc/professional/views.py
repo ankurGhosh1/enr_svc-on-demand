@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.db import connection
 from svc.utils import AllProcedures, FastProcedures, dictfetchall
 
+# Professional Dashboard
 
 def dashboard(request):
     cursor = connection.cursor()
@@ -10,6 +11,8 @@ def dashboard(request):
     if address == 0 :
         return redirect('accounts:address_add')
     return render(request, 'professional/dashboard.html')
+
+# Explore Jobs
 
 def Explore(request):
     nearJobs = AllProcedures.getMyCityJobs(user_id=request.session['user']['id'])
@@ -24,6 +27,7 @@ def Explore(request):
     # print(appliedList)
     return render(request, 'professional/explore.html', {'jobs':nearJobs, 'city':city, 'appliedList':appliedList})
 
+# Filtering of job according to  
 
 def filter(request):
     if request.method=="POST":
@@ -41,7 +45,7 @@ def filter(request):
         return render(request, 'professional/explore.html', {'jobs':jobs, 'city':cities, 'appliedList':appliedList})
     return HttpResponse(f"heheheh-{city}-{cat}-{subCat}")
 
-
+#  Indivudual Jobs
 
 def indiJob(request, job_id):
 
@@ -61,6 +65,7 @@ def indiJob(request, job_id):
         applied = True
     return render(request, 'professional/indiJob.html', {'jobdetail': eachjob, 'user':user[0], 'applied':applied})
 
+# Applying for a job
 
 def applyJob(request, job_id):
     if request.session.has_key('user'):
@@ -74,7 +79,9 @@ def applyJob(request, job_id):
     return redirect('accounts:signup')
 
 
-
+#  Profile view
 
 def MyProfile(request):
-    return render(request, 'professional/myprofile.html')
+    cursor = connection.cursor()
+    reviews = cursor.execute(f"EXEC dbo.myreviews @User_id='{request.user.id}'")
+    return render(request, 'professional/myprofile.html', {'myreviews': reviews})

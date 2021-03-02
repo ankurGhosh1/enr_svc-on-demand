@@ -13,7 +13,8 @@ class ClientLoginMixin(AccessMixin):
         if not request.session['user']['is_authenticated']:
             return self.handle_no_permission()
         if self.request.session['user']['usertype_id'] == 2:
-            return render(request, 'clients/restricted.html')
+            # return render(request, 'clients/restricted.html')
+            return redirect('/professional/explore')
         return super().dispatch(request, *args, **kwargs)
 
 

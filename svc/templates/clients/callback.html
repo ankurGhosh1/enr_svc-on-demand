@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="container">
+    <button class="btn btn-primary navbut"><a href="/client/services/">Go Back To All Services</a></button>
     <form method="POST">
         {% csrf_token %}
         {% for user in user %}

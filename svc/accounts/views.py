@@ -21,6 +21,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# Home Page View
 
 def home(request):
     if request.session.has_key('user'):
@@ -34,6 +35,7 @@ def home(request):
     return render(request, 'home.html')
 
 
+# Login View
 
 def _login(request, user, password, pass_req):
     if check_password(password, user[0]['password']) or pass_req:
@@ -151,6 +153,7 @@ def selectUserType(request):
             return _login(request, user, "a", True)
     return render(request, 'registration/selectType.html', {'application':app})
 
+#  login view
 
 def login(request):
     if request.method == 'POST':
@@ -162,6 +165,8 @@ def login(request):
         return redirect('accounts:login')
     print(request.session.get('user'), "all user session")
     return render(request,'registration/login.html')
+
+# signup view
 
 def signup(request):
     cursor = connection.cursor()
@@ -183,6 +188,8 @@ def signup(request):
         return redirect('accounts:login')
     return render(request,'registration/signup.html',{'user_type':user_t,'application':app})
 
+
+#  logout view
 
 def logout(request):
     try:
